@@ -1,0 +1,137 @@
+{
+  "appName": "Overlayer",
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "confirm": "Open",
+    "undo": "Undo"
+  },
+  "tools": {
+    "select": "Select",
+    "brush": "Brush",
+    "highlight": "Area highlight",
+    "text": "Text",
+    "sticky": "Sticky note",
+    "button": "Link button",
+    "arrow": "Arrow",
+    "table": "Table",
+    "image": "Image",
+    "eraser": "Eraser",
+    "delete": "Remove object"
+  },
+  "toolbar": {
+    "color": "Color",
+    "width": "Stroke width",
+    "hex": "HEX color"
+  },
+  "canvas": {
+    "title": "Notes canvas",
+    "subtitle": "Quick notes for this site",
+    "openBoard": "Open the full canvas",
+    "backToNotes": "Back to quick notes",
+    "close": "Close canvas",
+    "clear": "Clear the whole canvas",
+    "clearTitle": "Clear this canvas?",
+    "clearText": "Everything on this site's canvas will be permanently deleted.",
+    "dragTable": "Drag table",
+    "zoomIn": "Zoom in",
+    "zoomOut": "Zoom out",
+    "zoomReset": "Reset zoom to 100%",
+    "zoomFit": "Show the whole canvas",
+    "quickEmpty": "Quick notes for this site. Add text, a sticky note, a link or an image with the buttons below.",
+    "bringToFront": "Bring to front",
+    "sendToBack": "Send to back"
+  },
+  "text": {
+    "bold": "Bold",
+    "italic": "Italic",
+    "underline": "Underline",
+    "strike": "Strikethrough",
+    "bulletList": "Bullet list",
+    "orderedList": "Numbered list",
+    "alignLeft": "Align left",
+    "alignCenter": "Align center",
+    "alignRight": "Align right",
+    "size": "Text size"
+  },
+  "popup": {
+    "toggle": "Toggle canvas",
+    "openCanvas": "Open canvas",
+    "closeCanvas": "Close canvas",
+    "hideHighlights": "Hide highlights",
+    "showHighlights": "Show highlights",
+    "unavailable": "Overlayer is not available on this page",
+    "options": "Settings"
+  },
+  "sticky": {
+    "placeholder": "Note text…"
+  },
+  "linkButton": {
+    "label": "Label",
+    "icon": "Icon",
+    "invalidUrl": "Enter a link like https://…",
+    "defaultLabel": "Link",
+    "open": "Open link",
+    "confirmExternalTitle": "Open external link?",
+    "confirmExternalText": "You are about to open {{host}} in a new tab."
+  },
+  "image": {
+    "title": "Add image",
+    "dropHint": "Drop an image here or click to choose a file",
+    "invalid": "Choose an image file up to 5 MB"
+  },
+  "table": {
+    "row": "Row",
+    "column": "Column",
+    "addRow": "Add row",
+    "removeRow": "Remove row",
+    "addColumn": "Add column",
+    "removeColumn": "Remove column"
+  },
+  "options": {
+    "title": "Overlayer Settings",
+    "subtitle": "A notes canvas and highlighter for any website — fully offline",
+    "settings": "General",
+    "language": "Interface language",
+    "languageAuto": "Same as browser",
+    "theme": "Theme",
+    "themeGreen": "Green",
+    "themeBlue": "Blue",
+    "themeSpace": "Space",
+    "selectionButton": "Quick highlight on selection",
+    "selectionButtonHint": "Show a small highlight button next to selected text",
+    "highlighterBadge": "Floating highlights button",
+    "highlighterBadgeHint": "Round button on pages that have highlights",
+    "pages": "Saved notes",
+    "pagesHint": "All canvases and pages with highlights",
+    "pagesEmpty": "No saved notes yet",
+    "boardScope": "canvas",
+    "quickScope": "quick notes",
+    "annotationCount": "{{count}} items",
+    "totalSize": "Total notes size: {{size}}",
+    "data": "Data",
+    "dataHint": "A backup is the only way to move your notes to another device",
+    "export": "Export to JSON",
+    "import": "Import from JSON",
+    "importError": "Could not import the file: invalid format",
+    "exported": "Backup exported",
+    "pageDeleted": "Deleted",
+    "clearAll": "Delete all data",
+    "clearAllTitle": "Delete all data?",
+    "clearAllText": "All notes and settings will be permanently deleted. This cannot be undone.",
+    "offlineNote": "All data is stored locally on your device"
+  },
+  "highlighter": {
+    "highlight": "Highlight",
+    "panelTitle": "Highlights",
+    "search": "Search highlights…",
+    "empty": "Nothing found",
+    "notePlaceholder": "Add a note…",
+    "bold": "Bold",
+    "italic": "Italic",
+    "withNote": "With note",
+    "deleted": "Highlight deleted"
+  }
+}

@@ -1,0 +1,137 @@
+{
+  "appName": "Overlayer",
+  "common": {
+    "save": "Salvar",
+    "cancel": "Cancelar",
+    "delete": "Excluir",
+    "edit": "Editar",
+    "confirm": "Abrir",
+    "undo": "Desfazer"
+  },
+  "tools": {
+    "select": "Selecionar",
+    "brush": "Pincel",
+    "highlight": "Destaque de área",
+    "text": "Texto",
+    "sticky": "Nota adesiva",
+    "button": "Botão de link",
+    "arrow": "Seta",
+    "table": "Tabela",
+    "image": "Imagem",
+    "eraser": "Borracha",
+    "delete": "Remover objeto"
+  },
+  "toolbar": {
+    "color": "Cor",
+    "width": "Espessura do traço",
+    "hex": "Cor HEX"
+  },
+  "canvas": {
+    "title": "Canvas de notas",
+    "subtitle": "Notas rápidas deste site",
+    "openBoard": "Abrir o canvas completo",
+    "backToNotes": "Voltar às notas",
+    "close": "Fechar canvas",
+    "clear": "Limpar todo o canvas",
+    "clearTitle": "Limpar este canvas?",
+    "clearText": "Todo o conteúdo do canvas deste site será excluído permanentemente.",
+    "dragTable": "Arrastar tabela",
+    "zoomIn": "Aproximar",
+    "zoomOut": "Afastar",
+    "zoomReset": "Redefinir zoom para 100%",
+    "zoomFit": "Mostrar todo o canvas",
+    "quickEmpty": "Notas rápidas deste site. Adicione texto, uma nota, um link ou uma imagem com os botões abaixo.",
+    "bringToFront": "Trazer para a frente",
+    "sendToBack": "Enviar para trás"
+  },
+  "text": {
+    "bold": "Negrito",
+    "italic": "Itálico",
+    "underline": "Sublinhado",
+    "strike": "Tachado",
+    "bulletList": "Lista com marcadores",
+    "orderedList": "Lista numerada",
+    "alignLeft": "Alinhar à esquerda",
+    "alignCenter": "Centralizar",
+    "alignRight": "Alinhar à direita",
+    "size": "Tamanho do texto"
+  },
+  "popup": {
+    "toggle": "Abrir ou fechar o canvas",
+    "openCanvas": "Abrir canvas",
+    "closeCanvas": "Fechar canvas",
+    "hideHighlights": "Ocultar destaques",
+    "showHighlights": "Mostrar destaques",
+    "unavailable": "O Overlayer não está disponível nesta página",
+    "options": "Configurações"
+  },
+  "sticky": {
+    "placeholder": "Texto da nota…"
+  },
+  "linkButton": {
+    "label": "Rótulo",
+    "icon": "Ícone",
+    "invalidUrl": "Digite um link como https://…",
+    "defaultLabel": "Link",
+    "open": "Abrir link",
+    "confirmExternalTitle": "Abrir link externo?",
+    "confirmExternalText": "Você vai abrir {{host}} em uma nova aba."
+  },
+  "image": {
+    "title": "Adicionar imagem",
+    "dropHint": "Solte uma imagem aqui ou clique para escolher um arquivo",
+    "invalid": "Escolha um arquivo de imagem de até 5 MB"
+  },
+  "table": {
+    "row": "Linha",
+    "column": "Coluna",
+    "addRow": "Adicionar linha",
+    "removeRow": "Remover linha",
+    "addColumn": "Adicionar coluna",
+    "removeColumn": "Remover coluna"
+  },
+  "options": {
+    "title": "Configurações do Overlayer",
+    "subtitle": "Canvas de notas e marcador para qualquer site — totalmente offline",
+    "settings": "Geral",
+    "language": "Idioma da interface",
+    "languageAuto": "Igual ao navegador",
+    "theme": "Tema",
+    "themeGreen": "Green",
+    "themeBlue": "Blue",
+    "themeSpace": "Space",
+    "selectionButton": "Destaque rápido ao selecionar",
+    "selectionButtonHint": "Mostrar um botão ao lado do texto selecionado",
+    "highlighterBadge": "Botão flutuante de destaques",
+    "highlighterBadgeHint": "Botão redondo em páginas com destaques",
+    "pages": "Notas salvas",
+    "pagesHint": "Todos os canvas e páginas com destaques",
+    "pagesEmpty": "Ainda não há notas salvas",
+    "boardScope": "canvas",
+    "quickScope": "notas rápidas",
+    "annotationCount": "{{count}} itens",
+    "totalSize": "Tamanho total das notas: {{size}}",
+    "data": "Dados",
+    "dataHint": "Um backup é a única forma de mover suas notas para outro dispositivo",
+    "export": "Exportar para JSON",
+    "import": "Importar de JSON",
+    "importError": "Não foi possível importar o arquivo: formato inválido",
+    "exported": "Backup exportado",
+    "pageDeleted": "Excluído",
+    "clearAll": "Excluir todos os dados",
+    "clearAllTitle": "Excluir todos os dados?",
+    "clearAllText": "Todas as notas e configurações serão excluídas permanentemente.",
+    "offlineNote": "Todos os dados são armazenados localmente no seu dispositivo"
+  },
+  "highlighter": {
+    "highlight": "Destacar",
+    "panelTitle": "Destaques",
+    "search": "Pesquisar destaques…",
+    "empty": "Nada encontrado",
+    "notePlaceholder": "Adicionar uma nota…",
+    "bold": "Negrito",
+    "italic": "Itálico",
+    "withNote": "Com nota",
+    "deleted": "Destaque excluído"
+  }
+}

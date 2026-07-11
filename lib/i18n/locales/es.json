@@ -1,0 +1,137 @@
+{
+  "appName": "Overlayer",
+  "common": {
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "confirm": "Abrir",
+    "undo": "Deshacer"
+  },
+  "tools": {
+    "select": "Seleccionar",
+    "brush": "Pincel",
+    "highlight": "Resaltado de área",
+    "text": "Texto",
+    "sticky": "Nota adhesiva",
+    "button": "Botón de enlace",
+    "arrow": "Flecha",
+    "table": "Tabla",
+    "image": "Imagen",
+    "eraser": "Borrador",
+    "delete": "Eliminar objeto"
+  },
+  "toolbar": {
+    "color": "Color",
+    "width": "Grosor del trazo",
+    "hex": "Color HEX"
+  },
+  "canvas": {
+    "title": "Lienzo de notas",
+    "subtitle": "Notas rápidas de este sitio",
+    "openBoard": "Abrir el lienzo completo",
+    "backToNotes": "Volver a las notas",
+    "close": "Cerrar lienzo",
+    "clear": "Limpiar todo el lienzo",
+    "clearTitle": "¿Limpiar este lienzo?",
+    "clearText": "Todo el contenido del lienzo de este sitio se eliminará permanentemente.",
+    "dragTable": "Arrastrar tabla",
+    "zoomIn": "Acercar",
+    "zoomOut": "Alejar",
+    "zoomReset": "Restablecer zoom al 100%",
+    "zoomFit": "Mostrar todo el lienzo",
+    "quickEmpty": "Notas rápidas de este sitio. Añade texto, una nota, un enlace o una imagen con los botones de abajo.",
+    "bringToFront": "Traer al frente",
+    "sendToBack": "Enviar al fondo"
+  },
+  "text": {
+    "bold": "Negrita",
+    "italic": "Cursiva",
+    "underline": "Subrayado",
+    "strike": "Tachado",
+    "bulletList": "Lista con viñetas",
+    "orderedList": "Lista numerada",
+    "alignLeft": "Alinear a la izquierda",
+    "alignCenter": "Centrar",
+    "alignRight": "Alinear a la derecha",
+    "size": "Tamaño del texto"
+  },
+  "popup": {
+    "toggle": "Abrir o cerrar el lienzo",
+    "openCanvas": "Abrir lienzo",
+    "closeCanvas": "Cerrar lienzo",
+    "hideHighlights": "Ocultar resaltados",
+    "showHighlights": "Mostrar resaltados",
+    "unavailable": "Overlayer no está disponible en esta página",
+    "options": "Ajustes"
+  },
+  "sticky": {
+    "placeholder": "Texto de la nota…"
+  },
+  "linkButton": {
+    "label": "Etiqueta",
+    "icon": "Icono",
+    "invalidUrl": "Introduce un enlace como https://…",
+    "defaultLabel": "Enlace",
+    "open": "Abrir enlace",
+    "confirmExternalTitle": "¿Abrir enlace externo?",
+    "confirmExternalText": "Vas a abrir {{host}} en una nueva pestaña."
+  },
+  "image": {
+    "title": "Añadir imagen",
+    "dropHint": "Suelta una imagen aquí o haz clic para elegir un archivo",
+    "invalid": "Elige un archivo de imagen de hasta 5 MB"
+  },
+  "table": {
+    "row": "Fila",
+    "column": "Columna",
+    "addRow": "Añadir fila",
+    "removeRow": "Eliminar fila",
+    "addColumn": "Añadir columna",
+    "removeColumn": "Eliminar columna"
+  },
+  "options": {
+    "title": "Ajustes de Overlayer",
+    "subtitle": "Lienzo de notas y marcador para cualquier sitio — totalmente sin conexión",
+    "settings": "General",
+    "language": "Idioma de la interfaz",
+    "languageAuto": "Igual que el navegador",
+    "theme": "Tema",
+    "themeGreen": "Green",
+    "themeBlue": "Blue",
+    "themeSpace": "Space",
+    "selectionButton": "Resaltado rápido al seleccionar",
+    "selectionButtonHint": "Mostrar un pequeño botón junto al texto seleccionado",
+    "highlighterBadge": "Botón flotante de resaltados",
+    "highlighterBadgeHint": "Botón redondo en páginas con resaltados",
+    "pages": "Notas guardadas",
+    "pagesHint": "Todos los lienzos y páginas con resaltados",
+    "pagesEmpty": "Aún no hay notas guardadas",
+    "boardScope": "lienzo",
+    "quickScope": "notas rápidas",
+    "annotationCount": "{{count}} elementos",
+    "totalSize": "Tamaño total de las notas: {{size}}",
+    "data": "Datos",
+    "dataHint": "Una copia de seguridad es la única forma de mover tus notas a otro dispositivo",
+    "export": "Exportar a JSON",
+    "import": "Importar desde JSON",
+    "importError": "No se pudo importar el archivo: formato no válido",
+    "exported": "Copia de seguridad exportada",
+    "pageDeleted": "Eliminado",
+    "clearAll": "Eliminar todos los datos",
+    "clearAllTitle": "¿Eliminar todos los datos?",
+    "clearAllText": "Todas las notas y ajustes se eliminarán permanentemente.",
+    "offlineNote": "Todos los datos se guardan localmente en tu dispositivo"
+  },
+  "highlighter": {
+    "highlight": "Resaltar",
+    "panelTitle": "Resaltados",
+    "search": "Buscar resaltados…",
+    "empty": "No se encontró nada",
+    "notePlaceholder": "Añadir una nota…",
+    "bold": "Negrita",
+    "italic": "Cursiva",
+    "withNote": "Con nota",
+    "deleted": "Resaltado eliminado"
+  }
+}

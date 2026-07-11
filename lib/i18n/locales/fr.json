@@ -1,0 +1,137 @@
+{
+  "appName": "Overlayer",
+  "common": {
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "confirm": "Ouvrir",
+    "undo": "Annuler"
+  },
+  "tools": {
+    "select": "Sélectionner",
+    "brush": "Pinceau",
+    "highlight": "Surlignage de zone",
+    "text": "Texte",
+    "sticky": "Note adhésive",
+    "button": "Bouton-lien",
+    "arrow": "Flèche",
+    "table": "Tableau",
+    "image": "Image",
+    "eraser": "Gomme",
+    "delete": "Supprimer l'objet"
+  },
+  "toolbar": {
+    "color": "Couleur",
+    "width": "Épaisseur du trait",
+    "hex": "Couleur HEX"
+  },
+  "canvas": {
+    "title": "Canvas de notes",
+    "subtitle": "Notes rapides de ce site",
+    "openBoard": "Ouvrir le canvas complet",
+    "backToNotes": "Retour aux notes",
+    "close": "Fermer le canvas",
+    "clear": "Tout effacer sur le canvas",
+    "clearTitle": "Effacer ce canvas ?",
+    "clearText": "Tout le contenu du canvas de ce site sera définitivement supprimé.",
+    "dragTable": "Déplacer le tableau",
+    "zoomIn": "Zoom avant",
+    "zoomOut": "Zoom arrière",
+    "zoomReset": "Réinitialiser le zoom à 100 %",
+    "zoomFit": "Afficher tout le canvas",
+    "quickEmpty": "Notes rapides de ce site. Ajoutez du texte, une note, un lien ou une image avec les boutons ci-dessous.",
+    "bringToFront": "Mettre au premier plan",
+    "sendToBack": "Mettre à l'arrière-plan"
+  },
+  "text": {
+    "bold": "Gras",
+    "italic": "Italique",
+    "underline": "Souligné",
+    "strike": "Barré",
+    "bulletList": "Liste à puces",
+    "orderedList": "Liste numérotée",
+    "alignLeft": "Aligner à gauche",
+    "alignCenter": "Centrer",
+    "alignRight": "Aligner à droite",
+    "size": "Taille du texte"
+  },
+  "popup": {
+    "toggle": "Ouvrir ou fermer le canvas",
+    "openCanvas": "Ouvrir le canvas",
+    "closeCanvas": "Fermer le canvas",
+    "hideHighlights": "Masquer les surlignages",
+    "showHighlights": "Afficher les surlignages",
+    "unavailable": "Overlayer n'est pas disponible sur cette page",
+    "options": "Paramètres"
+  },
+  "sticky": {
+    "placeholder": "Texte de la note…"
+  },
+  "linkButton": {
+    "label": "Libellé",
+    "icon": "Icône",
+    "invalidUrl": "Saisissez un lien comme https://…",
+    "defaultLabel": "Lien",
+    "open": "Ouvrir le lien",
+    "confirmExternalTitle": "Ouvrir le lien externe ?",
+    "confirmExternalText": "Vous allez ouvrir {{host}} dans un nouvel onglet."
+  },
+  "image": {
+    "title": "Ajouter une image",
+    "dropHint": "Déposez une image ici ou cliquez pour choisir un fichier",
+    "invalid": "Choisissez un fichier image de 5 Mo maximum"
+  },
+  "table": {
+    "row": "Ligne",
+    "column": "Colonne",
+    "addRow": "Ajouter une ligne",
+    "removeRow": "Supprimer une ligne",
+    "addColumn": "Ajouter une colonne",
+    "removeColumn": "Supprimer une colonne"
+  },
+  "options": {
+    "title": "Paramètres d'Overlayer",
+    "subtitle": "Canvas de notes et surligneur pour n'importe quel site — entièrement hors ligne",
+    "settings": "Général",
+    "language": "Langue de l'interface",
+    "languageAuto": "Comme le navigateur",
+    "theme": "Thème",
+    "themeGreen": "Green",
+    "themeBlue": "Blue",
+    "themeSpace": "Space",
+    "selectionButton": "Surlignage rapide à la sélection",
+    "selectionButtonHint": "Afficher un petit bouton près du texte sélectionné",
+    "highlighterBadge": "Bouton flottant des surlignages",
+    "highlighterBadgeHint": "Bouton rond sur les pages avec surlignages",
+    "pages": "Notes enregistrées",
+    "pagesHint": "Tous les canvas et pages avec surlignages",
+    "pagesEmpty": "Aucune note enregistrée pour l'instant",
+    "boardScope": "canvas",
+    "quickScope": "notes rapides",
+    "annotationCount": "{{count}} éléments",
+    "totalSize": "Taille totale des notes : {{size}}",
+    "data": "Données",
+    "dataHint": "Une sauvegarde est le seul moyen de transférer vos notes sur un autre appareil",
+    "export": "Exporter en JSON",
+    "import": "Importer depuis JSON",
+    "importError": "Impossible d'importer le fichier : format non valide",
+    "exported": "Sauvegarde exportée",
+    "pageDeleted": "Supprimé",
+    "clearAll": "Supprimer toutes les données",
+    "clearAllTitle": "Supprimer toutes les données ?",
+    "clearAllText": "Toutes les notes et tous les paramètres seront définitivement supprimés.",
+    "offlineNote": "Toutes les données sont stockées localement sur votre appareil"
+  },
+  "highlighter": {
+    "highlight": "Surligner",
+    "panelTitle": "Surlignages",
+    "search": "Rechercher des surlignages…",
+    "empty": "Rien trouvé",
+    "notePlaceholder": "Ajouter une note…",
+    "bold": "Gras",
+    "italic": "Italique",
+    "withNote": "Avec note",
+    "deleted": "Surlignage supprimé"
+  }
+}

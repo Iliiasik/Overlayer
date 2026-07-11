@@ -1,0 +1,137 @@
+{
+  "appName": "Overlayer",
+  "common": {
+    "save": "保存",
+    "cancel": "取消",
+    "delete": "删除",
+    "edit": "编辑",
+    "confirm": "打开",
+    "undo": "撤销"
+  },
+  "tools": {
+    "select": "选择",
+    "brush": "画笔",
+    "highlight": "区域高亮",
+    "text": "文本",
+    "sticky": "便签",
+    "button": "链接按钮",
+    "arrow": "箭头",
+    "table": "表格",
+    "image": "图片",
+    "eraser": "橡皮擦",
+    "delete": "删除对象"
+  },
+  "toolbar": {
+    "color": "颜色",
+    "width": "线条粗细",
+    "hex": "HEX 颜色"
+  },
+  "canvas": {
+    "title": "笔记画布",
+    "subtitle": "此网站的快速笔记",
+    "openBoard": "打开完整画布",
+    "backToNotes": "返回笔记",
+    "close": "关闭画布",
+    "clear": "清空整个画布",
+    "clearTitle": "清空此画布？",
+    "clearText": "此网站画布上的所有内容将被永久删除。",
+    "dragTable": "拖动表格",
+    "zoomIn": "放大",
+    "zoomOut": "缩小",
+    "zoomReset": "重置缩放为 100%",
+    "zoomFit": "显示整个画布",
+    "quickEmpty": "此网站的快速笔记。使用下方按钮添加文本、便签、链接或图片。",
+    "bringToFront": "置于顶层",
+    "sendToBack": "置于底层"
+  },
+  "text": {
+    "bold": "加粗",
+    "italic": "斜体",
+    "underline": "下划线",
+    "strike": "删除线",
+    "bulletList": "无序列表",
+    "orderedList": "有序列表",
+    "alignLeft": "左对齐",
+    "alignCenter": "居中",
+    "alignRight": "右对齐",
+    "size": "文字大小"
+  },
+  "popup": {
+    "toggle": "打开或关闭画布",
+    "openCanvas": "打开画布",
+    "closeCanvas": "关闭画布",
+    "hideHighlights": "隐藏高亮",
+    "showHighlights": "显示高亮",
+    "unavailable": "此页面无法使用 Overlayer",
+    "options": "设置"
+  },
+  "sticky": {
+    "placeholder": "笔记内容…"
+  },
+  "linkButton": {
+    "label": "名称",
+    "icon": "图标",
+    "invalidUrl": "请输入 https://… 形式的链接",
+    "defaultLabel": "链接",
+    "open": "打开链接",
+    "confirmExternalTitle": "打开外部链接？",
+    "confirmExternalText": "即将在新标签页中打开 {{host}}。"
+  },
+  "image": {
+    "title": "添加图片",
+    "dropHint": "将图片拖到这里，或点击选择文件",
+    "invalid": "请选择不超过 5 MB 的图片文件"
+  },
+  "table": {
+    "row": "行",
+    "column": "列",
+    "addRow": "添加行",
+    "removeRow": "删除行",
+    "addColumn": "添加列",
+    "removeColumn": "删除列"
+  },
+  "options": {
+    "title": "Overlayer 设置",
+    "subtitle": "适用于任何网站的笔记画布和高亮工具 — 完全离线",
+    "settings": "常规",
+    "language": "界面语言",
+    "languageAuto": "与浏览器相同",
+    "theme": "主题",
+    "themeGreen": "Green",
+    "themeBlue": "Blue",
+    "themeSpace": "Space",
+    "selectionButton": "选中文本时快速高亮",
+    "selectionButtonHint": "在选中的文本旁显示小按钮",
+    "highlighterBadge": "高亮悬浮按钮",
+    "highlighterBadgeHint": "在有高亮的页面显示圆形按钮",
+    "pages": "已保存的笔记",
+    "pagesHint": "所有画布和带高亮的页面",
+    "pagesEmpty": "还没有保存的笔记",
+    "boardScope": "画布",
+    "quickScope": "快速笔记",
+    "annotationCount": "{{count}} 项",
+    "totalSize": "笔记总大小：{{size}}",
+    "data": "数据",
+    "dataHint": "备份是将笔记转移到其他设备的唯一方式",
+    "export": "导出为 JSON",
+    "import": "从 JSON 导入",
+    "importError": "无法导入文件：格式无效",
+    "exported": "已导出备份",
+    "pageDeleted": "已删除",
+    "clearAll": "删除所有数据",
+    "clearAllTitle": "删除所有数据？",
+    "clearAllText": "所有笔记和设置将被永久删除。",
+    "offlineNote": "所有数据都本地存储在你的设备上"
+  },
+  "highlighter": {
+    "highlight": "高亮",
+    "panelTitle": "高亮列表",
+    "search": "搜索高亮…",
+    "empty": "未找到任何内容",
+    "notePlaceholder": "添加备注…",
+    "bold": "加粗",
+    "italic": "斜体",
+    "withNote": "含备注",
+    "deleted": "已删除高亮"
+  }
+}

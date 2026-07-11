@@ -1,0 +1,17 @@
+{
+  "extName": {
+    "message": "Overlayer"
+  },
+  "extDescription": {
+    "message": "Lienzo de notas y resaltador de texto para cualquier sitio web. Funciona completamente sin conexión."
+  },
+  "commandToggleCanvas": {
+    "message": "Abrir o cerrar el lienzo de notas en la pestaña actual"
+  },
+  "commandToggleVisibility": {
+    "message": "Ocultar o mostrar los resaltados en la pestaña actual"
+  },
+  "contextHighlight": {
+    "message": "Resaltar"
+  }
+}

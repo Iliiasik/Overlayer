@@ -1,0 +1,169 @@
+@import 'tailwindcss';
+
+:root,
+:host {
+  --background: #f1ebe1;
+  --foreground: #26332a;
+  --card: #faf7f0;
+  --card-foreground: #26332a;
+  --popover: #faf7f0;
+  --popover-foreground: #26332a;
+  --primary: #44624a;
+  --primary-foreground: #f6f2e9;
+  --secondary: #c0cfb2;
+  --secondary-foreground: #2c3b30;
+  --muted: #e6e0d2;
+  --muted-foreground: #6d7a66;
+  --accent: #e2e8d4;
+  --accent-foreground: #2c3b30;
+  --destructive: #a84a3d;
+  --destructive-foreground: #f6f2e9;
+  --border: #dcd5c4;
+  --input: #d3ccba;
+  --ring: #8ba888;
+  --radius: 12px;
+  --sheet: #ffffff;
+  --sheet-ink: #1f2430;
+  --sheet-muted: #9ca3af;
+  --sheet-grid: #d9d9d9;
+  --sheet-border: #b9c6b4;
+}
+
+.blue {
+  --background: #f6f5f5;
+  --foreground: #1f4250;
+  --card: #ffffff;
+  --card-foreground: #1f4250;
+  --popover: #ffffff;
+  --popover-foreground: #1f4250;
+  --primary: #1687a7;
+  --primary-foreground: #f6f5f5;
+  --secondary: #d3e0ea;
+  --secondary-foreground: #276678;
+  --muted: #e8edf2;
+  --muted-foreground: #5c7885;
+  --accent: #e0eaf1;
+  --accent-foreground: #276678;
+  --destructive: #a84a3d;
+  --destructive-foreground: #f6f5f5;
+  --border: #c2d3e0;
+  --input: #aac4d8;
+  --ring: #1687a7;
+  --sheet-border: #b3c8d6;
+}
+
+.space {
+  --banner-line: oklch(0.269 0 0);
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.269 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.371 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --destructive-foreground: oklch(0.985 0 0);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  --sheet-border: #b6bcc6;
+}
+
+@theme {
+  --spacing: 4px;
+  --font-sans: 'Raleway', sans-serif;
+  --text-xs: 12px;
+  --text-xs--line-height: 16px;
+  --text-sm: 14px;
+  --text-sm--line-height: 20px;
+  --text-base: 16px;
+  --text-base--line-height: 24px;
+  --text-lg: 18px;
+  --text-lg--line-height: 28px;
+  --text-xl: 20px;
+  --text-xl--line-height: 28px;
+  --text-2xl: 24px;
+  --text-2xl--line-height: 32px;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: calc(var(--radius) - 6px);
+  --radius-md: calc(var(--radius) - 4px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    font-size: var(--text-sm);
+    line-height: var(--text-sm--line-height);
+  }
+}
+
+@layer components {
+  .rich-text {
+    font-size: 15px;
+    line-height: 1.45;
+    word-break: break-word;
+  }
+  .rich-text :focus {
+    outline: none;
+  }
+  .rich-text .ProseMirror {
+    outline: none;
+    white-space: pre-wrap;
+  }
+  .rich-text p {
+    margin: 0;
+  }
+  .rich-text p + p {
+    margin-top: 2px;
+  }
+  .rich-text ul,
+  .rich-text ol {
+    margin: 2px 0;
+    padding-left: 22px;
+  }
+  .rich-text ul {
+    list-style: disc;
+  }
+  .rich-text ol {
+    list-style: decimal;
+  }
+  .rich-text a {
+    color: var(--primary);
+    text-decoration: underline;
+  }
+}

@@ -1,0 +1,137 @@
+{
+  "appName": "Overlayer",
+  "common": {
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "delete": "Löschen",
+    "edit": "Bearbeiten",
+    "confirm": "Öffnen",
+    "undo": "Rückgängig"
+  },
+  "tools": {
+    "select": "Auswählen",
+    "brush": "Pinsel",
+    "highlight": "Bereich markieren",
+    "text": "Text",
+    "sticky": "Haftnotiz",
+    "button": "Link-Button",
+    "arrow": "Pfeil",
+    "table": "Tabelle",
+    "image": "Bild",
+    "eraser": "Radierer",
+    "delete": "Objekt entfernen"
+  },
+  "toolbar": {
+    "color": "Farbe",
+    "width": "Strichstärke",
+    "hex": "HEX-Farbe"
+  },
+  "canvas": {
+    "title": "Notiz-Canvas",
+    "subtitle": "Schnellnotizen dieser Website",
+    "openBoard": "Ganzes Canvas öffnen",
+    "backToNotes": "Zurück zu den Notizen",
+    "close": "Canvas schließen",
+    "clear": "Gesamtes Canvas leeren",
+    "clearTitle": "Dieses Canvas leeren?",
+    "clearText": "Der gesamte Inhalt des Canvas dieser Website wird unwiderruflich gelöscht.",
+    "dragTable": "Tabelle verschieben",
+    "zoomIn": "Vergrößern",
+    "zoomOut": "Verkleinern",
+    "zoomReset": "Zoom auf 100% zurücksetzen",
+    "zoomFit": "Ganzes Canvas anzeigen",
+    "quickEmpty": "Schnellnotizen dieser Website. Füge unten Text, eine Haftnotiz, einen Link oder ein Bild hinzu.",
+    "bringToFront": "In den Vordergrund",
+    "sendToBack": "In den Hintergrund"
+  },
+  "text": {
+    "bold": "Fett",
+    "italic": "Kursiv",
+    "underline": "Unterstrichen",
+    "strike": "Durchgestrichen",
+    "bulletList": "Aufzählung",
+    "orderedList": "Nummerierte Liste",
+    "alignLeft": "Linksbündig",
+    "alignCenter": "Zentriert",
+    "alignRight": "Rechtsbündig",
+    "size": "Textgröße"
+  },
+  "popup": {
+    "toggle": "Canvas öffnen oder schließen",
+    "openCanvas": "Canvas öffnen",
+    "closeCanvas": "Canvas schließen",
+    "hideHighlights": "Markierungen ausblenden",
+    "showHighlights": "Markierungen anzeigen",
+    "unavailable": "Overlayer ist auf dieser Seite nicht verfügbar",
+    "options": "Einstellungen"
+  },
+  "sticky": {
+    "placeholder": "Notiztext…"
+  },
+  "linkButton": {
+    "label": "Beschriftung",
+    "icon": "Symbol",
+    "invalidUrl": "Gib einen Link wie https://… ein",
+    "defaultLabel": "Link",
+    "open": "Link öffnen",
+    "confirmExternalTitle": "Externen Link öffnen?",
+    "confirmExternalText": "Du bist dabei, {{host}} in einem neuen Tab zu öffnen."
+  },
+  "image": {
+    "title": "Bild hinzufügen",
+    "dropHint": "Ziehe ein Bild hierher oder klicke, um eine Datei auszuwählen",
+    "invalid": "Wähle eine Bilddatei bis 5 MB"
+  },
+  "table": {
+    "row": "Zeile",
+    "column": "Spalte",
+    "addRow": "Zeile hinzufügen",
+    "removeRow": "Zeile entfernen",
+    "addColumn": "Spalte hinzufügen",
+    "removeColumn": "Spalte entfernen"
+  },
+  "options": {
+    "title": "Overlayer-Einstellungen",
+    "subtitle": "Notiz-Canvas und Textmarker für jede Website — komplett offline",
+    "settings": "Allgemein",
+    "language": "Sprache der Oberfläche",
+    "languageAuto": "Wie im Browser",
+    "theme": "Design",
+    "themeGreen": "Green",
+    "themeBlue": "Blue",
+    "themeSpace": "Space",
+    "selectionButton": "Schnellmarkierung bei Auswahl",
+    "selectionButtonHint": "Kleinen Button neben markiertem Text anzeigen",
+    "highlighterBadge": "Schwebender Markierungs-Button",
+    "highlighterBadgeHint": "Runder Button auf Seiten mit Markierungen",
+    "pages": "Gespeicherte Notizen",
+    "pagesHint": "Alle Canvases und Seiten mit Markierungen",
+    "pagesEmpty": "Noch keine gespeicherten Notizen",
+    "boardScope": "Canvas",
+    "quickScope": "Schnellnotizen",
+    "annotationCount": "{{count}} Stück",
+    "totalSize": "Gesamtgröße der Notizen: {{size}}",
+    "data": "Daten",
+    "dataHint": "Ein Backup ist der einzige Weg, deine Notizen auf ein anderes Gerät zu übertragen",
+    "export": "Als JSON exportieren",
+    "import": "Aus JSON importieren",
+    "importError": "Datei konnte nicht importiert werden: ungültiges Format",
+    "exported": "Backup exportiert",
+    "pageDeleted": "Gelöscht",
+    "clearAll": "Alle Daten löschen",
+    "clearAllTitle": "Alle Daten löschen?",
+    "clearAllText": "Alle Notizen und Einstellungen werden unwiderruflich gelöscht.",
+    "offlineNote": "Alle Daten werden lokal auf deinem Gerät gespeichert"
+  },
+  "highlighter": {
+    "highlight": "Markieren",
+    "panelTitle": "Markierungen",
+    "search": "Markierungen durchsuchen…",
+    "empty": "Nichts gefunden",
+    "notePlaceholder": "Notiz hinzufügen…",
+    "bold": "Fett",
+    "italic": "Kursiv",
+    "withNote": "Mit Notiz",
+    "deleted": "Markierung gelöscht"
+  }
+}

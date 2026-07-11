@@ -1,0 +1,17 @@
+{
+  "extName": {
+    "message": "Overlayer"
+  },
+  "extDescription": {
+    "message": "A notes canvas and text highlighter for any website. Works fully offline."
+  },
+  "commandToggleCanvas": {
+    "message": "Open or close the notes canvas on the current tab"
+  },
+  "commandToggleVisibility": {
+    "message": "Hide or show highlights on the current tab"
+  },
+  "contextHighlight": {
+    "message": "Highlight"
+  }
+}

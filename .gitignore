@@ -1,0 +1,14 @@
+node_modules/
+.wxt/
+.output/
+stats.html
+stats-*.json
+*.log
+.env
+.env.*
+web-ext.config.ts
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+.claude/

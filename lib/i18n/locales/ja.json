@@ -1,0 +1,137 @@
+{
+  "appName": "Overlayer",
+  "common": {
+    "save": "保存",
+    "cancel": "キャンセル",
+    "delete": "削除",
+    "edit": "編集",
+    "confirm": "開く",
+    "undo": "元に戻す"
+  },
+  "tools": {
+    "select": "選択",
+    "brush": "ブラシ",
+    "highlight": "範囲ハイライト",
+    "text": "テキスト",
+    "sticky": "付箋",
+    "button": "リンクボタン",
+    "arrow": "矢印",
+    "table": "表",
+    "image": "画像",
+    "eraser": "消しゴム",
+    "delete": "オブジェクトを削除"
+  },
+  "toolbar": {
+    "color": "色",
+    "width": "線の太さ",
+    "hex": "HEXカラー"
+  },
+  "canvas": {
+    "title": "ノートキャンバス",
+    "subtitle": "このサイトのクイックノート",
+    "openBoard": "フルキャンバスを開く",
+    "backToNotes": "ノートに戻る",
+    "close": "キャンバスを閉じる",
+    "clear": "キャンバスをすべて消去",
+    "clearTitle": "このキャンバスを消去しますか？",
+    "clearText": "このサイトのキャンバスの内容がすべて完全に削除されます。",
+    "dragTable": "表を移動",
+    "zoomIn": "拡大",
+    "zoomOut": "縮小",
+    "zoomReset": "ズームを100%に戻す",
+    "zoomFit": "キャンバス全体を表示",
+    "quickEmpty": "このサイトのクイックノート。下のボタンからテキスト・付箋・リンク・画像を追加できます。",
+    "bringToFront": "最前面へ",
+    "sendToBack": "最背面へ"
+  },
+  "text": {
+    "bold": "太字",
+    "italic": "斜体",
+    "underline": "下線",
+    "strike": "取り消し線",
+    "bulletList": "箇条書き",
+    "orderedList": "番号付きリスト",
+    "alignLeft": "左揃え",
+    "alignCenter": "中央揃え",
+    "alignRight": "右揃え",
+    "size": "文字サイズ"
+  },
+  "popup": {
+    "toggle": "キャンバスを開く / 閉じる",
+    "openCanvas": "キャンバスを開く",
+    "closeCanvas": "キャンバスを閉じる",
+    "hideHighlights": "ハイライトを隠す",
+    "showHighlights": "ハイライトを表示",
+    "unavailable": "このページではOverlayerを利用できません",
+    "options": "設定"
+  },
+  "sticky": {
+    "placeholder": "メモの内容…"
+  },
+  "linkButton": {
+    "label": "ラベル",
+    "icon": "アイコン",
+    "invalidUrl": "https://… の形式でリンクを入力してください",
+    "defaultLabel": "リンク",
+    "open": "リンクを開く",
+    "confirmExternalTitle": "外部リンクを開きますか？",
+    "confirmExternalText": "{{host}} を新しいタブで開こうとしています。"
+  },
+  "image": {
+    "title": "画像を追加",
+    "dropHint": "ここに画像をドロップするか、クリックしてファイルを選択",
+    "invalid": "5 MB以下の画像ファイルを選択してください"
+  },
+  "table": {
+    "row": "行",
+    "column": "列",
+    "addRow": "行を追加",
+    "removeRow": "行を削除",
+    "addColumn": "列を追加",
+    "removeColumn": "列を削除"
+  },
+  "options": {
+    "title": "Overlayer の設定",
+    "subtitle": "あらゆるサイトで使えるノートキャンバスとハイライター — 完全オフライン",
+    "settings": "一般",
+    "language": "表示言語",
+    "languageAuto": "ブラウザと同じ",
+    "theme": "テーマ",
+    "themeGreen": "Green",
+    "themeBlue": "Blue",
+    "themeSpace": "Space",
+    "selectionButton": "選択時のクイックハイライト",
+    "selectionButtonHint": "選択したテキストの横に小さなボタンを表示",
+    "highlighterBadge": "ハイライトのフローティングボタン",
+    "highlighterBadgeHint": "ハイライトのあるページに丸いボタンを表示",
+    "pages": "保存されたノート",
+    "pagesHint": "すべてのキャンバスとハイライトのあるページ",
+    "pagesEmpty": "保存されたノートはまだありません",
+    "boardScope": "キャンバス",
+    "quickScope": "クイックノート",
+    "annotationCount": "{{count}} 件",
+    "totalSize": "ノートの合計サイズ: {{size}}",
+    "data": "データ",
+    "dataHint": "バックアップはノートを別のデバイスへ移す唯一の方法です",
+    "export": "JSON にエクスポート",
+    "import": "JSON からインポート",
+    "importError": "ファイルをインポートできませんでした: 形式が無効です",
+    "exported": "バックアップを書き出しました",
+    "pageDeleted": "削除しました",
+    "clearAll": "すべてのデータを削除",
+    "clearAllTitle": "すべてのデータを削除しますか？",
+    "clearAllText": "すべてのノートと設定が完全に削除されます。",
+    "offlineNote": "すべてのデータはお使いのデバイスにローカル保存されます"
+  },
+  "highlighter": {
+    "highlight": "ハイライト",
+    "panelTitle": "ハイライト一覧",
+    "search": "ハイライトを検索…",
+    "empty": "見つかりませんでした",
+    "notePlaceholder": "メモを追加…",
+    "bold": "太字",
+    "italic": "斜体",
+    "withNote": "メモ付き",
+    "deleted": "ハイライトを削除しました"
+  }
+}
