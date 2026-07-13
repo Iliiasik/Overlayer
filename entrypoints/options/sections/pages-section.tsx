@@ -2,6 +2,7 @@ import { Globe, PenTool, StickyNote, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
+import { Tip } from '@/components/ui/tooltip';
 import { formatBytes } from '@/lib/format';
 import { toast } from '@/lib/toast';
 import { annotationRepository, type StorageSummary } from '@/lib/storage/annotation-repository';
@@ -71,16 +72,17 @@ export function PagesSection() {
               <span className="shrink-0 rounded-full bg-secondary px-2.5 py-0.5 text-xs font-medium text-secondary-foreground">
                 {t('options.annotationCount', { count: entry.annotationCount })}
               </span>
-              <Button
-                variant="ghost"
-                size="icon"
-                aria-label={t('common.delete')}
-                title={t('common.delete')}
-                className="shrink-0 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
-                onClick={() => void removeEntry(entry.key)}
-              >
-                <Trash2 className="h-4 w-4" />
-              </Button>
+              <Tip label={t('common.delete')} side="left">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  aria-label={t('common.delete')}
+                  className="shrink-0 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                  onClick={() => void removeEntry(entry.key)}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </Tip>
             </li>
           ))}
         </ul>

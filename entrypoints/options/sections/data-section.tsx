@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { clearAllData, exportData, importData } from '@/lib/storage/backup';
 import { toast } from '@/lib/toast';
-import { Section } from './section';
+import { Section, SettingRow } from './section';
 
 function downloadJson(content: string, filename: string): void {
   const url = URL.createObjectURL(new Blob([content], { type: 'application/json' }));
@@ -47,19 +47,31 @@ export function DataSection() {
 
   return (
     <Section title={t('options.data')} description={t('options.dataHint')}>
-      <div className="flex flex-col gap-4">
-        <div className="flex flex-wrap gap-2">
-          <Button variant="outline" onClick={() => void handleExport()}>
-            <Download className="h-4 w-4" />
-            {t('options.export')}
-          </Button>
-          <Button variant="outline" onClick={() => fileInputRef.current?.click()}>
-            <Upload className="h-4 w-4" />
-            {t('options.import')}
-          </Button>
+      <div className="flex flex-1 flex-col gap-4">
+        <div className="divide-y">
+          <SettingRow title={t('options.exportHint')}>
+            <Button
+              variant="outline"
+              className="min-w-36 justify-center"
+              onClick={() => void handleExport()}
+            >
+              <Download className="h-4 w-4" />
+              {t('options.export')}
+            </Button>
+          </SettingRow>
+          <SettingRow title={t('options.importHint')}>
+            <Button
+              variant="outline"
+              className="min-w-36 justify-center"
+              onClick={() => fileInputRef.current?.click()}
+            >
+              <Upload className="h-4 w-4" />
+              {t('options.import')}
+            </Button>
+          </SettingRow>
         </div>
         {importError && <p className="text-sm text-destructive">{t('options.importError')}</p>}
-        <div className="flex items-center justify-between gap-4 rounded-lg border border-destructive/30 bg-destructive/5 p-4">
+        <div className="mt-auto flex items-center justify-between gap-4 rounded-lg border border-destructive/30 bg-destructive/5 p-4">
           <p className="text-sm text-muted-foreground">{t('options.clearAllText')}</p>
           <Button variant="destructive" className="shrink-0" onClick={() => setConfirmOpen(true)}>
             <Trash2 className="h-4 w-4" />

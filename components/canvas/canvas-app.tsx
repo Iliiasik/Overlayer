@@ -23,6 +23,7 @@ import {
 import { DRAWING_COLORS, STROKE_WIDTHS } from '@/lib/annotations/palette';
 import { isRichTextEmpty } from '@/lib/annotations/rich-text';
 import { isExternalUrl } from '@/lib/annotations/url';
+import { CURSORS } from '@/lib/cursors';
 import type { CanvasItem, Point, ToolId } from '@/lib/annotations/types';
 import { DEFAULT_CAMERA, type Camera } from '@/lib/canvas/camera';
 import type { BoardStore } from '@/lib/storage/annotation-store';
@@ -232,13 +233,14 @@ export function CanvasApp({ store, quickStore, open, onClose }: CanvasAppProps) 
         role="dialog"
         aria-label={t('canvas.title')}
         aria-hidden={!open}
-        className="fixed inset-y-0 left-0 flex flex-col overflow-hidden border-r bg-background text-foreground shadow-2xl"
+        className="cursor-cascade fixed inset-y-0 left-0 flex flex-col overflow-hidden border-r bg-background text-foreground shadow-2xl"
         style={{
           width: expanded ? '100%' : width,
           maxWidth: '100%',
           transform: open ? 'translateX(0)' : 'translateX(-103%)',
           transition: resizing ? 'none' : DRAWER_TRANSITION,
           pointerEvents: open ? 'auto' : 'none',
+          cursor: CURSORS.arrow,
         }}
         {...stopEvents}
         onKeyDown={(event) => {
@@ -316,6 +318,55 @@ export function CanvasApp({ store, quickStore, open, onClose }: CanvasAppProps) 
             className="absolute inset-y-0 right-0 w-1.5 cursor-col-resize transition-colors hover:bg-primary/30 active:bg-primary/50"
           />
         )}
+        <ImageDialog
+          open={pendingImage != null}
+          onClose={() => setPendingImage(null)}
+          onInsert={(dataUrl, imageWidth, imageHeight) => {
+            if (!pendingImage) return;
+            const target = pendingImage.target === 'quick' ? quickStore : store;
+            const maxWidth = pendingImage.target === 'quick' ? QUICK_WIDTH - 48 : imageWidth;
+            const renderScale = Math.min(1, maxWidth / imageWidth);
+            target.add(
+              createImageAnnotation(
+                pendingImage.point,
+                dataUrl,
+                Math.round(imageWidth * renderScale),
+                Math.round(imageHeight * renderScale),
+                { color, strokeWidth, opacity: 1 },
+              ),
+            );
+            setPendingImage(null);
+            setTool('select');
+          }}
+        />
+        <ConfirmDialog
+          open={confirmClear}
+          title={t('canvas.clearTitle')}
+          description={t('canvas.clearText')}
+          confirmLabel={t('common.delete')}
+          cancelLabel={t('common.cancel')}
+          destructive
+          onCancel={() => setConfirmClear(false)}
+          onConfirm={() => {
+            setConfirmClear(false);
+            changeEditing(null);
+            store.clear();
+          }}
+        />
+        <ConfirmDialog
+          open={confirmLink != null}
+          title={t('linkButton.confirmExternalTitle')}
+          description={t('linkButton.confirmExternalText', {
+            host: confirmLink ? new URL(confirmLink).host : '',
+          })}
+          confirmLabel={t('common.confirm')}
+          cancelLabel={t('common.cancel')}
+          onCancel={() => setConfirmLink(null)}
+          onConfirm={() => {
+            if (confirmLink) window.open(confirmLink, '_blank', 'noopener');
+            setConfirmLink(null);
+          }}
+        />
       </section>
       <ContextMenu
         state={menu}
@@ -341,55 +392,6 @@ export function CanvasApp({ store, quickStore, open, onClose }: CanvasAppProps) 
         onDelete={() => {
           if (menu) activeStore.remove(menu.id);
           setMenu(null);
-        }}
-      />
-      <ImageDialog
-        open={pendingImage != null}
-        onClose={() => setPendingImage(null)}
-        onInsert={(dataUrl, imageWidth, imageHeight) => {
-          if (!pendingImage) return;
-          const target = pendingImage.target === 'quick' ? quickStore : store;
-          const maxWidth = pendingImage.target === 'quick' ? QUICK_WIDTH - 48 : imageWidth;
-          const renderScale = Math.min(1, maxWidth / imageWidth);
-          target.add(
-            createImageAnnotation(
-              pendingImage.point,
-              dataUrl,
-              Math.round(imageWidth * renderScale),
-              Math.round(imageHeight * renderScale),
-              { color, strokeWidth, opacity: 1 },
-            ),
-          );
-          setPendingImage(null);
-          setTool('select');
-        }}
-      />
-      <ConfirmDialog
-        open={confirmClear}
-        title={t('canvas.clearTitle')}
-        description={t('canvas.clearText')}
-        confirmLabel={t('common.delete')}
-        cancelLabel={t('common.cancel')}
-        destructive
-        onCancel={() => setConfirmClear(false)}
-        onConfirm={() => {
-          setConfirmClear(false);
-          changeEditing(null);
-          store.clear();
-        }}
-      />
-      <ConfirmDialog
-        open={confirmLink != null}
-        title={t('linkButton.confirmExternalTitle')}
-        description={t('linkButton.confirmExternalText', {
-          host: confirmLink ? new URL(confirmLink).host : '',
-        })}
-        confirmLabel={t('common.confirm')}
-        cancelLabel={t('common.cancel')}
-        onCancel={() => setConfirmLink(null)}
-        onConfirm={() => {
-          if (confirmLink) window.open(confirmLink, '_blank', 'noopener');
-          setConfirmLink(null);
         }}
       />
     </TooltipProvider>

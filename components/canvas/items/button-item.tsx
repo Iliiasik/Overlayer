@@ -84,7 +84,7 @@ function ButtonEditor({
         }}
         className={inputClass}
       />
-      <div className="grid grid-cols-6 gap-0.5" role="group" aria-label={t('linkButton.icon')}>
+      <div className="grid grid-cols-6 gap-1" role="group" aria-label={t('linkButton.icon')}>
         {Object.entries(BUTTON_ICONS).map(([name, IconOption]) => (
           <button
             key={name}
@@ -93,13 +93,13 @@ function ButtonEditor({
             aria-pressed={icon === name}
             onClick={() => setIcon(name)}
             className={cn(
-              'flex h-6 w-6 items-center justify-center rounded-md',
+              'flex h-7 w-full items-center justify-center rounded-md',
               icon === name
                 ? 'bg-primary text-primary-foreground'
                 : 'text-muted-foreground hover:bg-accent',
             )}
           >
-            <IconOption className="h-3 w-3" />
+            <IconOption className="h-3.5 w-3.5" />
           </button>
         ))}
       </div>
@@ -129,7 +129,6 @@ function ButtonEditor({
             variant="ghost"
             className="h-7 w-7 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
             aria-label={t('common.delete')}
-            title={t('common.delete')}
             onClick={() => {
               onRemove(annotation.id);
               onEditingChange(null);
