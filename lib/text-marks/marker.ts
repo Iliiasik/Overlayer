@@ -17,7 +17,6 @@ function applyMarkStyle(element: HTMLElement, annotation: TextMarkAnnotation): v
   element.style.borderRadius = '2px';
   element.style.setProperty('box-decoration-break', 'clone');
   element.style.setProperty('-webkit-box-decoration-break', 'clone');
-  element.style.cursor = 'pointer';
 }
 
 function textNodesIn(range: Range): Text[] {
@@ -118,7 +117,6 @@ export function setMarksVisible(visible: boolean, marks: TextMarkAnnotation[]): 
     element.style.fontWeight = 'inherit';
     element.style.fontStyle = 'inherit';
     element.style.textDecoration = 'inherit';
-    element.style.cursor = 'inherit';
   }
 }
 

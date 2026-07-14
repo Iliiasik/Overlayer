@@ -1,15 +1,4 @@
-export type ToolId =
-  | 'select'
-  | 'brush'
-  | 'highlight'
-  | 'text'
-  | 'sticky'
-  | 'button'
-  | 'arrow'
-  | 'table'
-  | 'image'
-  | 'eraser'
-  | 'delete';
+export type ToolId = 'select' | 'text' | 'sticky' | 'button' | 'table' | 'image' | 'delete';
 
 export interface Point {
   x: number;
@@ -41,17 +30,6 @@ interface ItemBase {
   updatedAt: number;
 }
 
-export interface BrushAnnotation extends ItemBase {
-  type: 'brush';
-  points: number[];
-}
-
-export interface HighlightAnnotation extends ItemBase {
-  type: 'highlight';
-  width: number;
-  height: number;
-}
-
 export interface TextAnnotation extends ItemBase {
   type: 'text';
   html: string;
@@ -70,11 +48,6 @@ export interface ButtonAnnotation extends ItemBase {
   icon?: string;
 }
 
-export interface ArrowAnnotation extends ItemBase {
-  type: 'arrow';
-  to: Point;
-}
-
 export interface TableAnnotation extends ItemBase {
   type: 'table';
   cells: string[][];
@@ -88,14 +61,7 @@ export interface ImageAnnotation extends ItemBase {
 }
 
 export type CanvasItem =
-  | BrushAnnotation
-  | HighlightAnnotation
-  | TextAnnotation
-  | StickyAnnotation
-  | ButtonAnnotation
-  | ArrowAnnotation
-  | TableAnnotation
-  | ImageAnnotation;
+  TextAnnotation | StickyAnnotation | ButtonAnnotation | TableAnnotation | ImageAnnotation;
 
 export interface TextMarkAnnotation {
   id: string;

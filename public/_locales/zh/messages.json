@@ -13,5 +13,8 @@
   },
   "contextHighlight": {
     "message": "高亮"
+  },
+  "contextNotes": {
+    "message": "笔记"
   }
 }

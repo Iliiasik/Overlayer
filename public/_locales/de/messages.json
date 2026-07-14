@@ -13,5 +13,8 @@
   },
   "contextHighlight": {
     "message": "Markieren"
+  },
+  "contextNotes": {
+    "message": "Notizen"
   }
 }

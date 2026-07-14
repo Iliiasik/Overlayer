@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react';
+import { CURSORS } from '@/lib/cursors';
 import type { ImageAnnotation } from '@/lib/annotations/types';
 import { clampWidthWithin } from './sheet';
 import { ItemShell, type ItemProps } from './shell';
@@ -93,7 +94,7 @@ export function ImageItem({
       offset={offset}
       interactive={interactive}
       className="group"
-      style={{ cursor: tool === 'select' ? 'grab' : undefined }}
+      style={{ cursor: tool === 'select' ? CURSORS.grab : undefined }}
       onPointerDown={dragOrDeleteHandler(tool, editing, annotation.id, onRemove, onPointerDown)}
     >
       <canvas
@@ -105,7 +106,8 @@ export function ImageItem({
         <span
           role="presentation"
           onPointerDown={startResize}
-          className="absolute -bottom-1 -right-1 h-4 w-4 cursor-nwse-resize rounded-full border-2 border-background bg-primary opacity-0 transition-opacity group-hover:opacity-100"
+          className="absolute -bottom-1 -right-1 h-4 w-4 rounded-full border-2 border-background bg-primary opacity-0 transition-opacity group-hover:opacity-100"
+          style={{ cursor: CURSORS.resizeD }}
         />
       )}
     </ItemShell>

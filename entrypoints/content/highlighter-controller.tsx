@@ -17,6 +17,7 @@ const HANDLE_WAIT_MS = 500;
 export interface HighlighterController {
   ensureMounted(): Promise<void>;
   createFromSelection(): Promise<void>;
+  togglePanel(): Promise<void>;
   setVisible(visible: boolean): void;
   handleLocationChange(): void;
 }
@@ -24,6 +25,7 @@ export interface HighlighterController {
 export function createHighlighterController(
   ctx: ContentScriptContext,
   getStore: () => MarkStore,
+  onPanelChange?: (open: boolean) => void,
 ): HighlighterController {
   let ui: ShadowRootContentScriptUi<ReactDOM.Root> | null = null;
   let i18nInstance: i18n | null = null;
@@ -42,6 +44,7 @@ export function createHighlighterController(
             handleRef={(next) => {
               handle = next;
             }}
+            onPanelChange={onPanelChange}
           />
         </ThemeRoot>
       </I18nextProvider>,
@@ -87,6 +90,10 @@ export function createHighlighterController(
     async createFromSelection() {
       await ensureMounted();
       (await waitForHandle())?.createFromSelection();
+    },
+    async togglePanel() {
+      await ensureMounted();
+      (await waitForHandle())?.togglePanel();
     },
     setVisible(visible) {
       if (ui) setShadowHostVisible(ui.shadowHost, visible);

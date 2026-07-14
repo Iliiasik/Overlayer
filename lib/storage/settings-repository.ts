@@ -9,6 +9,9 @@ export interface Settings {
   theme: ThemeSetting;
   highlighterBadge: boolean;
   selectionButton: boolean;
+  notesEdgeButton: boolean;
+  notesContextMenu: boolean;
+  edgeOffset: number;
 }
 
 const SETTINGS_KEY = 'settings';
@@ -18,6 +21,9 @@ export const DEFAULT_SETTINGS: Settings = {
   theme: 'space',
   highlighterBadge: true,
   selectionButton: true,
+  notesEdgeButton: true,
+  notesContextMenu: true,
+  edgeOffset: 0.5,
 };
 
 function normalize(stored: Partial<Settings> | undefined): Settings {
@@ -25,6 +31,8 @@ function normalize(stored: Partial<Settings> | undefined): Settings {
   if ((merged.theme as string) === 'teal') merged.theme = 'blue';
   if ((merged.theme as string) === 'dark') merged.theme = 'space';
   if (!['green', 'blue', 'space'].includes(merged.theme)) merged.theme = 'space';
+  if (!Number.isFinite(merged.edgeOffset)) merged.edgeOffset = DEFAULT_SETTINGS.edgeOffset;
+  merged.edgeOffset = Math.min(0.95, Math.max(0.05, merged.edgeOffset));
   return merged;
 }
 

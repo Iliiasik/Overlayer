@@ -13,5 +13,8 @@
   },
   "contextHighlight": {
     "message": "ハイライト"
+  },
+  "contextNotes": {
+    "message": "メモ"
   }
 }

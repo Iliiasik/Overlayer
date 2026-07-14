@@ -1,9 +1,6 @@
 import type {
   AnnotationStyle,
-  ArrowAnnotation,
-  BrushAnnotation,
   ButtonAnnotation,
-  HighlightAnnotation,
   ImageAnnotation,
   Point,
   StickyAnnotation,
@@ -12,13 +9,6 @@ import type {
   TextAnnotation,
   TextMarkAnnotation,
 } from './types';
-
-interface Rect {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-}
 
 const DEFAULT_TABLE_ROWS = 2;
 const DEFAULT_TABLE_COLUMNS = 3;
@@ -32,23 +22,6 @@ function baseFields(x: number, y: number, style: AnnotationStyle) {
     style,
     createdAt: now,
     updatedAt: now,
-  };
-}
-
-export function createBrushAnnotation(points: number[], style: AnnotationStyle): BrushAnnotation {
-  return {
-    ...baseFields(points[0], points[1], style),
-    type: 'brush',
-    points,
-  };
-}
-
-export function createHighlightAnnotation(rect: Rect, style: AnnotationStyle): HighlightAnnotation {
-  return {
-    ...baseFields(rect.x, rect.y, style),
-    type: 'highlight',
-    width: rect.width,
-    height: rect.height,
   };
 }
 
@@ -94,18 +67,6 @@ export function createButtonAnnotation(point: Point, style: AnnotationStyle): Bu
     type: 'button',
     label: '',
     url: '',
-  };
-}
-
-export function createArrowAnnotation(
-  from: Point,
-  to: Point,
-  style: AnnotationStyle,
-): ArrowAnnotation {
-  return {
-    ...baseFields(from.x, from.y, style),
-    type: 'arrow',
-    to,
   };
 }
 

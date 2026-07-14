@@ -67,12 +67,14 @@ function ButtonEditor({
       <input
         autoFocus
         value={label}
+        maxLength={60}
         placeholder={t('linkButton.label')}
         onChange={(event) => setLabel(event.target.value)}
         className={inputClass}
       />
       <input
         value={url}
+        maxLength={2048}
         placeholder="https://…"
         onChange={(event) => {
           setUrl(event.target.value);

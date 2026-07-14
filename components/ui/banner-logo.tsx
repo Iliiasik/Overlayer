@@ -20,7 +20,7 @@ export function BannerLogo({ className }: BannerLogoProps) {
       />
       <path
         d="M0 0 C205.92 0 411.84 0 624 0 C624 47.52 624 95.04 624 144 C418.08 144 212.16 144 0 144 C0 96.48 0 48.96 0 0 Z M9 9 C9 50.58 9 92.16 9 135 C208.98 135 408.96 135 615 135 C615 93.42 615 51.84 615 9 C415.02 9 215.04 9 9 9 Z "
-        fill="var(--card)"
+        fill="var(--banner-bg, var(--card))"
         transform="translate(0,0)"
       />
       <path

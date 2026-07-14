@@ -11,6 +11,7 @@ interface SegmentedProps<T extends string> {
   value: T;
   onChange: (value: T) => void;
   options: SegmentedOption<T>[];
+  stretch?: boolean;
   'aria-label'?: string;
 }
 
@@ -18,10 +19,15 @@ export function Segmented<T extends string>({
   value,
   onChange,
   options,
+  stretch,
   ...props
 }: SegmentedProps<T>) {
   return (
-    <div role="radiogroup" className="inline-flex rounded-lg bg-muted p-1" {...props}>
+    <div
+      role="radiogroup"
+      className={cn('inline-flex rounded-lg bg-muted p-1', stretch && 'flex w-full')}
+      {...props}
+    >
       {options.map(({ value: optionValue, label, icon: Icon }) => (
         <button
           key={optionValue}
@@ -31,6 +37,7 @@ export function Segmented<T extends string>({
           onClick={() => onChange(optionValue)}
           className={cn(
             'inline-flex h-8 items-center gap-1.5 rounded-md px-3 text-sm transition-colors',
+            stretch && 'flex-1 justify-center',
             value === optionValue
               ? 'bg-card font-medium text-foreground shadow-sm'
               : 'text-muted-foreground hover:text-foreground',

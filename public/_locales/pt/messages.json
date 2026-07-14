@@ -13,5 +13,8 @@
   },
   "contextHighlight": {
     "message": "Destacar"
+  },
+  "contextNotes": {
+    "message": "Notas"
   }
 }

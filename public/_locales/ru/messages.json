@@ -13,5 +13,8 @@
   },
   "contextHighlight": {
     "message": "Выделить"
+  },
+  "contextNotes": {
+    "message": "Заметки"
   }
 }

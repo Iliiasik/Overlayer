@@ -22,6 +22,8 @@
   --input: #d3ccba;
   --ring: #8ba888;
   --radius: 12px;
+  --banner-bg: #cdeabf;
+  --banner-line: #aed19e;
   --sheet: #ffffff;
   --sheet-ink: #1f2430;
   --sheet-muted: #9ca3af;
@@ -30,6 +32,8 @@
 }
 
 .blue {
+  --banner-bg: #c9e5f8;
+  --banner-line: #a5c9e2;
   --background: #f6f5f5;
   --foreground: #1f4250;
   --card: #ffffff;
@@ -53,7 +57,8 @@
 }
 
 .space {
-  --banner-line: oklch(0.269 0 0);
+  --banner-bg: var(--card);
+  --banner-line: color-mix(in srgb, var(--card), #000 25%);
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.205 0 0);
@@ -143,6 +148,10 @@
     box-shadow:
       0 8px 32px rgb(0 0 0 / 0.1),
       inset 0 1px 0 rgb(255 255 255 / 0.2);
+  }
+  .glass-panel {
+    background: color-mix(in srgb, var(--card) 62%, transparent);
+    backdrop-filter: blur(18px) saturate(1.5);
   }
   .rich-text {
     font-size: 15px;

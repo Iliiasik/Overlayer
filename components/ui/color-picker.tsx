@@ -83,12 +83,15 @@ export function ColorPicker({ color, onChange, onClose, side = 'bottom' }: Color
           role="slider"
           aria-label="saturation"
           aria-valuenow={Math.round(hsv.s * 100)}
-          className="relative h-32 cursor-crosshair touch-none rounded-lg border"
-          style={{
-            background: `linear-gradient(to top, #000, transparent), linear-gradient(to right, #fff, ${hueColor})`,
-          }}
+          className="relative h-32 cursor-crosshair touch-none"
           onPointerDown={handleSaturation}
         >
+          <div
+            className="pointer-events-none absolute inset-0 rounded-lg shadow-[inset_0_0_0_1px_rgba(0,0,0,0.06)]"
+            style={{
+              background: `linear-gradient(to top, #000, transparent), linear-gradient(to right, #fff, ${hueColor})`,
+            }}
+          />
           <span
             className="pointer-events-none absolute h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white shadow"
             style={{
@@ -103,12 +106,15 @@ export function ColorPicker({ color, onChange, onClose, side = 'bottom' }: Color
           role="slider"
           aria-label="hue"
           aria-valuenow={Math.round(hsv.h)}
-          className="relative h-3 cursor-pointer touch-none rounded-full"
-          style={{
-            background: 'linear-gradient(to right, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00)',
-          }}
+          className="relative h-3 cursor-pointer touch-none"
           onPointerDown={handleHue}
         >
+          <div
+            className="pointer-events-none absolute inset-0 rounded-full"
+            style={{
+              background: 'linear-gradient(to right, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00)',
+            }}
+          />
           <span
             className="pointer-events-none absolute top-1/2 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white shadow"
             style={{ left: `${(hsv.h / 360) * 100}%`, backgroundColor: hueColor }}

@@ -1,9 +1,10 @@
 import '@/assets/tailwind.css';
 import { MessageType, onMessage, type ExtensionState } from '@/lib/messaging';
-import { boardKeyForUrl, isAnnotatableUrl } from '@/lib/storage/page-key';
-import { createBoardStore, createMarkStore, type MarkStore } from '@/lib/storage/annotation-store';
+import { isAnnotatableUrl, quickKeyForUrl } from '@/lib/storage/page-key';
+import { createMarkStore, createNotesStore, type MarkStore } from '@/lib/storage/annotation-store';
 import { removeAllMarks, restoreAnnotation, setMarksVisible } from '@/lib/text-marks/marker';
 import { createCanvasController } from './canvas-controller';
+import { createEdgeDockController } from './edge-dock-controller';
 import { createHighlighterController } from './highlighter-controller';
 
 const MARK_RESTORE_RETRY_MS = 1500;
@@ -25,21 +26,31 @@ export default defineContentScript({
   cssInjectionMode: 'ui',
   async main(ctx) {
     let markStore = createMarkStore(window.location.href);
-    let boardStore = createBoardStore(window.location.href);
-    let quickStore = createBoardStore(window.location.href, 'quick');
+    let quickStore = createNotesStore(window.location.href);
     let marksVisible = true;
-    const canvas = createCanvasController(ctx, () => ({ board: boardStore, quick: quickStore }));
-    const highlighter = createHighlighterController(ctx, () => markStore);
+    const canvas = createCanvasController(ctx, () => quickStore);
+    const dock = createEdgeDockController(
+      ctx,
+      () => markStore,
+      () => quickStore,
+      {
+        openNotes: () => void canvas.toggle(),
+        openHighlights: () => void highlighter.togglePanel(),
+      },
+    );
+    const highlighter = createHighlighterController(
+      ctx,
+      () => markStore,
+      (open) => dock.setPanelOpen(open),
+    );
 
     const state = async (): Promise<ExtensionState> => {
-      await Promise.all([markStore.ready, boardStore.ready, quickStore.ready]).catch(
-        () => undefined,
-      );
+      await Promise.all([markStore.ready, quickStore.ready]).catch(() => undefined);
       return {
         canvasOpen: canvas.isOpen(),
         marksVisible,
         markCount: markStore.getSnapshot().length,
-        itemCount: boardStore.getSnapshot().length + quickStore.getSnapshot().length,
+        itemCount: quickStore.countItems(),
       };
     };
 
@@ -61,15 +72,14 @@ export default defineContentScript({
       markStore.dispose();
       removeAllMarks();
       markStore = createMarkStore(newUrl.href);
-      if (boardKeyForUrl(newUrl.href) !== boardStore.key) {
-        boardStore.dispose();
+      if (quickKeyForUrl(newUrl.href) !== quickStore.key) {
         quickStore.dispose();
-        boardStore = createBoardStore(newUrl.href);
-        quickStore = createBoardStore(newUrl.href, 'quick');
+        quickStore = createNotesStore(newUrl.href);
         canvas.close();
       }
       canvas.handleLocationChange();
       highlighter.handleLocationChange();
+      dock.handleLocationChange();
       void restoreMarks(markStore).then((markCount) => {
         if (markCount > 0) void highlighter.ensureMounted();
       });
@@ -78,5 +88,6 @@ export default defineContentScript({
     if (!isAnnotatableUrl(window.location.href)) return;
     const markCount = await restoreMarks(markStore);
     if (markCount > 0) await highlighter.ensureMounted();
+    await dock.ensureMounted();
   },
 });

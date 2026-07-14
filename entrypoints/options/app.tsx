@@ -21,14 +21,14 @@ export function App() {
               <AppIcon className="h-14 w-14 shrink-0" />
               <BannerLogo className="max-w-xs" />
             </div>
-            <p className="text-center text-sm text-muted-foreground">{t('options.subtitle')}</p>
+            <p className="text-center text-sm text-foreground/70">{t('options.subtitle')}</p>
           </header>
-          <div className="grid gap-6 lg:grid-cols-2">
+          <div className="grid gap-6 lg:grid-cols-[1.618fr_1fr]">
             <GeneralSection />
             <DataSection />
           </div>
           <PagesSection />
-          <footer className="pb-4 pt-2 text-center text-xs text-muted-foreground">
+          <footer className="pb-4 pt-2 text-center text-xs text-foreground/70">
             Overlayer 1.0.0 · {t('options.offlineNote')}
           </footer>
         </div>

@@ -71,6 +71,26 @@ export function GeneralSection() {
             onCheckedChange={(highlighterBadge) => void update({ highlighterBadge })}
           />
         </SettingRow>
+        <SettingRow
+          title={t('options.notesEdgeButton')}
+          description={t('options.notesEdgeButtonHint')}
+        >
+          <Switch
+            aria-label={t('options.notesEdgeButton')}
+            checked={settings.notesEdgeButton}
+            onCheckedChange={(notesEdgeButton) => void update({ notesEdgeButton })}
+          />
+        </SettingRow>
+        <SettingRow
+          title={t('options.notesContextMenu')}
+          description={t('options.notesContextMenuHint')}
+        >
+          <Switch
+            aria-label={t('options.notesContextMenu')}
+            checked={settings.notesContextMenu}
+            onCheckedChange={(notesContextMenu) => void update({ notesContextMenu })}
+          />
+        </SettingRow>
       </div>
     </Section>
   );

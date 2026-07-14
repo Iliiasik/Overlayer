@@ -53,6 +53,51 @@ describe('runMigrations', () => {
     expect(stored[key]).toBeUndefined();
   });
 
+  it('converts legacy quick boards into pages', async () => {
+    await fakeBrowser.storage.local.set({
+      'quick:example.com': {
+        domain: 'example.com',
+        items: [{ id: 'a', type: 'sticky', text: 'x', position: { x: 0, y: 0 } }],
+        camera: { x: 0, y: 0, scale: 1 },
+        updatedAt: 42,
+      },
+    });
+    await runMigrations();
+    const stored = await fakeBrowser.storage.local.get('quick:example.com');
+    const record = stored['quick:example.com'] as {
+      pages: { title: string; items: unknown[]; createdAt: number }[];
+      items?: unknown;
+    };
+    expect(record.items).toBeUndefined();
+    expect(record.pages).toHaveLength(1);
+    expect(record.pages[0].title).toBe('');
+    expect(record.pages[0].items).toHaveLength(1);
+    expect(record.pages[0].createdAt).toBe(42);
+  });
+
+  it('drops empty legacy quick records and dead board records', async () => {
+    await fakeBrowser.storage.local.set({
+      'quick:empty.com': { domain: 'empty.com', items: [], updatedAt: 1 },
+      'board:example.com': { domain: 'example.com', items: [{ id: 'a' }], updatedAt: 1 },
+    });
+    await runMigrations();
+    const stored = await fakeBrowser.storage.local.get(null);
+    expect(stored['quick:empty.com']).toBeUndefined();
+    expect(stored['board:example.com']).toBeUndefined();
+  });
+
+  it('leaves already-migrated quick records untouched', async () => {
+    const record = {
+      domain: 'example.com',
+      pages: [{ id: 'p', title: 't', items: [], createdAt: 1, updatedAt: 1 }],
+      updatedAt: 1,
+    };
+    await fakeBrowser.storage.local.set({ 'quick:example.com': record });
+    await runMigrations();
+    const stored = await fakeBrowser.storage.local.get('quick:example.com');
+    expect(stored['quick:example.com']).toEqual(record);
+  });
+
   it('does not run migrations twice', async () => {
     await runMigrations();
     const key = pageKeyForUrl(URL);

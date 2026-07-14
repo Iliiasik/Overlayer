@@ -1,12 +1,14 @@
 import { browser } from 'wxt/browser';
 import type { CanvasItem, TextMarkAnnotation } from '@/lib/annotations/types';
-import { DEFAULT_CAMERA, type Camera } from '@/lib/canvas/camera';
-import { boardKeyForUrl, pageKeyForUrl, quickKeyForUrl } from './page-key';
+import { quickKeyForUrl, pageKeyForUrl } from './page-key';
 import {
   annotationRepository,
-  type BoardKind,
-  type BoardRecord,
+  createNotePage,
+  normalizeQuickPages,
+  pageItemCount,
+  type NotePage,
   type PageRecord,
+  type QuickRecord,
 } from './annotation-repository';
 
 const SAVE_DEBOUNCE_MS = 500;
@@ -115,28 +117,31 @@ export function createMarkStore(url: string): MarkStore {
   };
 }
 
-export interface BoardStore {
+export interface NotesStore {
   readonly url: string;
   readonly key: string;
   readonly ready: Promise<void>;
-  getSnapshot(): CanvasItem[];
+  getPages(): NotePage[];
   subscribe(listener: () => void): () => void;
-  add(item: CanvasItem): void;
-  remove(id: string): void;
-  patch(id: string, changes: Partial<CanvasItem>): void;
-  translate(id: string, dx: number, dy: number): void;
-  replace(replacements: Map<string, CanvasItem[]>): void;
-  reorder(id: string, place: 'front' | 'back'): void;
-  clear(): void;
-  getCamera(): Camera;
-  setCamera(camera: Camera): void;
+  countItems(): number;
+  addPage(): string;
+  removePage(pageId: string): void;
+  renamePage(pageId: string, title: string): void;
+  addItem(pageId: string, item: CanvasItem): void;
+  removeItem(pageId: string, itemId: string): void;
+  patchItem(pageId: string, itemId: string, changes: Partial<CanvasItem>): void;
+  translateItem(pageId: string, itemId: string, dx: number, dy: number): void;
+  reorderItem(pageId: string, itemId: string, place: 'front' | 'back'): void;
   dispose(): void;
 }
 
-export function createBoardStore(url: string, kind: BoardKind = 'canvas'): BoardStore {
-  const key = kind === 'quick' ? quickKeyForUrl(url) : boardKeyForUrl(url);
-  let items: CanvasItem[] = [];
-  let camera: Camera = DEFAULT_CAMERA;
+function withBlankPage(pages: NotePage[]): NotePage[] {
+  return pages.length > 0 ? pages : [createNotePage()];
+}
+
+export function createNotesStore(url: string): NotesStore {
+  const key = quickKeyForUrl(url);
+  let pages: NotePage[] = withBlankPage([]);
   let lastPersisted: string | undefined;
   const listeners = new Set<() => void>();
   const scheduler = createScheduler();
@@ -145,33 +150,37 @@ export function createBoardStore(url: string, kind: BoardKind = 'canvas'): Board
     for (const listener of listeners) listener();
   };
 
-  const persist = () =>
-    scheduler.schedule(() => {
-      lastPersisted = JSON.stringify(items);
-      void annotationRepository.saveBoard(url, items, camera, kind);
-    });
-
-  const commit = (next: CanvasItem[]) => {
-    items = next;
+  const commit = (next: NotePage[]) => {
+    pages = withBlankPage(next);
     emit();
-    persist();
+    scheduler.schedule(() => {
+      lastPersisted = JSON.stringify(pages);
+      void annotationRepository.saveQuick(url, pages);
+    });
   };
 
-  const ready = annotationRepository.loadBoard(url, kind).then((loaded) => {
-    items = loaded.items;
-    camera = loaded.camera;
+  const patchPage = (pageId: string, mutate: (page: NotePage) => NotePage) => {
+    commit(
+      pages.map((page) => (page.id === pageId ? { ...mutate(page), updatedAt: Date.now() } : page)),
+    );
+  };
+
+  const mapItems = (pageId: string, mapper: (items: CanvasItem[]) => CanvasItem[]) => {
+    patchPage(pageId, (page) => ({ ...page, items: mapper(page.items) }));
+  };
+
+  const ready = annotationRepository.loadQuick(url).then((loaded) => {
+    pages = withBlankPage(loaded);
     emit();
   });
 
   const unwatch = watchStorageKey(key, (newValue) => {
-    const record = newValue as BoardRecord | undefined;
-    const next = record?.items ?? [];
+    const next = normalizeQuickPages(newValue as QuickRecord | undefined);
     const serialized = JSON.stringify(next);
     if (serialized === lastPersisted) return;
     scheduler.cancel();
     lastPersisted = serialized;
-    items = next;
-    camera = record?.camera ?? camera;
+    pages = withBlankPage(next);
     emit();
   });
 
@@ -179,61 +188,58 @@ export function createBoardStore(url: string, kind: BoardKind = 'canvas'): Board
     url,
     key,
     ready,
-    getSnapshot: () => items,
+    getPages: () => pages,
     subscribe(listener) {
       listeners.add(listener);
       return () => listeners.delete(listener);
     },
-    add(item) {
-      commit([...items, item]);
+    countItems: () => pageItemCount(pages),
+    addPage() {
+      const page = createNotePage();
+      commit([...pages, page]);
+      return page.id;
     },
-    remove(id) {
-      commit(items.filter((item) => item.id !== id));
+    removePage(pageId) {
+      commit(pages.filter((page) => page.id !== pageId));
     },
-    patch(id, changes) {
-      commit(
+    renamePage(pageId, title) {
+      patchPage(pageId, (page) => ({ ...page, title }));
+    },
+    addItem(pageId, item) {
+      mapItems(pageId, (items) => [...items, item]);
+    },
+    removeItem(pageId, itemId) {
+      mapItems(pageId, (items) => items.filter((item) => item.id !== itemId));
+    },
+    patchItem(pageId, itemId, changes) {
+      mapItems(pageId, (items) =>
         items.map((item) =>
-          item.id === id ? ({ ...item, ...changes, updatedAt: Date.now() } as CanvasItem) : item,
+          item.id === itemId
+            ? ({ ...item, ...changes, updatedAt: Date.now() } as CanvasItem)
+            : item,
         ),
       );
     },
-    translate(id, dx, dy) {
-      commit(
-        items.map((item) => {
-          if (item.id !== id) return item;
-          const moved: CanvasItem = {
-            ...item,
-            position: { x: item.position.x + dx, y: item.position.y + dy },
-            updatedAt: Date.now(),
-          };
-          if (moved.type === 'brush') {
-            moved.points = moved.points.map((value, index) =>
-              index % 2 === 0 ? value + dx : value + dy,
-            );
-          }
-          if (moved.type === 'arrow') {
-            moved.to = { x: moved.to.x + dx, y: moved.to.y + dy };
-          }
-          return moved;
-        }),
+    translateItem(pageId, itemId, dx, dy) {
+      mapItems(pageId, (items) =>
+        items.map((item) =>
+          item.id === itemId
+            ? {
+                ...item,
+                position: { x: item.position.x + dx, y: item.position.y + dy },
+                updatedAt: Date.now(),
+              }
+            : item,
+        ),
       );
     },
-    replace(replacements) {
-      commit(items.flatMap((item) => replacements.get(item.id) ?? [item]));
-    },
-    reorder(id, place) {
-      const target = items.find((item) => item.id === id);
-      if (!target) return;
-      const rest = items.filter((item) => item.id !== id);
-      commit(place === 'front' ? [...rest, target] : [target, ...rest]);
-    },
-    clear() {
-      commit([]);
-    },
-    getCamera: () => camera,
-    setCamera(next) {
-      camera = next;
-      if (items.length > 0) persist();
+    reorderItem(pageId, itemId, place) {
+      mapItems(pageId, (items) => {
+        const target = items.find((item) => item.id === itemId);
+        if (!target) return items;
+        const rest = items.filter((item) => item.id !== itemId);
+        return place === 'front' ? [...rest, target] : [target, ...rest];
+      });
     },
     dispose() {
       unwatch();

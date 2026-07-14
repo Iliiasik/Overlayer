@@ -1,8 +1,7 @@
 import { fakeBrowser } from 'wxt/testing';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { createStickyAnnotation, createTextMarkAnnotation } from '@/lib/annotations/factory';
-import { DEFAULT_CAMERA } from '@/lib/canvas/camera';
-import { annotationRepository } from '../annotation-repository';
+import { annotationRepository, createNotePage } from '../annotation-repository';
 
 const URL_A = 'https://www.example.com/articles/1';
 const URL_B = 'https://example.com/articles/2';
@@ -30,47 +29,73 @@ describe('annotationRepository', () => {
     expect(await annotationRepository.loadMarks(URL_B)).toHaveLength(0);
   });
 
-  it('shares one board across pages and www variants of a domain', async () => {
-    await annotationRepository.saveBoard(URL_A, [sticky()], DEFAULT_CAMERA);
-    expect((await annotationRepository.loadBoard(URL_B)).items).toHaveLength(1);
-    expect((await annotationRepository.loadBoard('https://other.com/')).items).toHaveLength(0);
+  it('shares quick pages across paths and www variants of a domain', async () => {
+    await annotationRepository.saveQuick(URL_A, [createNotePage([sticky()])]);
+    expect(await annotationRepository.loadQuick(URL_B)).toHaveLength(1);
+    expect(await annotationRepository.loadQuick('https://other.com/')).toHaveLength(0);
   });
 
-  it('persists the board camera', async () => {
-    const camera = { x: -120, y: 40, scale: 1.5 };
-    await annotationRepository.saveBoard(URL_A, [sticky()], camera);
-    expect((await annotationRepository.loadBoard(URL_B)).camera).toEqual(camera);
+  it('keeps page titles and order', async () => {
+    const first = { ...createNotePage([sticky()]), title: 'first' };
+    const second = { ...createNotePage(), title: 'second' };
+    await annotationRepository.saveQuick(URL_A, [first, second]);
+    const pages = await annotationRepository.loadQuick(URL_A);
+    expect(pages.map((page) => page.title)).toEqual(['first', 'second']);
+  });
+
+  it('reads legacy single-board records as one page', async () => {
+    await fakeBrowser.storage.local.set({
+      'quick:example.com': { domain: 'example.com', items: [sticky(), sticky()], updatedAt: 5 },
+    });
+    const pages = await annotationRepository.loadQuick(URL_A);
+    expect(pages).toHaveLength(1);
+    expect(pages[0].items).toHaveLength(2);
   });
 
   it('removes records when the last entry is deleted', async () => {
     await annotationRepository.saveMarks(URL_A, [mark()]);
-    await annotationRepository.saveBoard(URL_A, [sticky()], DEFAULT_CAMERA);
+    await annotationRepository.saveQuick(URL_A, [createNotePage([sticky()])]);
     await annotationRepository.saveMarks(URL_A, []);
-    await annotationRepository.saveBoard(URL_A, [], DEFAULT_CAMERA);
+    await annotationRepository.saveQuick(URL_A, [createNotePage()]);
     expect(await annotationRepository.listAll()).toHaveLength(0);
   });
 
-  it('counts marks and board items together for a url', async () => {
+  it('keeps records whose pages have only a title', async () => {
+    await annotationRepository.saveQuick(URL_A, [{ ...createNotePage(), title: 'plans' }]);
+    expect(await annotationRepository.listAll()).toHaveLength(1);
+  });
+
+  it('counts marks and quick items together for a url', async () => {
     await annotationRepository.saveMarks(URL_A, [mark()]);
-    await annotationRepository.saveBoard(URL_A, [sticky(), sticky()], DEFAULT_CAMERA);
+    await annotationRepository.saveQuick(URL_A, [
+      createNotePage([sticky()]),
+      createNotePage([sticky()]),
+    ]);
     expect(await annotationRepository.countForUrl(URL_A)).toBe(3);
   });
 
-  it('lists boards and mark pages with kinds and sizes', async () => {
+  it('lists quick and mark records with kinds and sizes', async () => {
     await annotationRepository.saveMarks(URL_A, [mark()]);
-    await annotationRepository.saveBoard(URL_A, [sticky()], DEFAULT_CAMERA);
+    await annotationRepository.saveQuick(URL_A, [createNotePage([sticky()])]);
     const entries = await annotationRepository.listAll();
     expect(entries).toHaveLength(2);
-    expect(entries.map((entry) => entry.kind).sort()).toEqual(['board', 'marks']);
-    expect(entries.find((entry) => entry.kind === 'board')?.label).toBe('example.com');
+    expect(entries.map((entry) => entry.kind).sort()).toEqual(['marks', 'quick']);
+    expect(entries.find((entry) => entry.kind === 'quick')?.label).toBe('example.com');
     for (const entry of entries) {
       expect(entry.sizeBytes).toBeGreaterThan(0);
     }
   });
 
-  it('clearAll removes only note and board records', async () => {
+  it('lists full mark records for search', async () => {
     await annotationRepository.saveMarks(URL_A, [mark()]);
-    await annotationRepository.saveBoard(URL_A, [sticky()], DEFAULT_CAMERA);
+    const records = await annotationRepository.listMarkRecords();
+    expect(records).toHaveLength(1);
+    expect(records[0].record.annotations[0].anchor.text?.quote).toBe('quote');
+  });
+
+  it('clearAll removes only note and quick records', async () => {
+    await annotationRepository.saveMarks(URL_A, [mark()]);
+    await annotationRepository.saveQuick(URL_A, [createNotePage([sticky()])]);
     await fakeBrowser.storage.local.set({ settings: { theme: 'green' } });
     await annotationRepository.clearAll();
     expect(await annotationRepository.listAll()).toHaveLength(0);

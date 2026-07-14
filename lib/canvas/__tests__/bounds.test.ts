@@ -1,45 +1,31 @@
 import { describe, expect, it } from 'vitest';
 import {
-  createArrowAnnotation,
-  createBrushAnnotation,
-  createHighlightAnnotation,
+  createImageAnnotation,
   createStickyAnnotation,
+  createTextAnnotation,
 } from '@/lib/annotations/factory';
-import { contentBounds, itemBounds, pointsBounds } from '../bounds';
+import { itemBounds } from '../bounds';
 
-const STYLE = { color: '#000', strokeWidth: 3, opacity: 1 };
-
-describe('pointsBounds', () => {
-  it('computes the bounding box of a point list', () => {
-    expect(pointsBounds([0, 0, 10, 20, -5, 8])).toEqual({ x: -5, y: 0, width: 15, height: 20 });
-  });
-});
+const STYLE = { color: '#000', strokeWidth: 0, opacity: 1 };
 
 describe('itemBounds', () => {
-  it('uses geometry for shapes', () => {
-    const highlight = createHighlightAnnotation({ x: 10, y: 20, width: 30, height: 40 }, STYLE);
-    expect(itemBounds(highlight)).toEqual({ x: 10, y: 20, width: 30, height: 40 });
-    const arrow = createArrowAnnotation({ x: 0, y: 0 }, { x: -20, y: 50 }, STYLE);
-    expect(itemBounds(arrow)).toEqual({ x: -20, y: 0, width: 20, height: 50 });
+  it('uses stored dimensions for images', () => {
+    const image = createImageAnnotation({ x: 10, y: 20 }, 'data:,', 30, 40, STYLE);
+    expect(itemBounds(image)).toEqual({ x: 10, y: 20, width: 30, height: 40 });
   });
 
-  it('estimates sizes for html items', () => {
-    const sticky = createStickyAnnotation({ x: 5, y: 5 }, STYLE);
+  it('uses the text width and a minimum height for text', () => {
+    const text = { ...createTextAnnotation({ x: 5, y: 6 }, STYLE), width: 200 };
+    const bounds = itemBounds(text);
+    expect(bounds.x).toBe(5);
+    expect(bounds.width).toBe(200);
+    expect(bounds.height).toBeGreaterThan(0);
+  });
+
+  it('gives a fixed footprint for sticky notes', () => {
+    const sticky = createStickyAnnotation({ x: 0, y: 0 }, STYLE);
     const bounds = itemBounds(sticky);
     expect(bounds.width).toBeGreaterThan(0);
     expect(bounds.height).toBeGreaterThan(0);
-  });
-});
-
-describe('contentBounds', () => {
-  it('returns null for an empty board', () => {
-    expect(contentBounds([])).toBeNull();
-  });
-
-  it('unions the bounds of all items', () => {
-    const brush = createBrushAnnotation([0, 0, 100, 100], STYLE);
-    const highlight = createHighlightAnnotation({ x: -50, y: 10, width: 20, height: 20 }, STYLE);
-    const bounds = contentBounds([brush, highlight]);
-    expect(bounds).toEqual({ x: -50, y: 0, width: 150, height: 100 });
   });
 });

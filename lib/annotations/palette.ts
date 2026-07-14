@@ -7,6 +7,4 @@ export const DRAWING_COLORS = [
   '#2b2b2b',
 ] as const;
 
-export const STROKE_WIDTHS = [3, 6, 12] as const;
-
-export const HIGHLIGHT_OPACITY = 0.35;
+export const DEFAULT_ITEM_COLOR = DRAWING_COLORS[DRAWING_COLORS.length - 1];

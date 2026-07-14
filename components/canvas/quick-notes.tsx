@@ -129,7 +129,7 @@ export function QuickNotes({
           bounds={SHEET_BOUNDS}
         />
       </div>
-      <div className="flex shrink-0 items-center justify-center gap-1 border-t bg-background p-1.5">
+      <div className="glass-panel flex shrink-0 items-center justify-center gap-1 border-t p-1.5">
         {QUICK_TOOLS.map(({ id, icon: Icon }) => (
           <Button
             key={id}

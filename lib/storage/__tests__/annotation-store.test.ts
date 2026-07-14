@@ -1,14 +1,9 @@
 // @vitest-environment jsdom
 import { fakeBrowser } from 'wxt/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import {
-  createBrushAnnotation,
-  createStickyAnnotation,
-  createTextMarkAnnotation,
-} from '@/lib/annotations/factory';
-import { DEFAULT_CAMERA } from '@/lib/canvas/camera';
-import { annotationRepository } from '../annotation-repository';
-import { createBoardStore, createMarkStore } from '../annotation-store';
+import { createStickyAnnotation, createTextMarkAnnotation } from '@/lib/annotations/factory';
+import { annotationRepository, createNotePage } from '../annotation-repository';
+import { createMarkStore, createNotesStore } from '../annotation-store';
 
 const URL = 'https://example.com/page';
 
@@ -59,122 +54,165 @@ describe('markStore', () => {
   });
 });
 
-describe('boardStore', () => {
+describe('notesStore', () => {
   beforeEach(() => {
     fakeBrowser.reset();
     vi.useFakeTimers();
   });
 
-  it('loads persisted items and camera on creation', async () => {
-    await annotationRepository.saveBoard(URL, [sticky()], { x: 5, y: 6, scale: 2 });
-    const store = createBoardStore(URL);
+  it('starts with a single blank page', async () => {
+    const store = createNotesStore(URL);
     await store.ready;
-    expect(store.getSnapshot()).toHaveLength(1);
-    expect(store.getCamera()).toEqual({ x: 5, y: 6, scale: 2 });
+    expect(store.getPages()).toHaveLength(1);
+    expect(store.getPages()[0].title).toBe('');
+    expect(store.getPages()[0].items).toHaveLength(0);
+  });
+
+  it('loads persisted pages on creation', async () => {
+    await annotationRepository.saveQuick(URL, [createNotePage([sticky()])]);
+    const store = createNotesStore(URL);
+    await store.ready;
+    expect(store.getPages()).toHaveLength(1);
+    expect(store.getPages()[0].items).toHaveLength(1);
+  });
+
+  it('migrates a legacy single-board record into one page', async () => {
+    await fakeBrowser.storage.local.set({
+      'quick:example.com': { domain: 'example.com', items: [sticky()], updatedAt: 7 },
+    });
+    const store = createNotesStore(URL);
+    await store.ready;
+    expect(store.getPages()).toHaveLength(1);
+    expect(store.getPages()[0].items).toHaveLength(1);
   });
 
   it('collapses rapid mutations into one save', async () => {
-    const save = vi.spyOn(annotationRepository, 'saveBoard');
-    const store = createBoardStore(URL);
+    const save = vi.spyOn(annotationRepository, 'saveQuick');
+    const store = createNotesStore(URL);
     await store.ready;
-    store.add(sticky());
-    store.add(sticky());
-    store.setCamera({ x: 1, y: 1, scale: 1 });
+    const pageId = store.getPages()[0].id;
+    store.addItem(pageId, sticky());
+    store.addItem(pageId, sticky());
+    store.renamePage(pageId, 'todo');
     await vi.advanceTimersByTimeAsync(600);
     expect(save).toHaveBeenCalledTimes(1);
     save.mockRestore();
   });
 
-  it('translate moves position, brush points and arrow ends', async () => {
-    const store = createBoardStore(URL);
+  it('adds, switches and removes pages', async () => {
+    const store = createNotesStore(URL);
     await store.ready;
-    const brush = createBrushAnnotation([0, 0, 10, 10], {
-      color: '#000',
-      strokeWidth: 3,
-      opacity: 1,
-    });
-    store.add(brush);
-    store.translate(brush.id, 5, 7);
-    const moved = store.getSnapshot()[0];
-    expect(moved.position).toEqual({ x: 5, y: 7 });
-    expect(moved.type === 'brush' && moved.points).toEqual([5, 7, 15, 17]);
+    const first = store.getPages()[0].id;
+    store.renamePage(first, 'one');
+    const second = store.addPage();
+    expect(store.getPages()).toHaveLength(2);
+    store.addItem(second, sticky());
+    store.removePage(first);
+    expect(store.getPages()).toHaveLength(1);
+    expect(store.getPages()[0].id).toBe(second);
   });
 
-  it('replace substitutes an item with segments', async () => {
-    const store = createBoardStore(URL);
+  it('keeps one blank page after removing the last page', async () => {
+    const store = createNotesStore(URL);
     await store.ready;
-    const brush = createBrushAnnotation([0, 0, 10, 10], {
-      color: '#000',
-      strokeWidth: 3,
-      opacity: 1,
-    });
-    store.add(brush);
-    const segment = { ...brush, id: crypto.randomUUID(), points: [0, 0, 4, 4] };
-    store.replace(new Map([[brush.id, [segment]]]));
-    expect(store.getSnapshot()).toHaveLength(1);
-    expect(store.getSnapshot()[0].id).toBe(segment.id);
+    const pageId = store.getPages()[0].id;
+    store.addItem(pageId, sticky());
+    store.removePage(pageId);
+    expect(store.getPages()).toHaveLength(1);
+    expect(store.getPages()[0].items).toHaveLength(0);
+  });
+
+  it('persists titles even without items', async () => {
+    const store = createNotesStore(URL);
+    await store.ready;
+    store.renamePage(store.getPages()[0].id, 'groceries');
+    await vi.advanceTimersByTimeAsync(600);
+    const pages = await annotationRepository.loadQuick(URL);
+    expect(pages).toHaveLength(1);
+    expect(pages[0].title).toBe('groceries');
+  });
+
+  it('removes the record when pages are blank', async () => {
+    const store = createNotesStore(URL);
+    await store.ready;
+    const pageId = store.getPages()[0].id;
+    store.addItem(pageId, sticky());
+    await vi.advanceTimersByTimeAsync(600);
+    expect(await annotationRepository.listAll()).toHaveLength(1);
+    const itemId = store.getPages()[0].items[0].id;
+    store.removeItem(pageId, itemId);
+    await vi.advanceTimersByTimeAsync(600);
+    expect(await annotationRepository.listAll()).toHaveLength(0);
+  });
+
+  it('translate moves the item position', async () => {
+    const store = createNotesStore(URL);
+    await store.ready;
+    const pageId = store.getPages()[0].id;
+    const item = sticky();
+    store.addItem(pageId, item);
+    store.translateItem(pageId, item.id, 5, 7);
+    expect(store.getPages()[0].items[0].position).toEqual({ x: 6, y: 9 });
   });
 
   it('reorder moves an item to the front or back', async () => {
-    const store = createBoardStore(URL);
+    const store = createNotesStore(URL);
     await store.ready;
+    const pageId = store.getPages()[0].id;
     const first = sticky();
     const second = sticky();
     const third = sticky();
-    store.add(first);
-    store.add(second);
-    store.add(third);
-    store.reorder(first.id, 'front');
-    expect(store.getSnapshot().map((item) => item.id)).toEqual([second.id, third.id, first.id]);
-    store.reorder(third.id, 'back');
-    expect(store.getSnapshot().map((item) => item.id)).toEqual([third.id, second.id, first.id]);
+    store.addItem(pageId, first);
+    store.addItem(pageId, second);
+    store.addItem(pageId, third);
+    store.reorderItem(pageId, first.id, 'front');
+    expect(store.getPages()[0].items.map((item) => item.id)).toEqual([
+      second.id,
+      third.id,
+      first.id,
+    ]);
+    store.reorderItem(pageId, third.id, 'back');
+    expect(store.getPages()[0].items.map((item) => item.id)).toEqual([
+      third.id,
+      second.id,
+      first.id,
+    ]);
   });
 
-  it('keeps quick notes separate from the canvas board', async () => {
-    const board = createBoardStore(URL);
-    const quick = createBoardStore(URL, 'quick');
-    await Promise.all([board.ready, quick.ready]);
-    board.add(sticky());
-    quick.add(sticky());
-    quick.add(sticky());
-    await vi.advanceTimersByTimeAsync(600);
-    expect((await annotationRepository.loadBoard(URL)).items).toHaveLength(1);
-    expect((await annotationRepository.loadBoard(URL, 'quick')).items).toHaveLength(2);
-    expect(quick.key).not.toBe(board.key);
+  it('counts items across pages', async () => {
+    const store = createNotesStore(URL);
+    await store.ready;
+    const first = store.getPages()[0].id;
+    store.addItem(first, sticky());
+    const second = store.addPage();
+    store.addItem(second, sticky());
+    store.addItem(second, sticky());
+    expect(store.countItems()).toBe(3);
   });
 
   it('adopts an external clear from another tab', async () => {
-    const store = createBoardStore(URL);
+    const store = createNotesStore(URL);
     await store.ready;
-    store.add(sticky());
+    store.addItem(store.getPages()[0].id, sticky());
     await vi.advanceTimersByTimeAsync(600);
     const listener = vi.fn();
     store.subscribe(listener);
     await fakeBrowser.storage.local.clear();
-    expect(store.getSnapshot()).toHaveLength(0);
+    expect(store.countItems()).toBe(0);
+    expect(store.getPages()).toHaveLength(1);
     expect(listener).toHaveBeenCalled();
   });
 
   it('does not clobber local state with its own persisted write', async () => {
-    const store = createBoardStore(URL);
+    const store = createNotesStore(URL);
     await store.ready;
-    store.add(sticky());
+    const pageId = store.getPages()[0].id;
+    store.addItem(pageId, sticky());
     await vi.advanceTimersByTimeAsync(600);
-    store.add(sticky());
-    expect(store.getSnapshot()).toHaveLength(2);
+    store.addItem(pageId, sticky());
+    expect(store.getPages()[0].items).toHaveLength(2);
     await vi.advanceTimersByTimeAsync(600);
-    expect(store.getSnapshot()).toHaveLength(2);
-    expect((await annotationRepository.loadBoard(URL)).items).toHaveLength(2);
-  });
-
-  it('clear empties the board and deletes the record', async () => {
-    const store = createBoardStore(URL);
-    await store.ready;
-    store.add(sticky());
-    await vi.advanceTimersByTimeAsync(600);
-    store.clear();
-    await vi.advanceTimersByTimeAsync(600);
-    expect((await annotationRepository.loadBoard(URL)).items).toHaveLength(0);
-    expect(store.getCamera()).toEqual(DEFAULT_CAMERA);
+    expect(store.getPages()[0].items).toHaveLength(2);
+    expect((await annotationRepository.loadQuick(URL))[0].items).toHaveLength(2);
   });
 });

@@ -1,5 +1,6 @@
 import { Download, Trash2, Upload } from 'lucide-react';
 import { useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
@@ -71,9 +72,13 @@ export function DataSection() {
           </SettingRow>
         </div>
         {importError && <p className="text-sm text-destructive">{t('options.importError')}</p>}
-        <div className="mt-auto flex items-center justify-between gap-4 rounded-lg border border-destructive/30 bg-destructive/5 p-4">
-          <p className="text-sm text-muted-foreground">{t('options.clearAllText')}</p>
-          <Button variant="destructive" className="shrink-0" onClick={() => setConfirmOpen(true)}>
+        <div className="mt-auto flex flex-col gap-3 rounded-lg border border-destructive/30 bg-destructive/5 p-4">
+          <p className="text-sm text-foreground/70">{t('options.clearAllText')}</p>
+          <Button
+            variant="destructive"
+            className="justify-center"
+            onClick={() => setConfirmOpen(true)}
+          >
             <Trash2 className="h-4 w-4" />
             {t('options.clearAll')}
           </Button>
@@ -90,16 +95,19 @@ export function DataSection() {
           event.target.value = '';
         }}
       />
-      <ConfirmDialog
-        open={confirmOpen}
-        title={t('options.clearAllTitle')}
-        description={t('options.clearAllText')}
-        confirmLabel={t('options.clearAll')}
-        cancelLabel={t('common.cancel')}
-        destructive
-        onCancel={() => setConfirmOpen(false)}
-        onConfirm={() => void handleClearAll()}
-      />
+      {createPortal(
+        <ConfirmDialog
+          open={confirmOpen}
+          title={t('options.clearAllTitle')}
+          description={t('options.clearAllText')}
+          confirmLabel={t('options.clearAll')}
+          cancelLabel={t('common.cancel')}
+          destructive
+          onCancel={() => setConfirmOpen(false)}
+          onConfirm={() => void handleClearAll()}
+        />,
+        document.body,
+      )}
     </Section>
   );
 }

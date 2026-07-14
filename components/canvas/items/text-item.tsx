@@ -16,6 +16,7 @@ import { EditorContent, useEditor, useEditorState, type Editor } from '@tiptap/r
 import StarterKit from '@tiptap/starter-kit';
 import TextAlign from '@tiptap/extension-text-align';
 import { TextStyleKit } from '@tiptap/extension-text-style';
+import { CURSORS } from '@/lib/cursors';
 import type { Point, TextAnnotation } from '@/lib/annotations/types';
 import { cn } from '@/lib/utils';
 import { clampWidthWithin, type SheetBounds } from './sheet';
@@ -310,7 +311,7 @@ export function TextItem({
       )}
       style={{
         width,
-        cursor: tool === 'select' && !editing ? 'grab' : undefined,
+        cursor: tool === 'select' && !editing ? CURSORS.grab : undefined,
         color: annotation.style.color,
       }}
       onPointerDown={dragOrDeleteHandler(tool, editing, annotation.id, onRemove, onPointerDown)}
@@ -336,9 +337,10 @@ export function TextItem({
           role="presentation"
           onPointerDown={startResize}
           className={cn(
-            'absolute -right-1 top-1/2 h-6 w-2 -translate-y-1/2 cursor-ew-resize rounded-full border border-background bg-primary transition-opacity',
+            'absolute -right-1 top-1/2 h-6 w-2 -translate-y-1/2 rounded-full border border-background bg-primary transition-opacity',
             editing ? 'opacity-100' : 'opacity-0 group-hover:opacity-100',
           )}
+          style={{ cursor: CURSORS.resizeH }}
         />
       )}
     </ItemShell>

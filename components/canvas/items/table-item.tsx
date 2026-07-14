@@ -2,6 +2,7 @@ import { GripVertical, Minus, Plus } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
+import { CURSORS } from '@/lib/cursors';
 import type { TableAnnotation } from '@/lib/annotations/types';
 import { CONTENT_INK } from './sheet';
 import { ItemShell, type ItemProps } from './shell';
@@ -59,7 +60,7 @@ export function TableItem({
       position={annotation.position}
       offset={offset}
       interactive={interactive}
-      style={{ cursor: tool === 'select' && !editing ? 'grab' : undefined }}
+      style={{ cursor: tool === 'select' && !editing ? CURSORS.grab : undefined }}
       onPointerDown={(event) => {
         if (tool === 'delete') {
           event.stopPropagation();
@@ -116,7 +117,8 @@ export function TableItem({
               aria-label={t('canvas.dragTable')}
               title={t('canvas.dragTable')}
               onPointerDown={onPointerDown}
-              className="flex h-8 w-5 cursor-grab touch-none items-center justify-center text-muted-foreground active:cursor-grabbing"
+              className="flex h-8 w-5 touch-none items-center justify-center text-muted-foreground"
+              style={{ cursor: CURSORS.grab }}
             >
               <GripVertical className="h-4 w-4" />
             </button>

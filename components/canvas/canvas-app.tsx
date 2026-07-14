@@ -8,38 +8,35 @@ import {
   type PointerEvent as ReactPointerEvent,
 } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useAnnotations } from '@/hooks/use-annotations';
+import { usePages } from '@/hooks/use-annotations';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { TooltipProvider } from '@/components/ui/tooltip';
-import { eraseFromBrush, ERASE_RADIUS } from '@/lib/annotations/erase';
 import {
   createButtonAnnotation,
   createImageAnnotation,
   createStickyAnnotation,
-  createTableAnnotation,
   createTextAnnotation,
-  DEFAULT_TEXT_WIDTH,
 } from '@/lib/annotations/factory';
-import { DRAWING_COLORS, STROKE_WIDTHS } from '@/lib/annotations/palette';
+import { DEFAULT_ITEM_COLOR } from '@/lib/annotations/palette';
 import { isRichTextEmpty } from '@/lib/annotations/rich-text';
 import { isExternalUrl } from '@/lib/annotations/url';
 import { CURSORS } from '@/lib/cursors';
-import type { CanvasItem, Point, ToolId } from '@/lib/annotations/types';
-import { DEFAULT_CAMERA, type Camera } from '@/lib/canvas/camera';
-import type { BoardStore } from '@/lib/storage/annotation-store';
-import { Board } from './board';
+import type { CanvasItem, Point } from '@/lib/annotations/types';
+import { pageItemCount } from '@/lib/storage/annotation-repository';
+import type { NotesStore } from '@/lib/storage/annotation-store';
 import { ContextMenu, type ContextMenuState } from './context-menu';
 import { DrawerHeader } from './drawer-header';
 import { ImageDialog } from './image-dialog';
+import { PageBar } from './page-bar';
 import { QuickNotes, QUICK_PADDING, QUICK_WIDTH, type QuickTool } from './quick-notes';
-import { CanvasToolbar } from './toolbar';
-import type { PlacementTool } from './shapes-layer';
 
 const EDITABLE_TYPES = new Set<CanvasItem['type']>(['text', 'sticky', 'button', 'table']);
 
+const ITEM_STYLE = { color: DEFAULT_ITEM_COLOR, strokeWidth: 0, opacity: 1 };
+const CONTENT_WIDTH = QUICK_WIDTH - QUICK_PADDING * 2;
+
 interface CanvasAppProps {
-  store: BoardStore;
-  quickStore: BoardStore;
+  store: NotesStore;
   open: boolean;
   onClose: () => void;
 }
@@ -57,11 +54,6 @@ const stopEvents = {
   onPointerDown: (event: ReactPointerEvent) => event.stopPropagation(),
 };
 
-interface PendingImage {
-  point: Point;
-  target: 'canvas' | 'quick';
-}
-
 function defaultWidth(): number {
   return Math.min(
     MAX_DRAWER_WIDTH,
@@ -69,44 +61,28 @@ function defaultWidth(): number {
   );
 }
 
-export function CanvasApp({ store, quickStore, open, onClose }: CanvasAppProps) {
+export function CanvasApp({ store, open, onClose }: CanvasAppProps) {
   const { t } = useTranslation();
   const sectionRef = useRef<HTMLElement>(null);
-  const items = useAnnotations(store);
-  const quickItems = useAnnotations(quickStore);
-  const [loaded, setLoaded] = useState(false);
-  const [camera, setCamera] = useState<Camera>(DEFAULT_CAMERA);
-  const [expanded, setExpanded] = useState(false);
+  const pages = usePages(store);
   const [width, setWidth] = useState(defaultWidth);
   const [resizing, setResizing] = useState(false);
-  const [tool, setTool] = useState<ToolId>('select');
-  const [color, setColor] = useState<string>(DRAWING_COLORS[DRAWING_COLORS.length - 1]);
-  const [strokeWidth, setStrokeWidth] = useState<number>(STROKE_WIDTHS[1]);
+  const [activePageId, setActivePageId] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [pendingImage, setPendingImage] = useState<PendingImage | null>(null);
-  const [confirmClear, setConfirmClear] = useState(false);
+  const [pendingImage, setPendingImage] = useState<Point | null>(null);
   const [confirmLink, setConfirmLink] = useState<string | null>(null);
+  const [confirmPageDelete, setConfirmPageDelete] = useState(false);
   const [menu, setMenu] = useState<ContextMenuState | null>(null);
 
-  const activeStore = expanded ? store : quickStore;
-  const style = { color, strokeWidth, opacity: 1 };
-  const domainLabel = decodeURIComponent(store.key.replace(/^board:(file:)?/, ''));
+  const activeIndex = Math.max(
+    0,
+    pages.findIndex((page) => page.id === activePageId),
+  );
+  const activePage = pages[activeIndex];
+  const pageId = activePage.id;
+  const items = activePage.items;
 
-  useEffect(() => {
-    let active = true;
-    void Promise.all([store.ready, quickStore.ready]).then(() => {
-      if (!active) return;
-      setCamera(store.getCamera());
-      setLoaded(true);
-    });
-    return () => {
-      active = false;
-    };
-  }, [store, quickStore]);
-
-  useEffect(() => {
-    if (loaded) store.setCamera(camera);
-  }, [store, camera, loaded]);
+  const domainLabel = decodeURIComponent(store.key.replace(/^quick:(file:)?/, ''));
 
   useEffect(() => {
     const node = sectionRef.current;
@@ -116,81 +92,72 @@ export function CanvasApp({ store, quickStore, open, onClose }: CanvasAppProps) 
     return () => node.removeEventListener('wheel', onWheel);
   }, []);
 
-  const changeCamera = useCallback((updater: (camera: Camera) => Camera) => {
-    setCamera(updater);
-  }, []);
-
   const changeEditing = useCallback(
     (next: string | null) => {
       if (editingId && editingId !== next) {
-        for (const target of [store, quickStore]) {
-          const edited = target.getSnapshot().find((item) => item.id === editingId);
-          if (!edited) continue;
-          if (edited.type === 'text' && isRichTextEmpty(edited.html)) target.remove(editingId);
-          if (edited.type === 'button' && !edited.url) target.remove(editingId);
+        const current = store.getPages().find((page) => page.id === pageId);
+        const edited = current?.items.find((item) => item.id === editingId);
+        if (edited?.type === 'text' && isRichTextEmpty(edited.html)) {
+          store.removeItem(pageId, editingId);
         }
+        if (edited?.type === 'button' && !edited.url) store.removeItem(pageId, editingId);
       }
       setEditingId(next);
     },
-    [store, quickStore, editingId],
+    [store, pageId, editingId],
   );
 
-  const toggleExpanded = useCallback(() => {
+  const switchPage = useCallback(
+    (index: number) => {
+      const target = pages[Math.min(pages.length - 1, Math.max(0, index))];
+      if (!target || target.id === pageId) return;
+      changeEditing(null);
+      setMenu(null);
+      setActivePageId(target.id);
+    },
+    [pages, pageId, changeEditing],
+  );
+
+  const addPage = useCallback(() => {
     changeEditing(null);
     setMenu(null);
-    setExpanded((value) => !value);
-  }, [changeEditing]);
+    setActivePageId(store.addPage());
+  }, [store, changeEditing]);
 
-  const createItem = useCallback(
-    (target: Exclude<PlacementTool, 'image'>, point: Point, textWidth: number): CanvasItem => {
-      const itemStyle = { color, strokeWidth, opacity: 1 };
-      if (target === 'text') return { ...createTextAnnotation(point, itemStyle), width: textWidth };
-      if (target === 'sticky') return createStickyAnnotation(point, itemStyle);
-      if (target === 'button') return createButtonAnnotation(point, itemStyle);
-      return createTableAnnotation(point, itemStyle);
-    },
-    [color, strokeWidth],
-  );
-
-  const place = useCallback(
-    (target: PlacementTool, point: Point) => {
-      if (target === 'image') {
-        setPendingImage({ point, target: 'canvas' });
-        return;
-      }
-      const item = createItem(target, point, DEFAULT_TEXT_WIDTH);
-      store.add(item);
-      changeEditing(item.id);
-      setTool('select');
-    },
-    [store, createItem, changeEditing],
-  );
+  const deleteActivePage = useCallback(() => {
+    changeEditing(null);
+    setMenu(null);
+    const neighbor = pages[activeIndex - 1] ?? pages[activeIndex + 1];
+    store.removePage(pageId);
+    setActivePageId(neighbor?.id ?? null);
+  }, [store, pages, activeIndex, pageId, changeEditing]);
 
   const quickAdd = useCallback(
-    (target: QuickTool, point: Point) => {
-      if (target === 'image') {
-        setPendingImage({ point, target: 'quick' });
+    (tool: QuickTool, point: Point) => {
+      if (tool === 'image') {
+        setPendingImage(point);
         return;
       }
-      const item = createItem(target, point, QUICK_WIDTH - QUICK_PADDING * 2);
-      quickStore.add(item);
+      const item =
+        tool === 'text'
+          ? { ...createTextAnnotation(point, ITEM_STYLE), width: CONTENT_WIDTH }
+          : tool === 'sticky'
+            ? createStickyAnnotation(point, ITEM_STYLE)
+            : createButtonAnnotation(point, ITEM_STYLE);
+      store.addItem(pageId, item);
       changeEditing(item.id);
     },
-    [quickStore, createItem, changeEditing],
+    [store, pageId, changeEditing],
   );
 
-  const erase = useCallback(
-    (point: Point) => {
-      const radius = ERASE_RADIUS / camera.scale;
-      const replacements = new Map<string, CanvasItem[]>();
-      for (const item of store.getSnapshot()) {
-        if (item.type !== 'brush') continue;
-        const result = eraseFromBrush(item, point.x, point.y, radius);
-        if (result) replacements.set(item.id, result);
-      }
-      if (replacements.size > 0) store.replace(replacements);
-    },
-    [store, camera.scale],
+  const patchItem = useCallback(
+    (id: string, changes: Partial<CanvasItem>) => store.patchItem(pageId, id, changes),
+    [store, pageId],
+  );
+  const removeItem = useCallback((id: string) => store.removeItem(pageId, id), [store, pageId]);
+  const translateItem = useCallback(
+    (id: string, dx: number, dy: number) => store.translateItem(pageId, id, dx, dy),
+    [store, pageId],
   );
 
   const openLink = useCallback((url: string) => {
@@ -205,7 +172,7 @@ export function CanvasApp({ store, quickStore, open, onClose }: CanvasAppProps) 
     setMenu({ id, x: point.x, y: point.y });
   }, []);
 
-  const menuItem = menu ? activeStore.getSnapshot().find((item) => item.id === menu.id) : undefined;
+  const menuItem = menu ? items.find((item) => item.id === menu.id) : undefined;
 
   const startResize = (event: ReactPointerEvent) => {
     event.preventDefault();
@@ -233,9 +200,9 @@ export function CanvasApp({ store, quickStore, open, onClose }: CanvasAppProps) 
         role="dialog"
         aria-label={t('canvas.title')}
         aria-hidden={!open}
-        className="cursor-cascade fixed inset-y-0 left-0 flex flex-col overflow-hidden border-r bg-background text-foreground shadow-2xl"
+        className="cursor-cascade fixed inset-y-0 left-0 flex flex-col overflow-hidden border-r text-foreground shadow-2xl"
         style={{
-          width: expanded ? '100%' : width,
+          width,
           maxWidth: '100%',
           transform: open ? 'translateX(0)' : 'translateX(-103%)',
           transition: resizing ? 'none' : DRAWER_TRANSITION,
@@ -249,8 +216,6 @@ export function CanvasApp({ store, quickStore, open, onClose }: CanvasAppProps) 
               setMenu(null);
             } else if (editingId) {
               changeEditing(null);
-            } else if (expanded) {
-              toggleExpanded();
             } else {
               onClose();
             }
@@ -260,97 +225,61 @@ export function CanvasApp({ store, quickStore, open, onClose }: CanvasAppProps) 
       >
         <DrawerHeader
           domainLabel={domainLabel}
-          expanded={expanded}
-          itemCount={(expanded ? items : quickItems).length}
-          onToggleExpanded={toggleExpanded}
+          itemCount={pageItemCount(pages)}
           onClose={onClose}
         />
+        <PageBar
+          title={activePage.title}
+          index={activeIndex}
+          count={pages.length}
+          onTitleChange={(title) => store.renamePage(pageId, title)}
+          onNavigate={switchPage}
+          onAdd={addPage}
+          onDelete={() => {
+            if (items.length > 0) {
+              setConfirmPageDelete(true);
+            } else {
+              deleteActivePage();
+            }
+          }}
+        />
         <div className="relative flex min-h-0 flex-1 flex-col">
-          {loaded && expanded && (
-            <>
-              <Board
-                items={items}
-                camera={camera}
-                onCameraChange={changeCamera}
-                tool={tool}
-                style={style}
-                active={open}
-                editingId={editingId}
-                onEditingChange={changeEditing}
-                onAdd={store.add}
-                onPatch={store.patch}
-                onRemove={store.remove}
-                onTranslate={store.translate}
-                onPlace={place}
-                onErase={erase}
-                onOpenLink={openLink}
-                onContextMenu={openMenu}
-              />
-              <CanvasToolbar
-                activeTool={tool}
-                onToolChange={setTool}
-                color={color}
-                onColorChange={setColor}
-                strokeWidth={strokeWidth}
-                onStrokeWidthChange={setStrokeWidth}
-                onClear={() => setConfirmClear(true)}
-              />
-            </>
-          )}
-          {loaded && !expanded && (
-            <QuickNotes
-              items={quickItems}
-              editingId={editingId}
-              onEditingChange={changeEditing}
-              onAdd={quickAdd}
-              onPatch={quickStore.patch}
-              onRemove={quickStore.remove}
-              onTranslate={quickStore.translate}
-              onOpenLink={openLink}
-              onContextMenu={openMenu}
-            />
-          )}
-        </div>
-        {!expanded && (
-          <div
-            role="presentation"
-            onPointerDown={startResize}
-            className="absolute inset-y-0 right-0 w-1.5 cursor-col-resize transition-colors hover:bg-primary/30 active:bg-primary/50"
+          <QuickNotes
+            key={pageId}
+            items={items}
+            editingId={editingId}
+            onEditingChange={changeEditing}
+            onAdd={quickAdd}
+            onPatch={patchItem}
+            onRemove={removeItem}
+            onTranslate={translateItem}
+            onOpenLink={openLink}
+            onContextMenu={openMenu}
           />
-        )}
+        </div>
+        <div
+          role="presentation"
+          onPointerDown={startResize}
+          className="absolute inset-y-0 right-0 w-1.5 transition-colors hover:bg-primary/30 active:bg-primary/50"
+          style={{ cursor: CURSORS.resizeH }}
+        />
         <ImageDialog
           open={pendingImage != null}
           onClose={() => setPendingImage(null)}
           onInsert={(dataUrl, imageWidth, imageHeight) => {
             if (!pendingImage) return;
-            const target = pendingImage.target === 'quick' ? quickStore : store;
-            const maxWidth = pendingImage.target === 'quick' ? QUICK_WIDTH - 48 : imageWidth;
-            const renderScale = Math.min(1, maxWidth / imageWidth);
-            target.add(
+            const renderScale = Math.min(1, CONTENT_WIDTH / imageWidth);
+            store.addItem(
+              pageId,
               createImageAnnotation(
-                pendingImage.point,
+                pendingImage,
                 dataUrl,
                 Math.round(imageWidth * renderScale),
                 Math.round(imageHeight * renderScale),
-                { color, strokeWidth, opacity: 1 },
+                ITEM_STYLE,
               ),
             );
             setPendingImage(null);
-            setTool('select');
-          }}
-        />
-        <ConfirmDialog
-          open={confirmClear}
-          title={t('canvas.clearTitle')}
-          description={t('canvas.clearText')}
-          confirmLabel={t('common.delete')}
-          cancelLabel={t('common.cancel')}
-          destructive
-          onCancel={() => setConfirmClear(false)}
-          onConfirm={() => {
-            setConfirmClear(false);
-            changeEditing(null);
-            store.clear();
           }}
         />
         <ConfirmDialog
@@ -367,6 +296,18 @@ export function CanvasApp({ store, quickStore, open, onClose }: CanvasAppProps) 
             setConfirmLink(null);
           }}
         />
+        <ConfirmDialog
+          open={confirmPageDelete}
+          title={t('canvas.deletePageTitle')}
+          description={t('canvas.deletePageText', { count: items.length })}
+          confirmLabel={t('common.delete')}
+          cancelLabel={t('common.cancel')}
+          onCancel={() => setConfirmPageDelete(false)}
+          onConfirm={() => {
+            setConfirmPageDelete(false);
+            deleteActivePage();
+          }}
+        />
       </section>
       <ContextMenu
         state={menu}
@@ -378,19 +319,18 @@ export function CanvasApp({ store, quickStore, open, onClose }: CanvasAppProps) 
           setMenu(null);
         }}
         onColorChange={(value) => {
-          if (menuItem)
-            activeStore.patch(menuItem.id, { style: { ...menuItem.style, color: value } });
+          if (menuItem) patchItem(menuItem.id, { style: { ...menuItem.style, color: value } });
         }}
         onBringToFront={() => {
-          if (menu) activeStore.reorder(menu.id, 'front');
+          if (menu) store.reorderItem(pageId, menu.id, 'front');
           setMenu(null);
         }}
         onSendToBack={() => {
-          if (menu) activeStore.reorder(menu.id, 'back');
+          if (menu) store.reorderItem(pageId, menu.id, 'back');
           setMenu(null);
         }}
         onDelete={() => {
-          if (menu) activeStore.remove(menu.id);
+          if (menu) removeItem(menu.id);
           setMenu(null);
         }}
       />

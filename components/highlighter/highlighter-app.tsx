@@ -26,11 +26,13 @@ import { HighlightsPanel } from './highlights-panel';
 
 export interface HighlighterHandle {
   createFromSelection: () => void;
+  togglePanel: () => void;
 }
 
 interface HighlighterAppProps {
   store: MarkStore;
   handleRef: Ref<HighlighterHandle>;
+  onPanelChange?: (open: boolean) => void;
 }
 
 interface Point {
@@ -56,7 +58,7 @@ function pagePointFromRect(rect: DOMRect): Point {
   };
 }
 
-export function HighlighterApp({ store, handleRef }: HighlighterAppProps) {
+export function HighlighterApp({ store, handleRef, onPanelChange }: HighlighterAppProps) {
   const { t } = useTranslation();
   const { settings } = useSettings();
   const annotations = useAnnotations(store);
@@ -97,7 +99,15 @@ export function HighlighterApp({ store, handleRef }: HighlighterAppProps) {
     setPopupPoint(pagePointFromRect(rect));
   }, [store, color]);
 
-  useImperativeHandle(handleRef, () => ({ createFromSelection }), [createFromSelection]);
+  useImperativeHandle(
+    handleRef,
+    () => ({ createFromSelection, togglePanel: () => setPanelOpen((open) => !open) }),
+    [createFromSelection],
+  );
+
+  useEffect(() => {
+    onPanelChange?.(panelOpen);
+  }, [panelOpen, onPanelChange]);
 
   useEffect(() => {
     if (!settings.selectionButton) return;
@@ -128,12 +138,14 @@ export function HighlighterApp({ store, handleRef }: HighlighterAppProps) {
   }, [settings.selectionButton]);
 
   useEffect(() => {
-    const onClick = (event: MouseEvent) => {
+    const onContextMenu = (event: MouseEvent) => {
       const id = markIdAt(event.target);
-      if (id) openPopupForMark(id);
+      if (!id) return;
+      event.preventDefault();
+      openPopupForMark(id);
     };
-    document.addEventListener('click', onClick);
-    return () => document.removeEventListener('click', onClick);
+    document.addEventListener('contextmenu', onContextMenu);
+    return () => document.removeEventListener('contextmenu', onContextMenu);
   }, [openPopupForMark]);
 
   useEffect(() => {
@@ -186,15 +198,12 @@ export function HighlighterApp({ store, handleRef }: HighlighterAppProps) {
     });
   };
 
-  const badgeVisible = settings.highlighterBadge && marks.length > 0;
-
   return (
     <div className="absolute left-0 top-0" style={{ pointerEvents: 'none' }}>
       {selectionPoint && (
         <button
           type="button"
           aria-label={t('highlighter.highlight')}
-          title={t('highlighter.highlight')}
           onPointerDown={(event) => {
             event.preventDefault();
             event.stopPropagation();
@@ -251,7 +260,6 @@ export function HighlighterApp({ store, handleRef }: HighlighterAppProps) {
                 className="h-7 w-7"
                 aria-label={t('highlighter.bold')}
                 aria-pressed={popupMark.bold}
-                title={t('highlighter.bold')}
                 onClick={() => patchMark(popupMark, { bold: !popupMark.bold })}
               >
                 <Bold className="h-3.5 w-3.5" />
@@ -262,7 +270,6 @@ export function HighlighterApp({ store, handleRef }: HighlighterAppProps) {
                 className="h-7 w-7"
                 aria-label={t('highlighter.italic')}
                 aria-pressed={popupMark.italic}
-                title={t('highlighter.italic')}
                 onClick={() => patchMark(popupMark, { italic: !popupMark.italic })}
               >
                 <Italic className="h-3.5 w-3.5" />
@@ -272,7 +279,6 @@ export function HighlighterApp({ store, handleRef }: HighlighterAppProps) {
                 size="icon"
                 className="ml-auto h-7 w-7 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
                 aria-label={t('common.delete')}
-                title={t('common.delete')}
                 onClick={() => removeMark(popupMark)}
               >
                 <Trash2 className="h-3.5 w-3.5" />
@@ -281,6 +287,7 @@ export function HighlighterApp({ store, handleRef }: HighlighterAppProps) {
             <textarea
               key={popupMark.id}
               defaultValue={popupMark.note}
+              maxLength={400}
               placeholder={t('highlighter.notePlaceholder')}
               rows={2}
               onChange={(event) => patchMark(popupMark, { note: event.currentTarget.value })}
@@ -289,26 +296,12 @@ export function HighlighterApp({ store, handleRef }: HighlighterAppProps) {
           </div>
         </>
       )}
-      {badgeVisible && (
-        <button
-          type="button"
-          aria-label={t('highlighter.panelTitle')}
-          title={t('highlighter.panelTitle')}
-          onClick={() => setPanelOpen((open) => !open)}
-          className="fixed right-3 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-transform hover:scale-110"
-          style={{ pointerEvents: 'auto' }}
-        >
-          <Highlighter className="h-4 w-4" />
-          <span className="absolute -top-1 -left-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-background px-1 text-[10px] font-semibold text-foreground shadow">
-            {marks.length}
-          </span>
-        </button>
-      )}
       {panelOpen && (
         <HighlightsPanel
           marks={marks}
           onClose={() => setPanelOpen(false)}
           onSelect={openPopupForMark}
+          onDelete={removeMark}
         />
       )}
       {tooltip && (

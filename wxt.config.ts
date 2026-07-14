@@ -10,7 +10,14 @@ export default defineConfig({
     name: '__MSG_extName__',
     description: '__MSG_extDescription__',
     default_locale: 'en',
-    permissions: ['storage', 'unlimitedStorage', 'activeTab', 'scripting', 'contextMenus'],
+    permissions: [
+      'storage',
+      'unlimitedStorage',
+      'activeTab',
+      'scripting',
+      'contextMenus',
+      ...(browser === 'firefox' ? [] : ['favicon']),
+    ],
     host_permissions: ['<all_urls>'],
     web_accessible_resources: [{ resources: ['fonts/*', 'icon/*'], matches: ['<all_urls>'] }],
     commands: {
