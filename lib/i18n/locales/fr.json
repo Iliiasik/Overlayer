@@ -138,6 +138,7 @@
     "deleted": "Surlignage supprimé",
     "jumpGo": "Aller au surlignage",
     "jumpSearching": "Recherche sur la page…",
-    "jumpNotFound": "Surlignage introuvable sur la page"
+    "jumpNotFound": "Surlignage introuvable sur la page",
+    "jumpContinue": "Continuer la recherche"
   }
 }

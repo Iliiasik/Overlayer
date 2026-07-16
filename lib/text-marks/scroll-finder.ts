@@ -2,9 +2,12 @@ import type { TextMarkAnnotation } from '@/lib/annotations/types';
 import { flashMark, isMarkPresent, markElement, restoreAnnotation } from './marker';
 
 const STEP_SETTLE_MS = 180;
-const MAX_STEPS = 60;
-const TOP_LOAD_RETRIES = 15;
-const GROWTH_EPSILON = 50;
+const SWEEP_BUDGET = 60;
+const START_UP_WAVES = 6;
+const RESUME_UP_WAVES = 25;
+const SCROLLABLE_EPSILON = 50;
+const GROWTH_POLL_MS = 250;
+const GROWTH_TIMEOUT_MS = 2500;
 const STEP_FRACTION = 0.85;
 const FOCUS_ATTEMPTS = 4;
 const FOCUS_SETTLE_MS = 380;
@@ -13,10 +16,10 @@ const FOCUS_MARGIN = 8;
 function findScroller(): HTMLElement {
   const root = (document.scrollingElement ?? document.documentElement) as HTMLElement;
   let best = root;
-  let bestSize = root.scrollHeight > root.clientHeight + GROWTH_EPSILON ? root.scrollHeight : 0;
+  let bestSize = root.scrollHeight > root.clientHeight + SCROLLABLE_EPSILON ? root.scrollHeight : 0;
   for (const element of document.querySelectorAll<HTMLElement>('*')) {
     if (element.clientHeight < window.innerHeight * 0.5) continue;
-    if (element.scrollHeight <= element.clientHeight + GROWTH_EPSILON) continue;
+    if (element.scrollHeight <= element.clientHeight + SCROLLABLE_EPSILON) continue;
     const { overflowY } = getComputedStyle(element);
     if (overflowY !== 'auto' && overflowY !== 'scroll' && overflowY !== 'overlay') continue;
     if (element.scrollHeight > bestSize) {
@@ -56,41 +59,82 @@ export async function focusMark(mark: TextMarkAnnotation): Promise<boolean> {
   return true;
 }
 
-export async function scrollToFindMark(mark: TextMarkAnnotation): Promise<boolean> {
-  if (restoreAnnotation(mark)) return true;
+export interface MarkSearch {
+  start(): Promise<boolean>;
+  resume(): Promise<boolean>;
+  cancel(): void;
+}
+
+export function createMarkSearch(mark: TextMarkAnnotation): MarkSearch {
   const scroller = findScroller();
   const viewport = scroller.clientHeight || window.innerHeight;
   const startTop = scroller.scrollTop;
-  let steps = 0;
 
   const attempt = async (top: number): Promise<boolean> => {
     scroller.scrollTop = top;
     await settle();
-    steps++;
     return restoreAnnotation(mark);
   };
 
-  if (await attempt(Math.max(0, mark.anchor.position.y - viewport / 2))) return true;
-
-  let height = scroller.scrollHeight;
-  if (await attempt(0)) return true;
-  for (let retry = 0; retry < TOP_LOAD_RETRIES && steps < MAX_STEPS; retry++) {
-    if (scroller.scrollHeight <= height + GROWTH_EPSILON) break;
-    height = scroller.scrollHeight;
-    if (await attempt(0)) return true;
-  }
-
-  while (steps < MAX_STEPS) {
-    const bottom = scroller.scrollHeight - viewport;
-    if (scroller.scrollTop >= bottom - 2) {
-      if (scroller.scrollHeight <= height + GROWTH_EPSILON) break;
-      height = scroller.scrollHeight;
+  const topSignature = (): string => {
+    const walker = document.createTreeWalker(scroller, NodeFilter.SHOW_TEXT);
+    let text = '';
+    let node = walker.nextNode();
+    while (node && text.length < 300) {
+      text += node.textContent ?? '';
+      node = walker.nextNode();
     }
-    if (await attempt(Math.min(bottom, scroller.scrollTop + viewport * STEP_FRACTION))) {
-      return true;
-    }
-  }
+    return `${scroller.scrollHeight}:${Math.round(scroller.scrollTop)}:${text}`;
+  };
 
-  scroller.scrollTop = startTop;
-  return false;
+  const waitForNewContent = async (): Promise<boolean> => {
+    const initial = topSignature();
+    const deadline = performance.now() + GROWTH_TIMEOUT_MS;
+    while (performance.now() < deadline) {
+      await settle(GROWTH_POLL_MS);
+      if (topSignature() !== initial) return true;
+    }
+    return false;
+  };
+
+  const loadUpwards = async (waves: number): Promise<boolean> => {
+    for (let wave = 0; wave < waves; wave++) {
+      if (await attempt(0)) return true;
+      if (!(await waitForNewContent())) return false;
+      if (restoreAnnotation(mark)) return true;
+    }
+    return false;
+  };
+
+  const sweepDown = async (): Promise<boolean> => {
+    let steps = 0;
+    while (steps < SWEEP_BUDGET) {
+      const bottom = scroller.scrollHeight - viewport;
+      if (scroller.scrollTop >= bottom - 2 && !(await waitForNewContent())) break;
+      if (await attempt(Math.min(bottom, scroller.scrollTop + viewport * STEP_FRACTION))) {
+        return true;
+      }
+      steps++;
+    }
+    return false;
+  };
+
+  return {
+    async start() {
+      if (restoreAnnotation(mark)) return true;
+      if (await attempt(Math.max(0, mark.anchor.position.y - viewport / 2))) return true;
+      if (await loadUpwards(START_UP_WAVES)) return true;
+      return sweepDown();
+    },
+
+    async resume() {
+      if (restoreAnnotation(mark)) return true;
+      if (await loadUpwards(RESUME_UP_WAVES)) return true;
+      return sweepDown();
+    },
+
+    cancel() {
+      scroller.scrollTop = startTop;
+    },
+  };
 }

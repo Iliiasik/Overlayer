@@ -138,6 +138,7 @@
     "deleted": "Destaque excluído",
     "jumpGo": "Ir para o destaque",
     "jumpSearching": "Procurando na página…",
-    "jumpNotFound": "Destaque não encontrado na página"
+    "jumpNotFound": "Destaque não encontrado na página",
+    "jumpContinue": "Continuar procurando"
   }
 }

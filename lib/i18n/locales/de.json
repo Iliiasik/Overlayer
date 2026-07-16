@@ -138,6 +138,7 @@
     "deleted": "Markierung gelöscht",
     "jumpGo": "Zur Markierung springen",
     "jumpSearching": "Seite wird durchsucht…",
-    "jumpNotFound": "Markierung auf der Seite nicht gefunden"
+    "jumpNotFound": "Markierung auf der Seite nicht gefunden",
+    "jumpContinue": "Weitersuchen"
   }
 }

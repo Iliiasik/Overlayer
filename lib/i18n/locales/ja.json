@@ -138,6 +138,7 @@
     "deleted": "ハイライトを削除しました",
     "jumpGo": "ハイライトへ移動",
     "jumpSearching": "ページ内を検索中…",
-    "jumpNotFound": "ページ内にハイライトが見つかりません"
+    "jumpNotFound": "ページ内にハイライトが見つかりません",
+    "jumpContinue": "検索を続ける"
   }
 }

@@ -138,6 +138,7 @@
     "deleted": "已删除高亮",
     "jumpGo": "跳转到高亮",
     "jumpSearching": "正在页面中搜索…",
-    "jumpNotFound": "页面中未找到该高亮"
+    "jumpNotFound": "页面中未找到该高亮",
+    "jumpContinue": "继续搜索"
   }
 }

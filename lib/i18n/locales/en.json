@@ -138,6 +138,7 @@
     "deleted": "Highlight deleted",
     "jumpGo": "Jump to highlight",
     "jumpSearching": "Searching the page…",
-    "jumpNotFound": "Highlight not found on this page"
+    "jumpNotFound": "Highlight not found on this page",
+    "jumpContinue": "Keep searching"
   }
 }

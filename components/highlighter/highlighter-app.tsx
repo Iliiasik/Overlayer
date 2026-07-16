@@ -18,7 +18,7 @@ import {
   updateAnnotationStyle,
   wrapAnnotation,
 } from '@/lib/text-marks/marker';
-import { focusMark, scrollToFindMark } from '@/lib/text-marks/scroll-finder';
+import { createMarkSearch, focusMark, type MarkSearch } from '@/lib/text-marks/scroll-finder';
 import { createTextMarkAnnotation } from '@/lib/annotations/factory';
 import { DRAWING_COLORS } from '@/lib/annotations/palette';
 import { isolateEvents } from '@/lib/events';
@@ -162,23 +162,58 @@ export function HighlighterApp({ store, handleRef, onPanelChange }: HighlighterA
     setPopupPoint(pagePointFromRect(rect));
   }, [store, color]);
 
-  const startJumpSearch = useCallback((mark: TextMarkAnnotation) => {
-    setJump({ mark, phase: 'searching' });
-    void (async () => {
-      const found = isMarkPresent(mark.id)
-        ? await focusMark(mark)
-        : (await scrollToFindMark(mark)) && (await focusMark(mark));
-      setJump(found ? null : { mark, phase: 'notFound' });
-      setFailedIds((current) => {
-        const next = new Set(current);
-        if (found) {
-          next.delete(mark.id);
-        } else {
-          next.add(mark.id);
+  const searchRef = useRef<MarkSearch | null>(null);
+
+  const finishJumpSearch = useCallback(async (mark: TextMarkAnnotation, found: boolean) => {
+    if (found) {
+      await focusMark(mark);
+      searchRef.current = null;
+    }
+    setJump(found ? null : { mark, phase: 'notFound' });
+    setFailedIds((current) => {
+      const next = new Set(current);
+      if (found) {
+        next.delete(mark.id);
+      } else {
+        next.add(mark.id);
+      }
+      return next;
+    });
+  }, []);
+
+  const startJumpSearch = useCallback(
+    (mark: TextMarkAnnotation) => {
+      setJump({ mark, phase: 'searching' });
+      void (async () => {
+        if (isMarkPresent(mark.id)) {
+          await finishJumpSearch(mark, await focusMark(mark));
+          return;
         }
-        return next;
-      });
-    })();
+        const search = createMarkSearch(mark);
+        searchRef.current = search;
+        await finishJumpSearch(mark, await search.start());
+      })();
+    },
+    [finishJumpSearch],
+  );
+
+  const continueJumpSearch = useCallback(
+    (mark: TextMarkAnnotation) => {
+      const search = searchRef.current;
+      if (!search) {
+        startJumpSearch(mark);
+        return;
+      }
+      setJump({ mark, phase: 'searching' });
+      void search.resume().then((found) => finishJumpSearch(mark, found));
+    },
+    [startJumpSearch, finishJumpSearch],
+  );
+
+  const cancelJumpSearch = useCallback(() => {
+    searchRef.current?.cancel();
+    searchRef.current = null;
+    setJump(null);
   }, []);
 
   useImperativeHandle(
@@ -471,9 +506,14 @@ export function HighlighterApp({ store, handleRef, onPanelChange }: HighlighterA
         >
           <div className="flex w-80 max-w-[calc(100vw-24px)] flex-col gap-3 rounded-xl border bg-popover p-4 text-popover-foreground shadow-xl">
             <p className="text-sm">{t('highlighter.jumpNotFound')}</p>
-            <Button size="sm" onClick={() => setJump(null)}>
-              {t('common.ok')}
-            </Button>
+            <div className="flex justify-end gap-2">
+              <Button variant="ghost" size="sm" onClick={cancelJumpSearch}>
+                {t('common.cancel')}
+              </Button>
+              <Button size="sm" onClick={() => continueJumpSearch(jump.mark)}>
+                {t('highlighter.jumpContinue')}
+              </Button>
+            </div>
           </div>
         </div>
       )}
