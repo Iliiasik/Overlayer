@@ -28,8 +28,6 @@ export const DEFAULT_SETTINGS: Settings = {
 
 function normalize(stored: Partial<Settings> | undefined): Settings {
   const merged = { ...DEFAULT_SETTINGS, ...stored };
-  if ((merged.theme as string) === 'teal') merged.theme = 'blue';
-  if ((merged.theme as string) === 'dark') merged.theme = 'space';
   if (!['green', 'blue', 'space'].includes(merged.theme)) merged.theme = 'space';
   if (!Number.isFinite(merged.edgeOffset)) merged.edgeOffset = DEFAULT_SETTINGS.edgeOffset;
   merged.edgeOffset = Math.min(0.95, Math.max(0.05, merged.edgeOffset));

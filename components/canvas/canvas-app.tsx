@@ -21,6 +21,7 @@ import { DEFAULT_ITEM_COLOR } from '@/lib/annotations/palette';
 import { isRichTextEmpty } from '@/lib/annotations/rich-text';
 import { isExternalUrl } from '@/lib/annotations/url';
 import { CURSORS } from '@/lib/cursors';
+import { loadDroppedImage, type ImageDropPayload, type ImageLoadError } from '@/lib/images';
 import type { CanvasItem, Point } from '@/lib/annotations/types';
 import { pageItemCount } from '@/lib/storage/annotation-repository';
 import type { NotesStore } from '@/lib/storage/annotation-store';
@@ -28,9 +29,15 @@ import { ContextMenu, type ContextMenuState } from './context-menu';
 import { DrawerHeader } from './drawer-header';
 import { ImageDialog } from './image-dialog';
 import { PageBar } from './page-bar';
-import { QuickNotes, QUICK_PADDING, QUICK_WIDTH, type QuickTool } from './quick-notes';
+import {
+  QuickNotes,
+  QUICK_HEIGHT,
+  QUICK_PADDING,
+  QUICK_WIDTH,
+  type QuickTool,
+} from './quick-notes';
 
-const EDITABLE_TYPES = new Set<CanvasItem['type']>(['text', 'sticky', 'button', 'table']);
+const EDITABLE_TYPES = new Set<CanvasItem['type']>(['text', 'sticky', 'button']);
 
 const ITEM_STYLE = { color: DEFAULT_ITEM_COLOR, strokeWidth: 0, opacity: 1 };
 const CONTENT_WIDTH = QUICK_WIDTH - QUICK_PADDING * 2;
@@ -70,6 +77,9 @@ export function CanvasApp({ store, open, onClose }: CanvasAppProps) {
   const [activePageId, setActivePageId] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [pendingImage, setPendingImage] = useState<Point | null>(null);
+  const [dropBusy, setDropBusy] = useState(false);
+  const [dropError, setDropError] = useState<ImageLoadError | null>(null);
+  const dropErrorTimer = useRef<number | undefined>(undefined);
   const [confirmLink, setConfirmLink] = useState<string | null>(null);
   const [confirmPageDelete, setConfirmPageDelete] = useState(false);
   const [menu, setMenu] = useState<ContextMenuState | null>(null);
@@ -148,6 +158,37 @@ export function CanvasApp({ store, open, onClose }: CanvasAppProps) {
       changeEditing(item.id);
     },
     [store, pageId, changeEditing],
+  );
+
+  useEffect(() => () => window.clearTimeout(dropErrorTimer.current), []);
+
+  const dropImage = useCallback(
+    (payload: ImageDropPayload, point: Point) => {
+      setDropBusy(true);
+      setDropError(null);
+      window.clearTimeout(dropErrorTimer.current);
+      void loadDroppedImage(payload).then((result) => {
+        setDropBusy(false);
+        if (!result.ok) {
+          setDropError(result.reason);
+          dropErrorTimer.current = window.setTimeout(() => setDropError(null), 4000);
+          return;
+        }
+        const { image } = result;
+        const renderScale = Math.min(1, CONTENT_WIDTH / image.width);
+        const width = Math.round(image.width * renderScale);
+        const height = Math.round(image.height * renderScale);
+        const position: Point = {
+          x: Math.min(QUICK_WIDTH - QUICK_PADDING - width, Math.max(QUICK_PADDING, point.x)),
+          y: Math.min(QUICK_HEIGHT - QUICK_PADDING - height, Math.max(QUICK_PADDING, point.y)),
+        };
+        store.addItem(
+          pageId,
+          createImageAnnotation(position, image.dataUrl, width, height, ITEM_STYLE),
+        );
+      });
+    },
+    [store, pageId],
   );
 
   const patchItem = useCallback(
@@ -250,6 +291,9 @@ export function CanvasApp({ store, open, onClose }: CanvasAppProps) {
             editingId={editingId}
             onEditingChange={changeEditing}
             onAdd={quickAdd}
+            onDropImage={dropImage}
+            dropBusy={dropBusy}
+            dropError={dropError}
             onPatch={patchItem}
             onRemove={removeItem}
             onTranslate={translateItem}

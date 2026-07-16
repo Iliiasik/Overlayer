@@ -2,6 +2,12 @@ import { ImagePlus, X } from 'lucide-react';
 import { useRef, useState, type DragEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
+import {
+  loadDroppedImage,
+  loadImageFile,
+  payloadFromDataTransfer,
+  type ImageLoadResult,
+} from '@/lib/images';
 import { cn } from '@/lib/utils';
 
 interface ImageDialogProps {
@@ -10,20 +16,7 @@ interface ImageDialogProps {
   onInsert: (dataUrl: string, width: number, height: number) => void;
 }
 
-const MAX_FILE_BYTES = 5 * 1024 * 1024;
-const MAX_DIMENSION = 800;
 const DEFAULT_RENDER_WIDTH = 280;
-
-function downscale(bitmap: ImageBitmap): { dataUrl: string; width: number; height: number } {
-  const scale = Math.min(1, MAX_DIMENSION / Math.max(bitmap.width, bitmap.height));
-  const width = Math.round(bitmap.width * scale);
-  const height = Math.round(bitmap.height * scale);
-  const canvas = document.createElement('canvas');
-  canvas.width = width;
-  canvas.height = height;
-  canvas.getContext('2d')?.drawImage(bitmap, 0, 0, width, height);
-  return { dataUrl: canvas.toDataURL('image/webp', 0.85), width, height };
-}
 
 export function ImageDialog({ open, onClose, onInsert }: ImageDialogProps) {
   const { t } = useTranslation();
@@ -33,27 +26,26 @@ export function ImageDialog({ open, onClose, onInsert }: ImageDialogProps) {
 
   if (!open) return null;
 
-  const accept = async (file: File | undefined) => {
-    setError(false);
-    if (!file || !file.type.startsWith('image/') || file.size > MAX_FILE_BYTES) {
+  const insert = (result: ImageLoadResult) => {
+    if (!result.ok) {
       setError(true);
       return;
     }
-    try {
-      const bitmap = await createImageBitmap(file);
-      const { dataUrl, width, height } = downscale(bitmap);
-      bitmap.close();
-      const renderScale = Math.min(1, DEFAULT_RENDER_WIDTH / width);
-      onInsert(dataUrl, Math.round(width * renderScale), Math.round(height * renderScale));
-    } catch {
-      setError(true);
-    }
+    const { image } = result;
+    const renderScale = Math.min(1, DEFAULT_RENDER_WIDTH / image.width);
+    onInsert(
+      image.dataUrl,
+      Math.round(image.width * renderScale),
+      Math.round(image.height * renderScale),
+    );
   };
 
   const handleDrop = (event: DragEvent) => {
     event.preventDefault();
     setDragOver(false);
-    void accept(event.dataTransfer.files[0]);
+    setError(false);
+    const payload = payloadFromDataTransfer(event.dataTransfer);
+    void loadDroppedImage(payload).then(insert);
   };
 
   return (
@@ -98,7 +90,8 @@ export function ImageDialog({ open, onClose, onInsert }: ImageDialogProps) {
           accept="image/*"
           className="hidden"
           onChange={(event) => {
-            void accept(event.target.files?.[0]);
+            setError(false);
+            void loadImageFile(event.target.files?.[0] ?? null).then(insert);
             event.target.value = '';
           }}
         />

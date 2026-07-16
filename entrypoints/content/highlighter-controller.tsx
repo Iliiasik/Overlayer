@@ -9,6 +9,7 @@ import { ThemeRoot } from '@/components/theme-root';
 import { ensureFontFace } from '@/lib/fonts';
 import { pinShadowHost, setShadowHostVisible } from '@/lib/shadow-host';
 import { initI18n } from '@/lib/i18n';
+import type { TextMarkAnnotation } from '@/lib/annotations/types';
 import type { MarkStore } from '@/lib/storage/annotation-store';
 
 const HIGHLIGHTER_Z_INDEX = 2147483646;
@@ -18,6 +19,7 @@ export interface HighlighterController {
   ensureMounted(): Promise<void>;
   createFromSelection(): Promise<void>;
   togglePanel(): Promise<void>;
+  promptJump(mark: TextMarkAnnotation): Promise<void>;
   setVisible(visible: boolean): void;
   handleLocationChange(): void;
 }
@@ -94,6 +96,10 @@ export function createHighlighterController(
     async togglePanel() {
       await ensureMounted();
       (await waitForHandle())?.togglePanel();
+    },
+    async promptJump(mark) {
+      await ensureMounted();
+      (await waitForHandle())?.promptJump(mark);
     },
     setVisible(visible) {
       if (ui) setShadowHostVisible(ui.shadowHost, visible);

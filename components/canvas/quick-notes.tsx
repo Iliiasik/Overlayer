@@ -1,5 +1,5 @@
-import { Image, Link, StickyNote, Type, type LucideIcon } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { Image, Link, Loader2, StickyNote, Type, type LucideIcon } from 'lucide-react';
+import { useEffect, useRef, useState, type DragEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { useElementSize } from '@/hooks/use-element-size';
@@ -7,6 +7,13 @@ import { itemBounds } from '@/lib/canvas/bounds';
 import type { Camera } from '@/lib/canvas/camera';
 import type { CanvasItem, Point } from '@/lib/annotations/types';
 import { isEditableElement } from '@/lib/dom';
+import {
+  hasImagePayload,
+  payloadFromDataTransfer,
+  type ImageDropPayload,
+  type ImageLoadError,
+} from '@/lib/images';
+import { cn } from '@/lib/utils';
 import { ItemsLayer } from './items-layer';
 import type { SheetBounds } from './items/sheet';
 
@@ -28,6 +35,9 @@ interface QuickNotesProps {
   editingId: string | null;
   onEditingChange: (id: string | null) => void;
   onAdd: (tool: QuickTool, point: Point) => void;
+  onDropImage: (payload: ImageDropPayload, point: Point) => void;
+  dropBusy: boolean;
+  dropError: ImageLoadError | null;
   onPatch: (id: string, changes: Partial<CanvasItem>) => void;
   onRemove: (id: string) => void;
   onTranslate: (id: string, dx: number, dy: number) => void;
@@ -57,6 +67,9 @@ export function QuickNotes({
   editingId,
   onEditingChange,
   onAdd,
+  onDropImage,
+  dropBusy,
+  dropError,
   onPatch,
   onRemove,
   onTranslate,
@@ -67,6 +80,7 @@ export function QuickNotes({
   const containerRef = useRef<HTMLDivElement>(null);
   const size = useElementSize(containerRef);
   const [scroll, setScroll] = useState(0);
+  const [dropActive, setDropActive] = useState(false);
 
   const scale = size.width > 0 ? size.width / QUICK_WIDTH : 1;
   const maxScroll = Math.max(0, QUICK_HEIGHT - size.height / scale);
@@ -95,17 +109,47 @@ export function QuickNotes({
 
   const camera: Camera = { x: 0, y: -clampedScroll * scale, scale };
 
+  const handleDrop = (event: DragEvent) => {
+    if (!hasImagePayload(event.dataTransfer)) return;
+    event.preventDefault();
+    setDropActive(false);
+    const node = containerRef.current;
+    if (!node) return;
+    const rect = node.getBoundingClientRect();
+    const point: Point = {
+      x: Math.min(
+        QUICK_WIDTH - QUICK_PADDING,
+        Math.max(QUICK_PADDING, (event.clientX - rect.left) / scale),
+      ),
+      y: Math.min(
+        QUICK_HEIGHT - QUICK_PADDING,
+        Math.max(QUICK_PADDING, (event.clientY - rect.top) / scale + clampedScroll),
+      ),
+    };
+    onDropImage(payloadFromDataTransfer(event.dataTransfer), point);
+  };
+
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       <div
         ref={containerRef}
-        className="relative flex-1 overflow-hidden bg-[var(--sheet)]"
+        className={cn(
+          'relative flex-1 overflow-hidden bg-[var(--sheet)]',
+          dropActive && 'ring-2 ring-inset ring-ring',
+        )}
         onPointerDown={(event) => {
           if (event.target === event.currentTarget) onEditingChange(null);
         }}
         onContextMenu={(event) => {
           if (!isEditableElement(event.target)) event.preventDefault();
         }}
+        onDragOver={(event) => {
+          if (!hasImagePayload(event.dataTransfer)) return;
+          event.preventDefault();
+          setDropActive(true);
+        }}
+        onDragLeave={() => setDropActive(false)}
+        onDrop={handleDrop}
       >
         {items.length === 0 && (
           <p
@@ -117,7 +161,6 @@ export function QuickNotes({
         )}
         <ItemsLayer
           items={items}
-          tool="select"
           camera={camera}
           editingId={editingId}
           onEditingChange={onEditingChange}
@@ -128,6 +171,17 @@ export function QuickNotes({
           onContextMenu={onContextMenu}
           bounds={SHEET_BOUNDS}
         />
+        {dropBusy && (
+          <div className="absolute bottom-2 right-2 flex items-center gap-1.5 rounded-md border bg-popover px-2 py-1 text-xs text-popover-foreground shadow-md">
+            <Loader2 className="h-3 w-3 animate-spin text-primary" />
+            {t('image.loading')}
+          </div>
+        )}
+        {!dropBusy && dropError && (
+          <div className="absolute bottom-2 right-2 rounded-md border border-destructive/40 bg-popover px-2 py-1 text-xs text-destructive shadow-md">
+            {t(`image.${dropError}`)}
+          </div>
+        )}
       </div>
       <div className="glass-panel flex shrink-0 items-center justify-center gap-1 border-t p-1.5">
         {QUICK_TOOLS.map(({ id, icon: Icon }) => (

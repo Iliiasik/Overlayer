@@ -49,12 +49,6 @@ export function quoteOf(mark: TextMarkAnnotation): string {
   return mark.anchor.text?.quote ?? '';
 }
 
-export function marksMatching(marks: TextMarkAnnotation[], query: string): TextMarkAnnotation[] {
-  const needle = query.trim().toLowerCase();
-  if (!needle) return marks;
-  return marks.filter((mark) => quoteOf(mark).toLowerCase().includes(needle));
-}
-
 export function siteIndexSize(sites: SiteEntry[]): number {
   return sites.reduce(
     (sum, site) =>
@@ -103,15 +97,15 @@ export async function buildSiteIndex(): Promise<SiteEntry[]> {
     return entry;
   };
 
-  for (const { key, record, pages } of quickRecords) {
+  for (const { key, record } of quickRecords) {
     const url = record.origin ? `${record.origin}/` : urlForQuickDomain(record.domain);
     const entry = ensure(record.domain, url);
     entry.notes = {
       key,
       domain: record.domain,
       url,
-      pages,
-      itemCount: pageItemCount(pages),
+      pages: record.pages,
+      itemCount: pageItemCount(record.pages),
       sizeBytes: byteSize(record),
       updatedAt: record.updatedAt,
     };

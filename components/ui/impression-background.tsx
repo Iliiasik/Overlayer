@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useSettings } from '@/hooks/use-settings';
 import type { ThemeSetting } from '@/lib/storage/settings-repository';
+import { cn } from '@/lib/utils';
 
 interface Point {
   x: number;
@@ -224,32 +225,24 @@ const BAYER = [
   [15, 7, 13, 5],
 ];
 
-function mulberry32(seed: number): () => number {
-  let state = seed;
-  return () => {
-    state |= 0;
-    state = (state + 0x6d2b79f5) | 0;
-    let t = Math.imul(state ^ (state >>> 15), 1 | state);
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
+function hashCell(seed: number, cellX: number, cellY: number): number {
+  let h = SEED ^ seed ^ Math.imul(cellX + 1, 0x9e3779b1) ^ Math.imul(cellY + 1, 0x85ebca6b);
+  h = Math.imul(h ^ (h >>> 13), 0xc2b2ae35);
+  h ^= h >>> 16;
+  return (h >>> 0) / 4294967296;
 }
 
-function valueNoise(width: number, height: number, seed: number): (x: number, y: number) => number {
-  const random = mulberry32(SEED ^ seed);
-  const cols = NOISE_CELLS + 1;
-  const rows = Math.ceil((NOISE_CELLS * height) / width) + 1;
-  const lattice = Array.from({ length: rows }, () => Array.from({ length: cols }, () => random()));
-  const cell = width / NOISE_CELLS;
+function valueNoise(seed: number): (x: number, y: number) => number {
+  const cell = GRID_WIDTH / NOISE_CELLS;
   return (x, y) => {
-    const gx = Math.min(x / cell, cols - 1.001);
-    const gy = Math.min(y / cell, rows - 1.001);
+    const gx = x / cell;
+    const gy = y / cell;
     const x0 = Math.floor(gx);
     const y0 = Math.floor(gy);
     const fx = gx - x0;
     const fy = gy - y0;
-    const top = lattice[y0][x0] * (1 - fx) + lattice[y0][x0 + 1] * fx;
-    const bottom = lattice[y0 + 1][x0] * (1 - fx) + lattice[y0 + 1][x0 + 1] * fx;
+    const top = hashCell(seed, x0, y0) * (1 - fx) + hashCell(seed, x0 + 1, y0) * fx;
+    const bottom = hashCell(seed, x0, y0 + 1) * (1 - fx) + hashCell(seed, x0 + 1, y0 + 1) * fx;
     return top * (1 - fy) + bottom * fy;
   };
 }
@@ -287,20 +280,34 @@ function shouldPaint(edge: number, dither: number, x: number, y: number): boolea
   return keep > BAYER[y % 4][x % 4] / 16;
 }
 
-function paint(canvas: HTMLCanvasElement, palette: Palette): void {
+const ARCH_TARGET_DEPTH_PX = 84;
+const ARCH_MIN_DEPTH_CELLS = 5;
+const ARCH_MAX_DEPTH_CELLS = 12;
+const ARCH_SHOULDER = 0.16;
+const ARCH_DOME = 0.15;
+
+function smoothstep(value: number): number {
+  const t = Math.min(1, Math.max(0, value));
+  return t * t * (3 - 2 * t);
+}
+
+function paintBlob(canvas: HTMLCanvasElement, palette: Palette): void {
+  const surfaceWidth = canvas.offsetWidth || window.innerWidth;
+  const surfaceHeight = canvas.offsetHeight || window.innerHeight;
   const width = GRID_WIDTH;
-  const height = Math.max(72, Math.round((width * window.innerHeight) / window.innerWidth));
+  const height = Math.max(72, Math.round((width * surfaceHeight) / surfaceWidth));
   canvas.width = width;
   canvas.height = height;
   const context = canvas.getContext('2d');
   if (!context) return;
 
+  context.clearRect(0, 0, width, height);
   context.fillStyle = palette.paper;
   context.fillRect(0, 0, width, height);
 
   const aspect = width / height;
   const noises = LAYERS.map((layer, index) =>
-    valueNoise(width, height, layer.kind === 'mottle' ? layer.seed : index * 101),
+    valueNoise(layer.kind === 'mottle' ? layer.seed : index * 101),
   );
 
   LAYERS.forEach((layer, index) => {
@@ -331,38 +338,60 @@ function paint(canvas: HTMLCanvasElement, palette: Palette): void {
     }
   });
 
-  const random = mulberry32(SEED ^ 0x5f356495);
   context.globalAlpha = 0.07;
   for (let y = 0; y < height; y++) {
     for (let x = 0; x < width; x++) {
-      if (random() < 0.14) {
-        context.fillStyle = random() < 0.5 ? palette.grainDark : palette.grainLight;
+      const roll = hashCell(0x5f356495, x, y);
+      if (roll < 0.14) {
+        context.fillStyle = roll < 0.07 ? palette.grainDark : palette.grainLight;
         context.fillRect(x, y, 1, 1);
       }
     }
   }
   context.globalAlpha = 1;
+
+  const unit = surfaceWidth / width;
+  const depth = Math.min(
+    ARCH_MAX_DEPTH_CELLS,
+    Math.max(ARCH_MIN_DEPTH_CELLS, ARCH_TARGET_DEPTH_PX / unit),
+  );
+  for (let x = 0; x < width; x++) {
+    const t = x / (width - 1);
+    const profile = smoothstep(t / ARCH_SHOULDER) * smoothstep((1 - t) / ARCH_SHOULDER);
+    const lift = depth * profile * (1 - ARCH_DOME + ARCH_DOME * Math.sin(Math.PI * t));
+    const cut = Math.max(0, Math.round(height - lift));
+    if (cut < height) context.clearRect(x, cut, 1, height - cut);
+  }
 }
 
-export function RisoBackground() {
+export function impressionPaper(theme: ThemeSetting): string {
+  return PALETTES[theme].paper;
+}
+
+export function ImpressionBlob({ className }: { className?: string }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { settings } = useSettings();
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const repaint = () => paint(canvas, PALETTES[settings.theme]);
-    repaint();
-    window.addEventListener('resize', repaint);
-    return () => window.removeEventListener('resize', repaint);
+    let scheduled = 0;
+    const schedule = () => {
+      window.cancelAnimationFrame(scheduled);
+      scheduled = window.requestAnimationFrame(() => paintBlob(canvas, PALETTES[settings.theme]));
+    };
+    paintBlob(canvas, PALETTES[settings.theme]);
+    const observer = new ResizeObserver(schedule);
+    observer.observe(canvas);
+    return () => {
+      window.cancelAnimationFrame(scheduled);
+      observer.disconnect();
+    };
   }, [settings.theme]);
 
   return (
-    <canvas
-      ref={canvasRef}
-      aria-hidden="true"
-      className="pointer-events-none fixed inset-0 -z-10 h-full w-full"
-      style={{ imageRendering: 'pixelated' }}
-    />
+    <div aria-hidden="true" className={cn('pointer-events-none absolute -z-10', className)}>
+      <canvas ref={canvasRef} className="h-full w-full" style={{ imageRendering: 'pixelated' }} />
+    </div>
   );
 }

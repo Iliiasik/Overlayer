@@ -1,5 +1,5 @@
 import type { TextMarkAnnotation } from '@/lib/annotations/types';
-import { resolveQuote } from './anchor';
+import { resolveQuote, resolveQuotes } from './anchor';
 
 export const MARK_TAG = 'overlayer-mark';
 const HIGHLIGHT_ALPHA = '59';
@@ -82,6 +82,21 @@ export function restoreAnnotation(annotation: TextMarkAnnotation): boolean {
   return range ? wrapAnnotation(annotation, range) : false;
 }
 
+export function restoreAnnotations(annotations: TextMarkAnnotation[]): number {
+  const missing = annotations.filter(
+    (annotation) => annotation.anchor.text && !isMarkPresent(annotation.id),
+  );
+  if (missing.length === 0) return 0;
+  const resolved = resolveQuotes(missing.map((annotation) => annotation.anchor.text!));
+  return missing
+    .flatMap((annotation, index) => {
+      const match = resolved[index];
+      return match ? [{ annotation, match }] : [];
+    })
+    .sort((a, b) => b.match.start - a.match.start)
+    .filter(({ annotation, match }) => wrapAnnotation(annotation, match.range)).length;
+}
+
 export function markIdAt(target: EventTarget | null): string | null {
   if (!(target instanceof Element)) return null;
   return target.closest<HTMLElement>(MARK_TAG)?.dataset.ovlId ?? null;
@@ -91,12 +106,12 @@ export function markClientRect(id: string): DOMRect | null {
   return document.querySelector(markSelector(id))?.getBoundingClientRect() ?? null;
 }
 
-export function scrollToMark(id: string): void {
-  const elements = document.querySelectorAll<HTMLElement>(markSelector(id));
-  const first = elements[0];
-  if (!first) return;
-  first.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  for (const element of elements) {
+export function markElement(id: string): HTMLElement | null {
+  return document.querySelector<HTMLElement>(markSelector(id));
+}
+
+export function flashMark(id: string): void {
+  for (const element of document.querySelectorAll<HTMLElement>(markSelector(id))) {
     element.animate(
       [
         { boxShadow: `0 0 0 4px ${element.style.backgroundColor}` },

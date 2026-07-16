@@ -156,7 +156,7 @@ export function EdgeDock({
 
   return (
     <div
-      className="fixed right-3 z-30 flex cursor-grab touch-none flex-col items-center gap-2 active:cursor-grabbing"
+      className="fixed right-3 z-30 flex touch-none flex-col items-center gap-2"
       style={{ top, pointerEvents: 'auto' }}
       onPointerDown={startDrag}
     >

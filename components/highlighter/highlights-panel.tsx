@@ -16,15 +16,16 @@ import { Skeleton } from '@/components/ui/skeleton';
 import type { TextMarkAnnotation } from '@/lib/annotations/types';
 import { isolateEvents } from '@/lib/events';
 import { annotationRepository } from '@/lib/storage/annotation-repository';
+import { setPendingJump } from '@/lib/storage/pending-jump';
 import { listDomainMarks, type DomainMark } from '@/lib/storage/site-index';
-import { isMarkPresent, restoreAnnotation, scrollToMark } from '@/lib/text-marks/marker';
 import { cn } from '@/lib/utils';
 
 interface HighlightsPanelProps {
   marks: TextMarkAnnotation[];
+  failedIds: Set<string>;
   onClose: () => void;
-  onSelect: (id: string) => void;
   onDelete: (mark: TextMarkAnnotation) => void;
+  onJump: (mark: TextMarkAnnotation) => void;
 }
 
 const SKELETON_DELAY_MS = 250;
@@ -65,7 +66,13 @@ function computePageSize(): number {
   return Math.max(MIN_PAGE_SIZE, Math.floor(available / ITEM_HEIGHT));
 }
 
-export function HighlightsPanel({ marks, onClose, onSelect, onDelete }: HighlightsPanelProps) {
+export function HighlightsPanel({
+  marks,
+  failedIds,
+  onClose,
+  onDelete,
+  onJump,
+}: HighlightsPanelProps) {
   const { t } = useTranslation();
   const [query, setQuery] = useState('');
   const [scope, setScope] = useState<SearchScope>('page');
@@ -152,13 +159,12 @@ export function HighlightsPanel({ marks, onClose, onSelect, onDelete }: Highligh
 
   const jumpTo = (row: DomainMark) => {
     if (!row.currentPage) {
-      window.open(row.url, '_blank', 'noopener');
+      void setPendingJump(row.url, row.mark.id).then(() => {
+        window.open(row.url, '_blank', 'noopener');
+      });
       return;
     }
-    if (!isMarkPresent(row.mark.id)) restoreAnnotation(row.mark);
-    if (!isMarkPresent(row.mark.id)) return;
-    scrollToMark(row.mark.id);
-    onSelect(row.mark.id);
+    onJump(row.mark);
   };
 
   const deleteRow = (row: DomainMark) => {
@@ -269,7 +275,6 @@ export function HighlightsPanel({ marks, onClose, onSelect, onDelete }: Highligh
         ) : (
           <ul className="flex flex-col gap-0.5">
             {pageItems.map((row) => {
-              const present = row.currentPage && isMarkPresent(row.mark.id);
               return (
                 <li key={row.mark.id}>
                   <Item
@@ -281,7 +286,7 @@ export function HighlightsPanel({ marks, onClose, onSelect, onDelete }: Highligh
                     }}
                     className={cn(
                       'cursor-pointer transition-colors hover:bg-accent',
-                      row.currentPage && !present && 'opacity-50',
+                      failedIds.has(row.mark.id) && 'opacity-50',
                     )}
                   >
                     <ItemMedia>
@@ -293,7 +298,7 @@ export function HighlightsPanel({ marks, onClose, onSelect, onDelete }: Highligh
                     <ItemContent>
                       <ItemTitle
                         className={cn(
-                          'line-clamp-2 font-normal',
+                          'line-clamp-2 break-words font-normal',
                           row.mark.bold && 'font-bold',
                           row.mark.italic && 'italic',
                         )}
@@ -306,7 +311,7 @@ export function HighlightsPanel({ marks, onClose, onSelect, onDelete }: Highligh
                       {row.mark.note && (
                         <ItemDescription className="flex items-start gap-1">
                           <StickyNote className="mt-0.5 h-3 w-3 shrink-0" />
-                          <span className="line-clamp-2">{row.mark.note}</span>
+                          <span className="line-clamp-2 break-words">{row.mark.note}</span>
                         </ItemDescription>
                       )}
                     </ItemContent>

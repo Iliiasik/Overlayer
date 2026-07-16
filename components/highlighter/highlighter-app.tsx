@@ -1,13 +1,16 @@
-import { Bold, Highlighter, Italic, Trash2 } from 'lucide-react';
-import { useCallback, useEffect, useImperativeHandle, useState, type Ref } from 'react';
+import { Bold, Highlighter, Italic, Loader2, Trash2, X } from 'lucide-react';
+import { useCallback, useEffect, useImperativeHandle, useRef, useState, type Ref } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { HexInput } from '@/components/ui/hex-input';
+import { Popover, PopoverAnchor, PopoverContent } from '@/components/ui/popover';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { useAnnotations } from '@/hooks/use-annotations';
 import { captureRange } from '@/lib/text-marks/anchor';
 import { Toaster } from '@/components/ui/toaster';
 import { toast } from '@/lib/toast';
 import {
+  isMarkPresent,
   markClientRect,
   markIdAt,
   restoreAnnotation,
@@ -15,6 +18,7 @@ import {
   updateAnnotationStyle,
   wrapAnnotation,
 } from '@/lib/text-marks/marker';
+import { focusMark, scrollToFindMark } from '@/lib/text-marks/scroll-finder';
 import { createTextMarkAnnotation } from '@/lib/annotations/factory';
 import { DRAWING_COLORS } from '@/lib/annotations/palette';
 import { isolateEvents } from '@/lib/events';
@@ -27,6 +31,14 @@ import { HighlightsPanel } from './highlights-panel';
 export interface HighlighterHandle {
   createFromSelection: () => void;
   togglePanel: () => void;
+  promptJump: (mark: TextMarkAnnotation) => void;
+}
+
+type JumpPhase = 'prompt' | 'searching' | 'notFound';
+
+interface JumpState {
+  mark: TextMarkAnnotation;
+  phase: JumpPhase;
 }
 
 interface HighlighterAppProps {
@@ -47,6 +59,47 @@ function selectionInPage(): Selection | null {
 }
 
 const POPUP_WIDTH = 272;
+const NOTE_MAX_LENGTH = 200;
+const NOTE_CARD_WIDTH = 256;
+const NOTE_CARD_CLOSE_MS = 120;
+
+function NoteField({
+  note,
+  placeholder,
+  onChange,
+}: {
+  note: string;
+  placeholder: string;
+  onChange: (value: string) => void;
+}) {
+  const areaRef = useRef<HTMLTextAreaElement>(null);
+
+  const resize = (area: HTMLTextAreaElement) => {
+    area.style.height = 'auto';
+    area.style.height = `${area.scrollHeight}px`;
+  };
+
+  useEffect(() => {
+    if (areaRef.current) resize(areaRef.current);
+  }, []);
+
+  return (
+    <ScrollArea className="max-h-24 rounded-md border border-input bg-background focus-within:ring-2 focus-within:ring-ring">
+      <textarea
+        ref={areaRef}
+        defaultValue={note}
+        maxLength={NOTE_MAX_LENGTH}
+        rows={2}
+        placeholder={placeholder}
+        onChange={(event) => {
+          resize(event.currentTarget);
+          onChange(event.currentTarget.value);
+        }}
+        className="block w-full resize-none overflow-hidden break-words bg-transparent px-2.5 py-1.5 text-sm outline-none"
+      />
+    </ScrollArea>
+  );
+}
 
 function pagePointFromRect(rect: DOMRect): Point {
   return {
@@ -67,7 +120,17 @@ export function HighlighterApp({ store, handleRef, onPanelChange }: HighlighterA
   const [popupId, setPopupId] = useState<string | null>(null);
   const [popupPoint, setPopupPoint] = useState<Point | null>(null);
   const [panelOpen, setPanelOpen] = useState(false);
-  const [tooltip, setTooltip] = useState<{ text: string; x: number; y: number } | null>(null);
+  const [jump, setJump] = useState<JumpState | null>(null);
+  const [failedIds, setFailedIds] = useState<Set<string>>(new Set());
+  const [noteCard, setNoteCard] = useState<{
+    text: string;
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  } | null>(null);
+  const noteCardHovered = useRef(false);
+  const noteCardTimer = useRef<number | undefined>(undefined);
 
   const marks = annotations.filter((a): a is TextMarkAnnotation => a.type === 'textmark');
   const popupMark = marks.find((mark) => mark.id === popupId) ?? null;
@@ -99,9 +162,32 @@ export function HighlighterApp({ store, handleRef, onPanelChange }: HighlighterA
     setPopupPoint(pagePointFromRect(rect));
   }, [store, color]);
 
+  const startJumpSearch = useCallback((mark: TextMarkAnnotation) => {
+    setJump({ mark, phase: 'searching' });
+    void (async () => {
+      const found = isMarkPresent(mark.id)
+        ? await focusMark(mark)
+        : (await scrollToFindMark(mark)) && (await focusMark(mark));
+      setJump(found ? null : { mark, phase: 'notFound' });
+      setFailedIds((current) => {
+        const next = new Set(current);
+        if (found) {
+          next.delete(mark.id);
+        } else {
+          next.add(mark.id);
+        }
+        return next;
+      });
+    })();
+  }, []);
+
   useImperativeHandle(
     handleRef,
-    () => ({ createFromSelection, togglePanel: () => setPanelOpen((open) => !open) }),
+    () => ({
+      createFromSelection,
+      togglePanel: () => setPanelOpen((open) => !open),
+      promptJump: (mark: TextMarkAnnotation) => setJump({ mark, phase: 'prompt' }),
+    }),
     [createFromSelection],
   );
 
@@ -111,27 +197,50 @@ export function HighlighterApp({ store, handleRef, onPanelChange }: HighlighterA
 
   useEffect(() => {
     if (!settings.selectionButton) return;
+    const showForSelection = () => {
+      const selection = selectionInPage();
+      if (!selection) {
+        setSelectionPoint(null);
+        return;
+      }
+      const rect = selection.getRangeAt(0).getBoundingClientRect();
+      if (rect.width === 0 && rect.height === 0) {
+        setSelectionPoint(null);
+        return;
+      }
+      setSelectionPoint({
+        x: rect.right + window.scrollX + 6,
+        y: rect.bottom + window.scrollY + 6,
+      });
+    };
     const onMouseUp = (event: MouseEvent) => {
       if (markIdAt(event.target)) return;
-      window.setTimeout(() => {
-        const selection = selectionInPage();
-        if (!selection) {
-          setSelectionPoint(null);
-          return;
-        }
-        const rect = selection.getRangeAt(0).getBoundingClientRect();
-        setSelectionPoint({
-          x: rect.right + window.scrollX + 6,
-          y: rect.bottom + window.scrollY + 6,
-        });
-      });
+      window.setTimeout(showForSelection);
     };
     const onSelectionChange = () => {
       if (!selectionInPage()) setSelectionPoint(null);
     };
+    let staleTimer: number | undefined;
+    const staleObserver = new MutationObserver(() => {
+      window.clearTimeout(staleTimer);
+      staleTimer = window.setTimeout(() => {
+        setSelectionPoint((current) => {
+          if (!current) return current;
+          const selection = selectionInPage();
+          if (!selection) return null;
+          const rect = selection.getRangeAt(0).getBoundingClientRect();
+          return rect.width === 0 && rect.height === 0 ? null : current;
+        });
+      }, 250);
+    });
+    staleObserver.observe(document.body, { childList: true, subtree: true });
+    const initialTimer = window.setTimeout(showForSelection);
     document.addEventListener('mouseup', onMouseUp);
     document.addEventListener('selectionchange', onSelectionChange);
     return () => {
+      window.clearTimeout(initialTimer);
+      window.clearTimeout(staleTimer);
+      staleObserver.disconnect();
       document.removeEventListener('mouseup', onMouseUp);
       document.removeEventListener('selectionchange', onSelectionChange);
     };
@@ -148,6 +257,13 @@ export function HighlighterApp({ store, handleRef, onPanelChange }: HighlighterA
     return () => document.removeEventListener('contextmenu', onContextMenu);
   }, [openPopupForMark]);
 
+  const scheduleNoteCardClose = useCallback(() => {
+    window.clearTimeout(noteCardTimer.current);
+    noteCardTimer.current = window.setTimeout(() => {
+      if (!noteCardHovered.current) setNoteCard(null);
+    }, NOTE_CARD_CLOSE_MS);
+  }, []);
+
   useEffect(() => {
     const onOver = (event: MouseEvent) => {
       const id = markIdAt(event.target);
@@ -158,22 +274,26 @@ export function HighlighterApp({ store, handleRef, onPanelChange }: HighlighterA
       if (!mark?.note) return;
       const rect = markClientRect(id);
       if (!rect) return;
-      setTooltip({
+      window.clearTimeout(noteCardTimer.current);
+      setNoteCard({
         text: mark.note,
         x: rect.left + window.scrollX,
-        y: rect.top + window.scrollY - 8,
+        y: rect.top + window.scrollY,
+        width: rect.width,
+        height: rect.height,
       });
     };
     const onOut = (event: MouseEvent) => {
-      if (markIdAt(event.target)) setTooltip(null);
+      if (markIdAt(event.target)) scheduleNoteCardClose();
     };
     document.addEventListener('mouseover', onOver);
     document.addEventListener('mouseout', onOut);
     return () => {
+      window.clearTimeout(noteCardTimer.current);
       document.removeEventListener('mouseover', onOver);
       document.removeEventListener('mouseout', onOut);
     };
-  }, [store]);
+  }, [store, scheduleNoteCardClose]);
 
   const patchMark = (mark: TextMarkAnnotation, changes: Partial<TextMarkAnnotation>) => {
     const next = { ...mark, ...changes };
@@ -284,14 +404,11 @@ export function HighlighterApp({ store, handleRef, onPanelChange }: HighlighterA
                 <Trash2 className="h-3.5 w-3.5" />
               </Button>
             </div>
-            <textarea
+            <NoteField
               key={popupMark.id}
-              defaultValue={popupMark.note}
-              maxLength={400}
+              note={popupMark.note}
               placeholder={t('highlighter.notePlaceholder')}
-              rows={2}
-              onChange={(event) => patchMark(popupMark, { note: event.currentTarget.value })}
-              className="w-full resize-none rounded-md border border-input bg-background px-2.5 py-1.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              onChange={(value) => patchMark(popupMark, { note: value })}
             />
           </div>
         </>
@@ -299,18 +416,105 @@ export function HighlighterApp({ store, handleRef, onPanelChange }: HighlighterA
       {panelOpen && (
         <HighlightsPanel
           marks={marks}
+          failedIds={failedIds}
           onClose={() => setPanelOpen(false)}
-          onSelect={openPopupForMark}
           onDelete={removeMark}
+          onJump={startJumpSearch}
         />
       )}
-      {tooltip && (
+      {jump?.phase === 'prompt' && (
         <div
-          className="absolute z-20 max-w-64 -translate-y-full whitespace-pre-wrap rounded-md bg-primary px-3 py-1.5 text-xs text-primary-foreground shadow-md"
-          style={{ left: tooltip.x, top: tooltip.y }}
+          className="fixed bottom-6 left-1/2 z-30 flex w-80 max-w-[calc(100vw-24px)] -translate-x-1/2 flex-col gap-2.5 rounded-xl border bg-popover p-3 text-popover-foreground shadow-xl"
+          style={{ pointerEvents: 'auto' }}
+          {...isolateEvents}
         >
-          {tooltip.text}
+          <div className="flex items-center gap-2">
+            <span
+              className="h-2.5 w-2.5 shrink-0 rounded-full"
+              style={{ backgroundColor: jump.mark.style.color }}
+            />
+            <p className="line-clamp-2 min-w-0 flex-1 break-words text-sm">
+              {jump.mark.anchor.text?.quote}
+            </p>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-6 w-6 shrink-0 text-muted-foreground"
+              aria-label={t('common.cancel')}
+              onClick={() => setJump(null)}
+            >
+              <X className="h-3.5 w-3.5" />
+            </Button>
+          </div>
+          <Button size="sm" onClick={() => startJumpSearch(jump.mark)}>
+            {t('highlighter.jumpGo')}
+          </Button>
         </div>
+      )}
+      {jump?.phase === 'searching' && (
+        <div
+          className="fixed inset-0 z-30 flex items-center justify-center bg-black/25"
+          style={{ pointerEvents: 'auto' }}
+          {...isolateEvents}
+        >
+          <div className="flex items-center gap-3 rounded-xl border bg-popover px-5 py-4 text-popover-foreground shadow-xl">
+            <Loader2 className="h-5 w-5 animate-spin text-primary" />
+            <span className="text-sm">{t('highlighter.jumpSearching')}</span>
+          </div>
+        </div>
+      )}
+      {jump?.phase === 'notFound' && (
+        <div
+          className="fixed inset-0 z-30 flex items-center justify-center bg-black/25"
+          style={{ pointerEvents: 'auto' }}
+          {...isolateEvents}
+        >
+          <div className="flex w-80 max-w-[calc(100vw-24px)] flex-col gap-3 rounded-xl border bg-popover p-4 text-popover-foreground shadow-xl">
+            <p className="text-sm">{t('highlighter.jumpNotFound')}</p>
+            <Button size="sm" onClick={() => setJump(null)}>
+              {t('common.ok')}
+            </Button>
+          </div>
+        </div>
+      )}
+      {noteCard && (
+        <Popover open modal={false}>
+          <PopoverAnchor asChild>
+            <div
+              className="pointer-events-none absolute"
+              style={{
+                left: noteCard.x,
+                top: noteCard.y,
+                width: noteCard.width,
+                height: noteCard.height,
+              }}
+            />
+          </PopoverAnchor>
+          <PopoverContent
+            side="top"
+            align="start"
+            className="p-0"
+            style={{ width: NOTE_CARD_WIDTH, pointerEvents: 'auto' }}
+            onOpenAutoFocus={(event) => event.preventDefault()}
+            onPointerEnter={() => {
+              noteCardHovered.current = true;
+              window.clearTimeout(noteCardTimer.current);
+            }}
+            onPointerLeave={() => {
+              noteCardHovered.current = false;
+              scheduleNoteCardClose();
+            }}
+          >
+            <ScrollArea className="max-h-40 rounded-lg">
+              <p
+                className="whitespace-pre-wrap break-words px-3 py-2 text-sm"
+                style={{ width: NOTE_CARD_WIDTH - 2 }}
+              >
+                {noteCard.text}
+              </p>
+            </ScrollArea>
+          </PopoverContent>
+        </Popover>
       )}
       <Toaster />
     </div>

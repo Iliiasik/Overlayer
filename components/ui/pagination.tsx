@@ -71,7 +71,7 @@ export function PaginationEllipsis({ className, ...props }: HTMLAttributes<HTMLS
   );
 }
 
-export function pageNumbers(current: number, total: number): (number | 'ellipsis')[] {
+function pageNumbers(current: number, total: number): (number | 'ellipsis')[] {
   if (total <= 5) return Array.from({ length: total }, (_, i) => i + 1);
   const pages = new Set<number>([1, total, current - 1, current, current + 1]);
   const sorted = [...pages].filter((page) => page >= 1 && page <= total).sort((a, b) => a - b);

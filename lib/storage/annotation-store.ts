@@ -4,7 +4,6 @@ import { quickKeyForUrl, pageKeyForUrl } from './page-key';
 import {
   annotationRepository,
   createNotePage,
-  normalizeQuickPages,
   pageItemCount,
   type NotePage,
   type PageRecord,
@@ -175,7 +174,7 @@ export function createNotesStore(url: string): NotesStore {
   });
 
   const unwatch = watchStorageKey(key, (newValue) => {
-    const next = normalizeQuickPages(newValue as QuickRecord | undefined);
+    const next = (newValue as QuickRecord | undefined)?.pages ?? [];
     const serialized = JSON.stringify(next);
     if (serialized === lastPersisted) return;
     scheduler.cancel();

@@ -76,16 +76,6 @@ describe('notesStore', () => {
     expect(store.getPages()[0].items).toHaveLength(1);
   });
 
-  it('migrates a legacy single-board record into one page', async () => {
-    await fakeBrowser.storage.local.set({
-      'quick:example.com': { domain: 'example.com', items: [sticky()], updatedAt: 7 },
-    });
-    const store = createNotesStore(URL);
-    await store.ready;
-    expect(store.getPages()).toHaveLength(1);
-    expect(store.getPages()[0].items).toHaveLength(1);
-  });
-
   it('collapses rapid mutations into one save', async () => {
     const save = vi.spyOn(annotationRepository, 'saveQuick');
     const store = createNotesStore(URL);

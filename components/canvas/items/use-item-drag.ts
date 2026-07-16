@@ -1,5 +1,5 @@
 import { useState, type PointerEvent as ReactPointerEvent } from 'react';
-import type { Point, ToolId } from '@/lib/annotations/types';
+import type { Point } from '@/lib/annotations/types';
 import { clampWithin, type SheetBounds, type Size } from './sheet';
 
 export interface DragState {
@@ -65,22 +65,4 @@ export function useItemDrag(
   };
 
   return { offset, onPointerDown };
-}
-
-export function dragOrDeleteHandler(
-  tool: ToolId,
-  editing: boolean,
-  id: string,
-  onRemove: (id: string) => void,
-  onPointerDown: (event: ReactPointerEvent) => void,
-) {
-  return (event: ReactPointerEvent) => {
-    if (event.button !== 0) return;
-    if (tool === 'delete') {
-      event.stopPropagation();
-      onRemove(id);
-      return;
-    }
-    if (tool === 'select' && !editing) onPointerDown(event);
-  };
 }

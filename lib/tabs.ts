@@ -1,10 +1,16 @@
 import { browser } from 'wxt/browser';
 import { MessageType } from './messaging';
+import { setPendingJump } from './storage/pending-jump';
 
 const OPEN_NOTES_DELAY_MS = 400;
 
 export async function openTab(url: string): Promise<void> {
   await browser.tabs.create({ url });
+}
+
+export async function openTabToMark(url: string, markId: string): Promise<void> {
+  await setPendingJump(url, markId);
+  await openTab(url);
 }
 
 export async function openTabWithNotes(url: string): Promise<void> {

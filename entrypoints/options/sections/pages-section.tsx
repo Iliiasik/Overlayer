@@ -16,7 +16,7 @@ import { Segmented } from '@/components/ui/segmented';
 import { Skeleton } from '@/components/ui/skeleton';
 import { faviconUrl } from '@/lib/favicon';
 import { formatBytes } from '@/lib/format';
-import { openTab, openTabWithNotes } from '@/lib/tabs';
+import { openTab, openTabToMark, openTabWithNotes } from '@/lib/tabs';
 import { toast } from '@/lib/toast';
 import { annotationRepository } from '@/lib/storage/annotation-repository';
 import { isNotesKey, isQuickKey } from '@/lib/storage/page-key';
@@ -146,7 +146,7 @@ function QuoteList({
   onDeleteMark,
 }: {
   marks: TextMarkAnnotation[];
-  onOpen: () => void;
+  onOpen: (mark: TextMarkAnnotation) => void;
   onDeleteMark: (markId: string) => void;
 }) {
   const { t } = useTranslation();
@@ -158,9 +158,9 @@ function QuoteList({
           key={mark.id}
           role="button"
           tabIndex={0}
-          onClick={onOpen}
+          onClick={() => onOpen(mark)}
           onKeyDown={(event) => {
-            if (event.key === 'Enter') onOpen();
+            if (event.key === 'Enter') onOpen(mark);
           }}
           className="cursor-pointer py-1.5 transition-colors hover:bg-accent"
         >
@@ -173,14 +173,16 @@ function QuoteList({
           <ItemContent>
             <ItemTitle
               className={cn(
-                'line-clamp-2 font-normal',
+                'line-clamp-2 break-words font-normal',
                 mark.bold && 'font-bold',
                 mark.italic && 'italic',
               )}
             >
               {quoteOf(mark)}
             </ItemTitle>
-            {mark.note && <ItemDescription className="line-clamp-1">{mark.note}</ItemDescription>}
+            {mark.note && (
+              <ItemDescription className="line-clamp-1 break-words">{mark.note}</ItemDescription>
+            )}
           </ItemContent>
           <ItemActions>
             <DeleteButton label={t('common.delete')} onDelete={() => onDeleteMark(mark.id)} />
@@ -248,7 +250,7 @@ function HighlightPageRow({
       {open && (
         <QuoteList
           marks={marks}
-          onOpen={() => void openTab(page.url)}
+          onOpen={(mark) => void openTabToMark(page.url, mark.id)}
           onDeleteMark={(markId) => onDeleteMark(page.url, markId)}
         />
       )}
@@ -501,9 +503,9 @@ function TextTab({
               <Item
                 role="button"
                 tabIndex={0}
-                onClick={() => void openTab(row.page.url)}
+                onClick={() => void openTabToMark(row.page.url, row.mark.id)}
                 onKeyDown={(event) => {
-                  if (event.key === 'Enter') void openTab(row.page.url);
+                  if (event.key === 'Enter') void openTabToMark(row.page.url, row.mark.id);
                 }}
                 className="cursor-pointer transition-colors hover:bg-accent"
               >
@@ -516,7 +518,7 @@ function TextTab({
                 <ItemContent>
                   <ItemTitle
                     className={cn(
-                      'line-clamp-2 font-normal',
+                      'line-clamp-2 break-words font-normal',
                       row.mark.bold && 'font-bold',
                       row.mark.italic && 'italic',
                     )}

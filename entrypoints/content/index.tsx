@@ -2,23 +2,19 @@ import '@/assets/tailwind.css';
 import { MessageType, onMessage, type ExtensionState } from '@/lib/messaging';
 import { isAnnotatableUrl, quickKeyForUrl } from '@/lib/storage/page-key';
 import { createMarkStore, createNotesStore, type MarkStore } from '@/lib/storage/annotation-store';
-import { removeAllMarks, restoreAnnotation, setMarksVisible } from '@/lib/text-marks/marker';
+import { takePendingJump } from '@/lib/storage/pending-jump';
+import { removeAllMarks, setMarksVisible } from '@/lib/text-marks/marker';
+import { createMarkRestorer } from '@/lib/text-marks/restorer';
 import { createCanvasController } from './canvas-controller';
 import { createEdgeDockController } from './edge-dock-controller';
-import { createHighlighterController } from './highlighter-controller';
+import { createHighlighterController, type HighlighterController } from './highlighter-controller';
 
-const MARK_RESTORE_RETRY_MS = 1500;
-
-async function restoreMarks(store: MarkStore): Promise<number> {
-  await store.ready;
-  const marks = store.getSnapshot();
-  const unresolved = marks.filter((mark) => !restoreAnnotation(mark));
-  if (unresolved.length > 0) {
-    window.setTimeout(() => {
-      for (const mark of unresolved) restoreAnnotation(mark);
-    }, MARK_RESTORE_RETRY_MS);
-  }
-  return marks.length;
+async function runPendingJump(store: MarkStore, highlighter: HighlighterController): Promise<void> {
+  const markId = await takePendingJump(store.url);
+  if (!markId) return;
+  const mark = store.getSnapshot().find((candidate) => candidate.id === markId);
+  if (!mark) return;
+  await highlighter.promptJump(mark);
 }
 
 export default defineContentScript({
@@ -28,6 +24,7 @@ export default defineContentScript({
     let markStore = createMarkStore(window.location.href);
     let quickStore = createNotesStore(window.location.href);
     let marksVisible = true;
+    let restorer = createMarkRestorer(markStore, () => marksVisible);
     const canvas = createCanvasController(ctx, () => quickStore);
     const dock = createEdgeDockController(
       ctx,
@@ -69,9 +66,11 @@ export default defineContentScript({
 
     ctx.addEventListener(window, 'wxt:locationchange', ({ newUrl }) => {
       if (newUrl.href === markStore.url) return;
+      restorer.dispose();
       markStore.dispose();
       removeAllMarks();
       markStore = createMarkStore(newUrl.href);
+      restorer = createMarkRestorer(markStore, () => marksVisible);
       if (quickKeyForUrl(newUrl.href) !== quickStore.key) {
         quickStore.dispose();
         quickStore = createNotesStore(newUrl.href);
@@ -80,14 +79,16 @@ export default defineContentScript({
       canvas.handleLocationChange();
       highlighter.handleLocationChange();
       dock.handleLocationChange();
-      void restoreMarks(markStore).then((markCount) => {
+      void restorer.start().then((markCount) => {
         if (markCount > 0) void highlighter.ensureMounted();
+        void runPendingJump(markStore, highlighter);
       });
     });
 
     if (!isAnnotatableUrl(window.location.href)) return;
-    const markCount = await restoreMarks(markStore);
+    const markCount = await restorer.start();
     if (markCount > 0) await highlighter.ensureMounted();
     await dock.ensureMounted();
+    void runPendingJump(markStore, highlighter);
   },
 });

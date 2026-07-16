@@ -1,18 +1,16 @@
 import type { MouseEvent as ReactMouseEvent } from 'react';
 import type { Camera } from '@/lib/canvas/camera';
-import type { CanvasItem, Point, ToolId } from '@/lib/annotations/types';
+import type { CanvasItem, Point } from '@/lib/annotations/types';
 import { isEditableElement } from '@/lib/dom';
 import { ButtonItem } from './items/button-item';
 import { ImageItem } from './items/image-item';
 import { StickyItem } from './items/sticky-item';
-import { TableItem } from './items/table-item';
 import { TextItem } from './items/text-item';
 import type { SheetBounds } from './items/sheet';
 import type { ItemProps } from './items/shell';
 
 interface ItemsLayerProps {
   items: CanvasItem[];
-  tool: ToolId;
   camera: Camera;
   editingId: string | null;
   onEditingChange: (id: string | null) => void;
@@ -32,8 +30,6 @@ function renderItem(item: CanvasItem, props: Omit<ItemProps<never>, 'annotation'
       return <TextItem key={item.id} annotation={item} {...props} />;
     case 'button':
       return <ButtonItem key={item.id} annotation={item} {...props} />;
-    case 'table':
-      return <TableItem key={item.id} annotation={item} {...props} />;
     case 'image':
       return <ImageItem key={item.id} annotation={item} {...props} />;
     default:
@@ -43,7 +39,6 @@ function renderItem(item: CanvasItem, props: Omit<ItemProps<never>, 'annotation'
 
 export function ItemsLayer({
   items,
-  tool,
   camera,
   editingId,
   onEditingChange,
@@ -76,7 +71,6 @@ export function ItemsLayer({
     >
       {items.map((item) =>
         renderItem(item, {
-          tool,
           scale: camera.scale,
           editing: editingId === item.id,
           onEditingChange,

@@ -6,6 +6,7 @@
     "delete": "Delete",
     "edit": "Edit",
     "confirm": "Open",
+    "ok": "OK",
     "undo": "Undo"
   },
   "tools": {
@@ -22,7 +23,6 @@
     "title": "Notes canvas",
     "subtitle": "Quick notes for this site",
     "close": "Close canvas",
-    "dragTable": "Drag table",
     "quickEmpty": "Quick notes for this site. Add text, a sticky note, a link or an image with the buttons below.",
     "bringToFront": "Bring to front",
     "sendToBack": "Send to back",
@@ -53,7 +53,7 @@
     "hideHighlights": "Hide highlights",
     "showHighlights": "Show highlights",
     "unavailable": "Overlayer is not available on this page",
-    "options": "Settings"
+    "options": "Settings and Notes"
   },
   "sticky": {
     "placeholder": "Note text…"
@@ -70,15 +70,11 @@
   "image": {
     "title": "Add image",
     "dropHint": "Drop an image here or click to choose a file",
-    "invalid": "Choose an image file up to 5 MB"
-  },
-  "table": {
-    "row": "Row",
-    "column": "Column",
-    "addRow": "Add row",
-    "removeRow": "Remove row",
-    "addColumn": "Add column",
-    "removeColumn": "Remove column"
+    "invalid": "Choose an image file up to 5 MB",
+    "loading": "Adding image…",
+    "notImage": "This is not an image",
+    "tooLarge": "Image is larger than 5 MB",
+    "loadFailed": "Could not load the image"
   },
   "options": {
     "title": "Overlayer Settings",
@@ -139,6 +135,9 @@
     "bold": "Bold",
     "italic": "Italic",
     "withNote": "With note",
-    "deleted": "Highlight deleted"
+    "deleted": "Highlight deleted",
+    "jumpGo": "Jump to highlight",
+    "jumpSearching": "Searching the page…",
+    "jumpNotFound": "Highlight not found on this page"
   }
 }

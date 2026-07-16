@@ -1,5 +1,3 @@
-export type ToolId = 'select' | 'text' | 'sticky' | 'button' | 'table' | 'image' | 'delete';
-
 export interface Point {
   x: number;
   y: number;
@@ -48,11 +46,6 @@ export interface ButtonAnnotation extends ItemBase {
   icon?: string;
 }
 
-export interface TableAnnotation extends ItemBase {
-  type: 'table';
-  cells: string[][];
-}
-
 export interface ImageAnnotation extends ItemBase {
   type: 'image';
   dataUrl: string;
@@ -60,8 +53,7 @@ export interface ImageAnnotation extends ItemBase {
   height: number;
 }
 
-export type CanvasItem =
-  TextAnnotation | StickyAnnotation | ButtonAnnotation | TableAnnotation | ImageAnnotation;
+export type CanvasItem = TextAnnotation | StickyAnnotation | ButtonAnnotation | ImageAnnotation;
 
 export interface TextMarkAnnotation {
   id: string;

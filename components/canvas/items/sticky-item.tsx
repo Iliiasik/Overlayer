@@ -4,7 +4,7 @@ import { CURSORS } from '@/lib/cursors';
 import type { StickyAnnotation } from '@/lib/annotations/types';
 import { CONTENT_INK } from './sheet';
 import { ItemShell, type ItemProps } from './shell';
-import { dragOrDeleteHandler, useItemDrag } from './use-item-drag';
+import { useItemDrag } from './use-item-drag';
 
 const STICKY_TINT_ALPHA = '33';
 const STICKY_LINE_HEIGHT = 20;
@@ -18,12 +18,10 @@ export function clampStickyText(value: string): string {
 
 export function StickyItem({
   annotation,
-  tool,
   scale,
   editing,
   onEditingChange,
   onPatch,
-  onRemove,
   onTranslate,
   bounds,
 }: ItemProps<StickyAnnotation>) {
@@ -35,8 +33,6 @@ export function StickyItem({
     undefined,
     { position: annotation.position, bounds },
   );
-
-  const interactive = tool === 'select' || tool === 'delete';
 
   const change = (area: HTMLTextAreaElement) => {
     const value = clampStickyText(area.value);
@@ -50,17 +46,16 @@ export function StickyItem({
       itemId={annotation.id}
       position={annotation.position}
       offset={offset}
-      interactive={interactive}
       className="w-52 rounded-lg p-3 shadow-md"
       style={{
         backgroundColor: `${annotation.style.color}${STICKY_TINT_ALPHA}`,
         borderLeft: `3px solid ${annotation.style.color}`,
         backdropFilter: 'blur(2px)',
-        cursor: tool === 'select' && !editing ? CURSORS.grab : undefined,
+        cursor: editing ? undefined : CURSORS.grab,
       }}
-      onPointerDown={dragOrDeleteHandler(tool, editing, annotation.id, onRemove, onPointerDown)}
+      onPointerDown={editing ? undefined : onPointerDown}
       onDoubleClick={() => {
-        if (tool === 'select' && !editing) {
+        if (!editing) {
           setDraft(annotation.text);
           onEditingChange(annotation.id);
         }

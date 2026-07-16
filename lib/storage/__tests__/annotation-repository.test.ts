@@ -43,15 +43,6 @@ describe('annotationRepository', () => {
     expect(pages.map((page) => page.title)).toEqual(['first', 'second']);
   });
 
-  it('reads legacy single-board records as one page', async () => {
-    await fakeBrowser.storage.local.set({
-      'quick:example.com': { domain: 'example.com', items: [sticky(), sticky()], updatedAt: 5 },
-    });
-    const pages = await annotationRepository.loadQuick(URL_A);
-    expect(pages).toHaveLength(1);
-    expect(pages[0].items).toHaveLength(2);
-  });
-
   it('removes records when the last entry is deleted', async () => {
     await annotationRepository.saveMarks(URL_A, [mark()]);
     await annotationRepository.saveQuick(URL_A, [createNotePage([sticky()])]);

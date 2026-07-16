@@ -2,7 +2,7 @@ import { fakeBrowser } from 'wxt/testing';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { createStickyAnnotation, createTextMarkAnnotation } from '@/lib/annotations/factory';
 import { annotationRepository, createNotePage } from '../annotation-repository';
-import { buildSiteIndex, listDomainMarks, marksMatching, siteIndexSize } from '../site-index';
+import { buildSiteIndex, listDomainMarks, siteIndexSize } from '../site-index';
 
 function mark(quote: string) {
   return createTextMarkAnnotation({ quote, prefix: '', suffix: '' }, { x: 0, y: 0 }, '#000');
@@ -64,15 +64,6 @@ describe('buildSiteIndex', () => {
     await annotationRepository.saveMarks('https://example.com/a', [mark('x')]);
     const sites = await buildSiteIndex();
     expect(siteIndexSize(sites)).toBeGreaterThan(0);
-  });
-});
-
-describe('marksMatching', () => {
-  it('filters by quote text, case-insensitive', () => {
-    const marks = [mark('Hello World'), mark('other')];
-    expect(marksMatching(marks, 'hello')).toHaveLength(1);
-    expect(marksMatching(marks, '')).toHaveLength(2);
-    expect(marksMatching(marks, 'nothing')).toHaveLength(0);
   });
 });
 

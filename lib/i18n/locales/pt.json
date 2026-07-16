@@ -6,6 +6,7 @@
     "delete": "Excluir",
     "edit": "Editar",
     "confirm": "Abrir",
+    "ok": "OK",
     "undo": "Desfazer"
   },
   "tools": {
@@ -22,7 +23,6 @@
     "title": "Canvas de notas",
     "subtitle": "Notas rápidas deste site",
     "close": "Fechar canvas",
-    "dragTable": "Arrastar tabela",
     "quickEmpty": "Notas rápidas deste site. Adicione texto, uma nota, um link ou uma imagem com os botões abaixo.",
     "bringToFront": "Trazer para a frente",
     "sendToBack": "Enviar para trás",
@@ -53,7 +53,7 @@
     "hideHighlights": "Ocultar destaques",
     "showHighlights": "Mostrar destaques",
     "unavailable": "O Overlayer não está disponível nesta página",
-    "options": "Configurações"
+    "options": "Ajustes e notas"
   },
   "sticky": {
     "placeholder": "Texto da nota…"
@@ -70,15 +70,11 @@
   "image": {
     "title": "Adicionar imagem",
     "dropHint": "Solte uma imagem aqui ou clique para escolher um arquivo",
-    "invalid": "Escolha um arquivo de imagem de até 5 MB"
-  },
-  "table": {
-    "row": "Linha",
-    "column": "Coluna",
-    "addRow": "Adicionar linha",
-    "removeRow": "Remover linha",
-    "addColumn": "Adicionar coluna",
-    "removeColumn": "Remover coluna"
+    "invalid": "Escolha um arquivo de imagem de até 5 MB",
+    "loading": "Adicionando imagem…",
+    "notImage": "Isto não é uma imagem",
+    "tooLarge": "A imagem excede 5 MB",
+    "loadFailed": "Não foi possível carregar a imagem"
   },
   "options": {
     "title": "Configurações do Overlayer",
@@ -139,6 +135,9 @@
     "bold": "Negrito",
     "italic": "Itálico",
     "withNote": "Com nota",
-    "deleted": "Destaque excluído"
+    "deleted": "Destaque excluído",
+    "jumpGo": "Ir para o destaque",
+    "jumpSearching": "Procurando na página…",
+    "jumpNotFound": "Destaque não encontrado na página"
   }
 }

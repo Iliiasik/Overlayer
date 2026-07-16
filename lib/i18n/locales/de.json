@@ -6,6 +6,7 @@
     "delete": "Löschen",
     "edit": "Bearbeiten",
     "confirm": "Öffnen",
+    "ok": "OK",
     "undo": "Rückgängig"
   },
   "tools": {
@@ -22,7 +23,6 @@
     "title": "Notiz-Canvas",
     "subtitle": "Schnellnotizen dieser Website",
     "close": "Canvas schließen",
-    "dragTable": "Tabelle verschieben",
     "quickEmpty": "Schnellnotizen dieser Website. Füge unten Text, eine Haftnotiz, einen Link oder ein Bild hinzu.",
     "bringToFront": "In den Vordergrund",
     "sendToBack": "In den Hintergrund",
@@ -53,7 +53,7 @@
     "hideHighlights": "Markierungen ausblenden",
     "showHighlights": "Markierungen anzeigen",
     "unavailable": "Overlayer ist auf dieser Seite nicht verfügbar",
-    "options": "Einstellungen"
+    "options": "Einstellungen und Notizen"
   },
   "sticky": {
     "placeholder": "Notiztext…"
@@ -70,15 +70,11 @@
   "image": {
     "title": "Bild hinzufügen",
     "dropHint": "Ziehe ein Bild hierher oder klicke, um eine Datei auszuwählen",
-    "invalid": "Wähle eine Bilddatei bis 5 MB"
-  },
-  "table": {
-    "row": "Zeile",
-    "column": "Spalte",
-    "addRow": "Zeile hinzufügen",
-    "removeRow": "Zeile entfernen",
-    "addColumn": "Spalte hinzufügen",
-    "removeColumn": "Spalte entfernen"
+    "invalid": "Wähle eine Bilddatei bis 5 MB",
+    "loading": "Bild wird hinzugefügt…",
+    "notImage": "Das ist kein Bild",
+    "tooLarge": "Bild ist größer als 5 MB",
+    "loadFailed": "Bild konnte nicht geladen werden"
   },
   "options": {
     "title": "Overlayer-Einstellungen",
@@ -139,6 +135,9 @@
     "bold": "Fett",
     "italic": "Kursiv",
     "withNote": "Mit Notiz",
-    "deleted": "Markierung gelöscht"
+    "deleted": "Markierung gelöscht",
+    "jumpGo": "Zur Markierung springen",
+    "jumpSearching": "Seite wird durchsucht…",
+    "jumpNotFound": "Markierung auf der Seite nicht gefunden"
   }
 }

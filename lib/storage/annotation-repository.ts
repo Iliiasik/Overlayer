@@ -31,13 +31,6 @@ export interface QuickRecord {
   updatedAt: number;
 }
 
-interface LegacyQuickRecord {
-  domain: string;
-  items?: CanvasItem[];
-  pages?: NotePage[];
-  updatedAt: number;
-}
-
 export interface StorageSummary {
   key: string;
   kind: 'marks' | 'quick';
@@ -55,15 +48,6 @@ export function createNotePage(items: CanvasItem[] = []): NotePage {
 
 export function pageItemCount(pages: NotePage[]): number {
   return pages.reduce((sum, page) => sum + page.items.length, 0);
-}
-
-export function normalizeQuickPages(record: LegacyQuickRecord | null | undefined): NotePage[] {
-  if (!record) return [];
-  if (Array.isArray(record.pages)) return record.pages;
-  if (Array.isArray(record.items) && record.items.length > 0) {
-    return [{ ...createNotePage(record.items), createdAt: record.updatedAt ?? Date.now() }];
-  }
-  return [];
 }
 
 export function isQuickEmpty(pages: NotePage[]): boolean {
@@ -95,14 +79,13 @@ function markSummary(key: string, record: PageRecord): StorageSummary {
   };
 }
 
-function quickSummary(key: string, record: LegacyQuickRecord): StorageSummary {
-  const pages = normalizeQuickPages(record);
+function quickSummary(key: string, record: QuickRecord): StorageSummary {
   return {
     key,
     kind: 'quick',
     label: record.domain,
     detail: '',
-    annotationCount: pageItemCount(pages),
+    annotationCount: pageItemCount(record.pages),
     sizeBytes: byteSize(record),
     updatedAt: record.updatedAt,
   };
@@ -126,8 +109,8 @@ export const annotationRepository = {
   },
 
   async loadQuick(url: string): Promise<NotePage[]> {
-    const record = await read<LegacyQuickRecord>(quickKeyForUrl(url));
-    return normalizeQuickPages(record);
+    const record = await read<QuickRecord>(quickKeyForUrl(url));
+    return record?.pages ?? [];
   },
 
   async saveQuick(url: string, pages: NotePage[]): Promise<void> {
@@ -158,7 +141,7 @@ export const annotationRepository = {
     const all = await browser.storage.local.get(null);
     return Object.entries(all)
       .flatMap(([key, value]): StorageSummary[] => {
-        if (isQuickKey(key)) return [quickSummary(key, value as LegacyQuickRecord)];
+        if (isQuickKey(key)) return [quickSummary(key, value as QuickRecord)];
         if (isNotesKey(key)) return [markSummary(key, value as PageRecord)];
         return [];
       })
@@ -172,14 +155,11 @@ export const annotationRepository = {
       .map(([key, value]) => ({ key, record: value as PageRecord }));
   },
 
-  async listQuickRecords(): Promise<{ key: string; record: QuickRecord; pages: NotePage[] }[]> {
+  async listQuickRecords(): Promise<{ key: string; record: QuickRecord }[]> {
     const all = await browser.storage.local.get(null);
     return Object.entries(all)
       .filter(([key]) => isQuickKey(key))
-      .map(([key, value]) => {
-        const record = value as QuickRecord;
-        return { key, record, pages: normalizeQuickPages(record as LegacyQuickRecord) };
-      });
+      .map(([key, value]) => ({ key, record: value as QuickRecord }));
   },
 
   async removeEntry(key: string): Promise<void> {

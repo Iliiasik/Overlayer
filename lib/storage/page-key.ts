@@ -1,5 +1,4 @@
 const NOTES_PREFIX = 'notes:';
-const BOARD_PREFIX = 'board:';
 const QUICK_PREFIX = 'quick:';
 
 export function hashPath(path: string): string {
@@ -22,20 +21,12 @@ export function boardDomainForUrl(url: string): string {
   return hostname.replace(/^www\./, '') || hostname;
 }
 
-export function boardKeyForUrl(url: string): string {
-  return `${BOARD_PREFIX}${boardDomainForUrl(url)}`;
-}
-
 export function quickKeyForUrl(url: string): string {
   return `${QUICK_PREFIX}${boardDomainForUrl(url)}`;
 }
 
 export function isNotesKey(key: string): boolean {
   return key.startsWith(NOTES_PREFIX);
-}
-
-export function isBoardKey(key: string): boolean {
-  return key.startsWith(BOARD_PREFIX);
 }
 
 export function isQuickKey(key: string): boolean {

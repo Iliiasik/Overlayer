@@ -1,12 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import {
   boardDomainForUrl,
-  boardKeyForUrl,
   hashPath,
   isAnnotatableUrl,
-  isBoardKey,
   isNotesKey,
+  isQuickKey,
   pageKeyForUrl,
+  quickKeyForUrl,
 } from './page-key';
 
 describe('hashPath', () => {
@@ -31,34 +31,34 @@ describe('pageKeyForUrl', () => {
   });
 });
 
-describe('boardKeyForUrl', () => {
+describe('quickKeyForUrl', () => {
   it('is shared across paths of the same domain', () => {
-    expect(boardKeyForUrl('https://example.com/a')).toBe(boardKeyForUrl('https://example.com/b'));
+    expect(quickKeyForUrl('https://example.com/a')).toBe(quickKeyForUrl('https://example.com/b'));
   });
 
   it('ignores the www prefix and the protocol', () => {
-    expect(boardKeyForUrl('https://www.example.com/a')).toBe(
-      boardKeyForUrl('http://example.com/b'),
+    expect(quickKeyForUrl('https://www.example.com/a')).toBe(
+      quickKeyForUrl('http://example.com/b'),
     );
   });
 
   it('separates subdomains', () => {
-    expect(boardKeyForUrl('https://docs.example.com/')).not.toBe(
-      boardKeyForUrl('https://example.com/'),
+    expect(quickKeyForUrl('https://docs.example.com/')).not.toBe(
+      quickKeyForUrl('https://example.com/'),
     );
   });
 
   it('uses the file path for file urls', () => {
     expect(boardDomainForUrl('file:///C:/notes/page.html')).toBe('file:/C:/notes/page.html');
-    expect(boardKeyForUrl('file:///C:/notes/page.html')).not.toBe(
-      boardKeyForUrl('file:///C:/notes/other.html'),
+    expect(quickKeyForUrl('file:///C:/notes/page.html')).not.toBe(
+      quickKeyForUrl('file:///C:/notes/other.html'),
     );
   });
 
-  it('is recognized by isBoardKey', () => {
-    expect(isBoardKey(boardKeyForUrl('https://example.com/a'))).toBe(true);
-    expect(isBoardKey(pageKeyForUrl('https://example.com/a'))).toBe(false);
-    expect(isNotesKey(boardKeyForUrl('https://example.com/a'))).toBe(false);
+  it('is recognized by isQuickKey', () => {
+    expect(isQuickKey(quickKeyForUrl('https://example.com/a'))).toBe(true);
+    expect(isQuickKey(pageKeyForUrl('https://example.com/a'))).toBe(false);
+    expect(isNotesKey(quickKeyForUrl('https://example.com/a'))).toBe(false);
   });
 });
 

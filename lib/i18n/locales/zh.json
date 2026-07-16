@@ -6,6 +6,7 @@
     "delete": "删除",
     "edit": "编辑",
     "confirm": "打开",
+    "ok": "确定",
     "undo": "撤销"
   },
   "tools": {
@@ -22,7 +23,6 @@
     "title": "笔记画布",
     "subtitle": "此网站的快速笔记",
     "close": "关闭画布",
-    "dragTable": "拖动表格",
     "quickEmpty": "此网站的快速笔记。使用下方按钮添加文本、便签、链接或图片。",
     "bringToFront": "置于顶层",
     "sendToBack": "置于底层",
@@ -53,7 +53,7 @@
     "hideHighlights": "隐藏高亮",
     "showHighlights": "显示高亮",
     "unavailable": "此页面无法使用 Overlayer",
-    "options": "设置"
+    "options": "设置与笔记"
   },
   "sticky": {
     "placeholder": "笔记内容…"
@@ -70,15 +70,11 @@
   "image": {
     "title": "添加图片",
     "dropHint": "将图片拖到这里，或点击选择文件",
-    "invalid": "请选择不超过 5 MB 的图片文件"
-  },
-  "table": {
-    "row": "行",
-    "column": "列",
-    "addRow": "添加行",
-    "removeRow": "删除行",
-    "addColumn": "添加列",
-    "removeColumn": "删除列"
+    "invalid": "请选择不超过 5 MB 的图片文件",
+    "loading": "正在添加图片…",
+    "notImage": "这不是图片",
+    "tooLarge": "图片超过 5 MB",
+    "loadFailed": "无法加载图片"
   },
   "options": {
     "title": "Overlayer 设置",
@@ -139,6 +135,9 @@
     "bold": "加粗",
     "italic": "斜体",
     "withNote": "含备注",
-    "deleted": "已删除高亮"
+    "deleted": "已删除高亮",
+    "jumpGo": "跳转到高亮",
+    "jumpSearching": "正在页面中搜索…",
+    "jumpNotFound": "页面中未找到该高亮"
   }
 }

@@ -1,12 +1,11 @@
 import type { CSSProperties, PointerEvent as ReactPointerEvent, ReactNode } from 'react';
-import type { CanvasItem, Point, ToolId } from '@/lib/annotations/types';
+import type { CanvasItem, Point } from '@/lib/annotations/types';
 import { cn } from '@/lib/utils';
 import type { SheetBounds } from './sheet';
 import type { DragState } from './use-item-drag';
 
 export interface ItemProps<T> {
   annotation: T;
-  tool: ToolId;
   scale: number;
   editing: boolean;
   onEditingChange: (id: string | null) => void;
@@ -48,7 +47,6 @@ interface ItemShellProps {
   itemId: string;
   position: Point;
   offset: DragState | null;
-  interactive: boolean;
   children: ReactNode;
   style?: CSSProperties;
   className?: string;
@@ -60,7 +58,6 @@ export function ItemShell({
   itemId,
   position,
   offset,
-  interactive,
   children,
   style,
   className,
@@ -75,7 +72,7 @@ export function ItemShell({
         left: position.x,
         top: position.y,
         transform: offset ? `translate(${offset.dx}px, ${offset.dy}px)` : undefined,
-        pointerEvents: interactive ? 'auto' : 'none',
+        pointerEvents: 'auto',
         ...style,
       }}
       onPointerDown={onPointerDown}

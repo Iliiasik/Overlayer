@@ -6,6 +6,7 @@
     "delete": "削除",
     "edit": "編集",
     "confirm": "開く",
+    "ok": "OK",
     "undo": "元に戻す"
   },
   "tools": {
@@ -22,7 +23,6 @@
     "title": "ノートキャンバス",
     "subtitle": "このサイトのクイックノート",
     "close": "キャンバスを閉じる",
-    "dragTable": "表を移動",
     "quickEmpty": "このサイトのクイックノート。下のボタンからテキスト・付箋・リンク・画像を追加できます。",
     "bringToFront": "最前面へ",
     "sendToBack": "最背面へ",
@@ -53,7 +53,7 @@
     "hideHighlights": "ハイライトを隠す",
     "showHighlights": "ハイライトを表示",
     "unavailable": "このページではOverlayerを利用できません",
-    "options": "設定"
+    "options": "設定とノート"
   },
   "sticky": {
     "placeholder": "メモの内容…"
@@ -70,15 +70,11 @@
   "image": {
     "title": "画像を追加",
     "dropHint": "ここに画像をドロップするか、クリックしてファイルを選択",
-    "invalid": "5 MB以下の画像ファイルを選択してください"
-  },
-  "table": {
-    "row": "行",
-    "column": "列",
-    "addRow": "行を追加",
-    "removeRow": "行を削除",
-    "addColumn": "列を追加",
-    "removeColumn": "列を削除"
+    "invalid": "5 MB以下の画像ファイルを選択してください",
+    "loading": "画像を追加中…",
+    "notImage": "これは画像ではありません",
+    "tooLarge": "画像が5MBを超えています",
+    "loadFailed": "画像を読み込めませんでした"
   },
   "options": {
     "title": "Overlayer の設定",
@@ -139,6 +135,9 @@
     "bold": "太字",
     "italic": "斜体",
     "withNote": "メモ付き",
-    "deleted": "ハイライトを削除しました"
+    "deleted": "ハイライトを削除しました",
+    "jumpGo": "ハイライトへ移動",
+    "jumpSearching": "ページ内を検索中…",
+    "jumpNotFound": "ページ内にハイライトが見つかりません"
   }
 }

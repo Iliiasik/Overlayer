@@ -22,8 +22,8 @@
   --input: #d3ccba;
   --ring: #8ba888;
   --radius: 12px;
-  --banner-bg: #cdeabf;
-  --banner-line: #aed19e;
+  --banner-bg: #e3e8d2;
+  --banner-line: #c2ccab;
   --sheet: #ffffff;
   --sheet-ink: #1f2430;
   --sheet-muted: #9ca3af;
@@ -143,7 +143,7 @@
   }
   .glass-card {
     background: color-mix(in srgb, var(--card) 62%, transparent);
-    backdrop-filter: blur(18px) saturate(1.5);
+    backdrop-filter: blur(12px);
     border: 1px solid color-mix(in srgb, var(--border) 55%, transparent);
     box-shadow:
       0 8px 32px rgb(0 0 0 / 0.1),
@@ -151,7 +151,7 @@
   }
   .glass-panel {
     background: color-mix(in srgb, var(--card) 62%, transparent);
-    backdrop-filter: blur(18px) saturate(1.5);
+    backdrop-filter: blur(12px);
   }
   .rich-text {
     font-size: 15px;

@@ -13,8 +13,42 @@ interface NormalizedText {
   map: number[];
 }
 
+const SKIPPED_TAGS = new Set([
+  'SCRIPT',
+  'STYLE',
+  'NOSCRIPT',
+  'TEMPLATE',
+  'TITLE',
+  'IFRAME',
+  'OBJECT',
+  'TEXTAREA',
+  'SELECT',
+]);
+
+function isElementVisible(element: Element): boolean {
+  if (SKIPPED_TAGS.has(element.tagName)) return false;
+  const style = element.ownerDocument?.defaultView?.getComputedStyle(element);
+  if (!style) return true;
+  return (
+    style.display !== 'none' && style.visibility !== 'hidden' && style.visibility !== 'collapse'
+  );
+}
+
 function buildTextIndex(root: Node): TextIndex {
-  const walker = (root.ownerDocument ?? document).createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  const walker = (root.ownerDocument ?? document).createTreeWalker(
+    root,
+    NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT,
+    {
+      acceptNode: (node) => {
+        if (node.nodeType === Node.ELEMENT_NODE) {
+          return isElementVisible(node as Element)
+            ? NodeFilter.FILTER_SKIP
+            : NodeFilter.FILTER_REJECT;
+        }
+        return NodeFilter.FILTER_ACCEPT;
+      },
+    },
+  );
   const nodes: Text[] = [];
   const starts: number[] = [];
   let text = '';
@@ -61,26 +95,62 @@ function locate(index: TextIndex, offset: number): { node: Text; offset: number 
   return null;
 }
 
+function firstIndexedOffset(index: TextIndex, node: Node): number | null {
+  if (node.nodeType === Node.TEXT_NODE) {
+    const at = index.nodes.indexOf(node as Text);
+    return at === -1 ? null : index.starts[at];
+  }
+  for (const child of node.childNodes) {
+    const offset = firstIndexedOffset(index, child);
+    if (offset !== null) return offset;
+  }
+  return null;
+}
+
+function globalOffset(index: TextIndex, container: Node, offset: number): number | null {
+  if (container.nodeType === Node.TEXT_NODE) {
+    const at = index.nodes.indexOf(container as Text);
+    return at === -1 ? null : index.starts[at] + offset;
+  }
+  for (let i = offset; i < container.childNodes.length; i++) {
+    const found = firstIndexedOffset(index, container.childNodes[i]);
+    if (found !== null) return found;
+  }
+  return null;
+}
+
 export function captureRange(range: Range, root: Node = document.body): TextAnchor | null {
   const quote = range.toString();
   if (!quote.trim()) return null;
   const index = buildTextIndex(root);
-  const beforeRange = range.cloneRange();
-  beforeRange.setStart(root, 0);
-  beforeRange.setEnd(range.startContainer, range.startOffset);
-  const start = beforeRange.toString().length;
+  let start = globalOffset(index, range.startContainer, range.startOffset);
+  let end = globalOffset(index, range.endContainer, range.endOffset);
+  if (start === null || end === null || end < start) {
+    const found = index.text.indexOf(quote);
+    if (found === -1) return { quote, prefix: '', suffix: '' };
+    start = found;
+    end = found + quote.length;
+  }
   return {
     quote,
     prefix: index.text.slice(Math.max(0, start - CONTEXT_LENGTH), start),
-    suffix: index.text.slice(start + quote.length, start + quote.length + CONTEXT_LENGTH),
+    suffix: index.text.slice(end, end + CONTEXT_LENGTH),
   };
 }
 
-export function resolveQuote(anchor: TextAnchor, root: Node = document.body): Range | null {
+export interface ResolvedQuote {
+  range: Range;
+  start: number;
+}
+
+function resolveInIndex(
+  anchor: TextAnchor,
+  root: Node,
+  index: TextIndex,
+  haystack: NormalizedText,
+): ResolvedQuote | null {
   const quote = normalize(anchor.quote);
   if (!quote.trim()) return null;
-  const index = buildTextIndex(root);
-  const haystack = normalizeWithMap(index.text);
   const prefix = normalize(anchor.prefix);
   const suffix = normalize(anchor.suffix);
 
@@ -116,5 +186,19 @@ export function resolveQuote(anchor: TextAnchor, root: Node = document.body): Ra
   const range = (root.ownerDocument ?? document).createRange();
   range.setStart(startLocation.node, startLocation.offset);
   range.setEnd(endLocation.node, endLocation.offset);
-  return range;
+  return { range, start: rawStart };
+}
+
+export function resolveQuote(anchor: TextAnchor, root: Node = document.body): Range | null {
+  return resolveQuotes([anchor], root)[0]?.range ?? null;
+}
+
+export function resolveQuotes(
+  anchors: TextAnchor[],
+  root: Node = document.body,
+): (ResolvedQuote | null)[] {
+  if (anchors.length === 0) return [];
+  const index = buildTextIndex(root);
+  const haystack = normalizeWithMap(index.text);
+  return anchors.map((anchor) => resolveInIndex(anchor, root, index, haystack));
 }

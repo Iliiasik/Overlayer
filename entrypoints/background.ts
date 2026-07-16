@@ -1,5 +1,5 @@
 import { browser } from 'wxt/browser';
-import { MessageType, sendToActiveTab } from '@/lib/messaging';
+import { MessageType, onMessage, sendToActiveTab } from '@/lib/messaging';
 import { annotationRepository } from '@/lib/storage/annotation-repository';
 import { isAnnotatableUrl, isNotesKey, isQuickKey } from '@/lib/storage/page-key';
 import { runMigrations } from '@/lib/storage/schema';
@@ -19,6 +19,28 @@ async function refreshBadge(tabId: number, url: string | undefined): Promise<voi
 async function refreshActiveTabBadge(): Promise<void> {
   const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
   if (tab?.id != null) await refreshBadge(tab.id, tab.url);
+}
+
+const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
+const BASE64_CHUNK = 0x8000;
+
+async function fetchImageAsDataUrl(url: string | undefined): Promise<string | null> {
+  if (!url) return null;
+  try {
+    const response = await fetch(url);
+    const type = response.headers.get('content-type')?.split(';')[0] ?? '';
+    if (!response.ok || !type.startsWith('image/')) return null;
+    const buffer = await response.arrayBuffer();
+    if (buffer.byteLength > MAX_IMAGE_BYTES) return null;
+    const bytes = new Uint8Array(buffer);
+    let binary = '';
+    for (let i = 0; i < bytes.length; i += BASE64_CHUNK) {
+      binary += String.fromCharCode(...bytes.subarray(i, i + BASE64_CHUNK));
+    }
+    return `data:${type};base64,${btoa(binary)}`;
+  } catch {
+    return null;
+  }
 }
 
 async function rebuildContextMenus(): Promise<void> {
@@ -43,6 +65,8 @@ async function rebuildContextMenus(): Promise<void> {
 export default defineBackground(() => {
   void runMigrations();
   void browser.action.setBadgeBackgroundColor({ color: '#1687a7' });
+
+  onMessage(MessageType.FetchImage, (message) => fetchImageAsDataUrl(message.url));
 
   browser.runtime.onInstalled.addListener(() => {
     void rebuildContextMenus().catch(() => undefined);

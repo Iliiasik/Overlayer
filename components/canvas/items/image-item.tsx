@@ -3,7 +3,7 @@ import { CURSORS } from '@/lib/cursors';
 import type { ImageAnnotation } from '@/lib/annotations/types';
 import { clampWidthWithin } from './sheet';
 import { ItemShell, type ItemProps } from './shell';
-import { dragOrDeleteHandler, useItemDrag } from './use-item-drag';
+import { useItemDrag } from './use-item-drag';
 
 const MIN_IMAGE_WIDTH = 60;
 
@@ -45,11 +45,8 @@ function useBitmapCanvas(dataUrl: string) {
 
 export function ImageItem({
   annotation,
-  tool,
   scale,
-  editing,
   onPatch,
-  onRemove,
   onTranslate,
   bounds,
 }: ItemProps<ImageAnnotation>) {
@@ -62,7 +59,6 @@ export function ImageItem({
     { position: annotation.position, bounds },
   );
 
-  const interactive = tool === 'select' || tool === 'delete';
   const width = resizeWidth ?? annotation.width;
   const ratio = annotation.height / annotation.width;
 
@@ -92,24 +88,21 @@ export function ImageItem({
       itemId={annotation.id}
       position={annotation.position}
       offset={offset}
-      interactive={interactive}
       className="group"
-      style={{ cursor: tool === 'select' ? CURSORS.grab : undefined }}
-      onPointerDown={dragOrDeleteHandler(tool, editing, annotation.id, onRemove, onPointerDown)}
+      style={{ cursor: CURSORS.grab }}
+      onPointerDown={onPointerDown}
     >
       <canvas
         ref={canvasRef}
         className="block rounded-xl shadow-md"
         style={{ width, height: Math.round(width * ratio) }}
       />
-      {tool === 'select' && (
-        <span
-          role="presentation"
-          onPointerDown={startResize}
-          className="absolute -bottom-1 -right-1 h-4 w-4 rounded-full border-2 border-background bg-primary opacity-0 transition-opacity group-hover:opacity-100"
-          style={{ cursor: CURSORS.resizeD }}
-        />
-      )}
+      <span
+        role="presentation"
+        onPointerDown={startResize}
+        className="absolute -bottom-1 -right-1 h-4 w-4 rounded-full border-2 border-background bg-primary opacity-0 transition-opacity group-hover:opacity-100"
+        style={{ cursor: CURSORS.resizeD }}
+      />
     </ItemShell>
   );
 }

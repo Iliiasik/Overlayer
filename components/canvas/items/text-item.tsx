@@ -21,7 +21,7 @@ import type { Point, TextAnnotation } from '@/lib/annotations/types';
 import { cn } from '@/lib/utils';
 import { clampWidthWithin, type SheetBounds } from './sheet';
 import { ItemPopover, ItemShell, type ItemProps } from './shell';
-import { dragOrDeleteHandler, useItemDrag } from './use-item-drag';
+import { useItemDrag } from './use-item-drag';
 
 const POPOVER_WIDTH = 224;
 
@@ -256,12 +256,10 @@ function TextEditor({
 
 export function TextItem({
   annotation,
-  tool,
   scale,
   editing,
   onEditingChange,
   onPatch,
-  onRemove,
   onTranslate,
   bounds,
 }: ItemProps<TextAnnotation>) {
@@ -273,7 +271,6 @@ export function TextItem({
     { position: annotation.position, bounds },
   );
 
-  const interactive = tool === 'select' || tool === 'delete';
   const width = resizeWidth ?? annotation.width;
 
   const startResize = (event: ReactPointerEvent) => {
@@ -302,7 +299,6 @@ export function TextItem({
       itemId={annotation.id}
       position={annotation.position}
       offset={offset}
-      interactive={interactive}
       className={cn(
         'group rounded-md transition-shadow',
         editing
@@ -311,10 +307,10 @@ export function TextItem({
       )}
       style={{
         width,
-        cursor: tool === 'select' && !editing ? CURSORS.grab : undefined,
+        cursor: editing ? undefined : CURSORS.grab,
         color: annotation.style.color,
       }}
-      onPointerDown={dragOrDeleteHandler(tool, editing, annotation.id, onRemove, onPointerDown)}
+      onPointerDown={editing ? undefined : onPointerDown}
     >
       {editing ? (
         <TextEditor
@@ -327,22 +323,20 @@ export function TextItem({
         <div
           className="rich-text px-3 py-2"
           onDoubleClick={() => {
-            if (tool === 'select') onEditingChange(annotation.id);
+            onEditingChange(annotation.id);
           }}
           dangerouslySetInnerHTML={{ __html: annotation.html }}
         />
       )}
-      {tool === 'select' && (
-        <span
-          role="presentation"
-          onPointerDown={startResize}
-          className={cn(
-            'absolute -right-1 top-1/2 h-6 w-2 -translate-y-1/2 rounded-full border border-background bg-primary transition-opacity',
-            editing ? 'opacity-100' : 'opacity-0 group-hover:opacity-100',
-          )}
-          style={{ cursor: CURSORS.resizeH }}
-        />
-      )}
+      <span
+        role="presentation"
+        onPointerDown={startResize}
+        className={cn(
+          'absolute -right-1 top-1/2 h-6 w-2 -translate-y-1/2 rounded-full border border-background bg-primary transition-opacity',
+          editing ? 'opacity-100' : 'opacity-0 group-hover:opacity-100',
+        )}
+        style={{ cursor: CURSORS.resizeH }}
+      />
     </ItemShell>
   );
 }

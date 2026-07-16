@@ -4,15 +4,12 @@ import type {
   ImageAnnotation,
   Point,
   StickyAnnotation,
-  TableAnnotation,
   TextAnchor,
   TextAnnotation,
   TextMarkAnnotation,
 } from './types';
 
-const DEFAULT_TABLE_ROWS = 2;
-const DEFAULT_TABLE_COLUMNS = 3;
-export const DEFAULT_TEXT_WIDTH = 260;
+const DEFAULT_TEXT_WIDTH = 260;
 
 function baseFields(x: number, y: number, style: AnnotationStyle) {
   const now = Date.now();
@@ -67,16 +64,6 @@ export function createButtonAnnotation(point: Point, style: AnnotationStyle): Bu
     type: 'button',
     label: '',
     url: '',
-  };
-}
-
-export function createTableAnnotation(point: Point, style: AnnotationStyle): TableAnnotation {
-  return {
-    ...baseFields(point.x, point.y, style),
-    type: 'table',
-    cells: Array.from({ length: DEFAULT_TABLE_ROWS }, () =>
-      Array.from({ length: DEFAULT_TABLE_COLUMNS }, () => ''),
-    ),
   };
 }
 

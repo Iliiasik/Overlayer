@@ -8,7 +8,7 @@ import { normalizeUrl } from '@/lib/annotations/url';
 import { cn } from '@/lib/utils';
 import type { SheetBounds } from './sheet';
 import { ItemPopover, ItemShell, type ItemProps } from './shell';
-import { dragOrDeleteHandler, useItemDrag } from './use-item-drag';
+import { useItemDrag } from './use-item-drag';
 
 const EDITOR_WIDTH = 224;
 
@@ -146,7 +146,6 @@ function ButtonEditor({
 
 export function ButtonItem({
   annotation,
-  tool,
   scale,
   editing,
   onEditingChange,
@@ -172,16 +171,13 @@ export function ButtonItem({
     { position: annotation.position, bounds },
   );
 
-  const interactive = tool === 'select' || tool === 'delete';
-
   return (
     <ItemShell
       itemId={annotation.id}
       position={annotation.position}
       offset={offset}
-      interactive={interactive}
       className="w-max"
-      onPointerDown={dragOrDeleteHandler(tool, editing, annotation.id, onRemove, onPointerDown)}
+      onPointerDown={editing ? undefined : onPointerDown}
     >
       <button
         type="button"

@@ -6,6 +6,7 @@
     "delete": "Supprimer",
     "edit": "Modifier",
     "confirm": "Ouvrir",
+    "ok": "OK",
     "undo": "Annuler"
   },
   "tools": {
@@ -22,7 +23,6 @@
     "title": "Canvas de notes",
     "subtitle": "Notes rapides de ce site",
     "close": "Fermer le canvas",
-    "dragTable": "Déplacer le tableau",
     "quickEmpty": "Notes rapides de ce site. Ajoutez du texte, une note, un lien ou une image avec les boutons ci-dessous.",
     "bringToFront": "Mettre au premier plan",
     "sendToBack": "Mettre à l'arrière-plan",
@@ -53,7 +53,7 @@
     "hideHighlights": "Masquer les surlignages",
     "showHighlights": "Afficher les surlignages",
     "unavailable": "Overlayer n'est pas disponible sur cette page",
-    "options": "Paramètres"
+    "options": "Réglages et notes"
   },
   "sticky": {
     "placeholder": "Texte de la note…"
@@ -70,15 +70,11 @@
   "image": {
     "title": "Ajouter une image",
     "dropHint": "Déposez une image ici ou cliquez pour choisir un fichier",
-    "invalid": "Choisissez un fichier image de 5 Mo maximum"
-  },
-  "table": {
-    "row": "Ligne",
-    "column": "Colonne",
-    "addRow": "Ajouter une ligne",
-    "removeRow": "Supprimer une ligne",
-    "addColumn": "Ajouter une colonne",
-    "removeColumn": "Supprimer une colonne"
+    "invalid": "Choisissez un fichier image de 5 Mo maximum",
+    "loading": "Ajout de l'image…",
+    "notImage": "Ce n'est pas une image",
+    "tooLarge": "L'image dépasse 5 Mo",
+    "loadFailed": "Impossible de charger l'image"
   },
   "options": {
     "title": "Paramètres d'Overlayer",
@@ -139,6 +135,9 @@
     "bold": "Gras",
     "italic": "Italique",
     "withNote": "Avec note",
-    "deleted": "Surlignage supprimé"
+    "deleted": "Surlignage supprimé",
+    "jumpGo": "Aller au surlignage",
+    "jumpSearching": "Recherche sur la page…",
+    "jumpNotFound": "Surlignage introuvable sur la page"
   }
 }
