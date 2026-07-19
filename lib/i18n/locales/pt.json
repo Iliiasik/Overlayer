@@ -53,6 +53,7 @@
     "hideHighlights": "Ocultar destaques",
     "showHighlights": "Mostrar destaques",
     "unavailable": "O Overlayer não está disponível nesta página",
+    "guide": "Guia",
     "options": "Ajustes e notas"
   },
   "sticky": {
@@ -140,5 +141,44 @@
     "jumpSearching": "Procurando na página…",
     "jumpNotFound": "Destaque não encontrado na página",
     "jumpContinue": "Continuar procurando"
+  },
+  "guide": {
+    "title": "Como funciona o Overlayer",
+    "notes": {
+      "title": "Notas rápidas",
+      "p1": "Cada site tem sua própria folha de notas. Abra com o botão redondo lateral, pelo popup ou com clique direito → Notas.",
+      "p2": "A barra abaixo da folha adiciona texto, notas adesivas, botões de link e imagens.",
+      "p3": "Você também pode arrastar imagens direto para a folha. Funciona do computador e de qualquer site.",
+      "p4": "Arraste os itens para movê-los. Clique duplo abre a edição. O clique direito muda cor e camada ou exclui."
+    },
+    "pages": {
+      "title": "Páginas e títulos",
+      "p1": "Um site pode ter várias páginas de notas. Troque entre elas com as setas acima da folha.",
+      "p2": "Digite o título de cada página no campo ao lado das setas.",
+      "p3": "O botão + cria uma página nova. A lixeira exclui a atual."
+    },
+    "highlight": {
+      "title": "Marcador de texto",
+      "p1": "Selecione texto numa página e aperte o botãozinho que aparece. Clique direito → Destacar também funciona.",
+      "p2": "O clique direito num destaque abre o editor. Lá você muda cor e estilo, escreve uma nota ou exclui.",
+      "p3": "Passe o cursor sobre um destaque para ler a nota.",
+      "sample": "Um destaque fica assim"
+    },
+    "list": {
+      "title": "Botões laterais e lista",
+      "p1": "Os botões redondos laterais abrem as notas rápidas e a lista de destaques. Arraste-os para cima ou para baixo.",
+      "p2": "A lista tem busca por texto, filtros por cor e estilo, e visão da página ou do site inteiro.",
+      "p3": "Clique numa entrada para ir ao texto. Em feeds longos, use Continuar procurando para carregar o histórico."
+    },
+    "manager": {
+      "title": "Notas salvas",
+      "p1": "Os ajustes têm um gerenciador de todos os sites com três abas: Sites, Notas e Texto.",
+      "p2": "Clique numa entrada para abrir o site. As notas abrem sozinhas e o destaque é localizado na página."
+    },
+    "data": {
+      "title": "Seus dados",
+      "p1": "Tudo fica salvo localmente no navegador. Nada sai do seu dispositivo.",
+      "p2": "Use Exportar para salvar uma cópia JSON. Importe-a em outro dispositivo para mover suas notas."
+    }
   }
 }

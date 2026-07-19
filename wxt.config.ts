@@ -10,6 +10,9 @@ export default defineConfig({
     name: '__MSG_extName__',
     description: '__MSG_extDescription__',
     default_locale: 'en',
+    action: {
+      default_icon: { 16: 'icon/16.png', 32: 'icon/32.png', 48: 'icon/48.png' },
+    },
     permissions: [
       'storage',
       'unlimitedStorage',
@@ -20,19 +23,12 @@ export default defineConfig({
     ],
     host_permissions: ['<all_urls>'],
     web_accessible_resources: [{ resources: ['fonts/*', 'icon/*'], matches: ['<all_urls>'] }],
-    commands: {
-      'toggle-canvas': {
-        suggested_key: { default: 'Alt+Shift+P' },
-        description: '__MSG_commandToggleCanvas__',
-      },
-      'toggle-visibility': {
-        suggested_key: { default: 'Alt+Shift+H' },
-        description: '__MSG_commandToggleVisibility__',
-      },
-    },
     ...(browser === 'firefox' && {
       browser_specific_settings: {
         gecko: { id: 'overlayer@overlayer.app', strict_min_version: '128.0' },
+      },
+      browser_action: {
+        default_icon: { 16: 'icon/16.png', 32: 'icon/32.png', 48: 'icon/48.png' },
       },
     }),
   }),

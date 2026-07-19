@@ -5,12 +5,6 @@
   "extDescription": {
     "message": "Notiz-Canvas und Textmarker für jede Website. Funktioniert vollständig offline."
   },
-  "commandToggleCanvas": {
-    "message": "Notiz-Canvas im aktuellen Tab öffnen oder schließen"
-  },
-  "commandToggleVisibility": {
-    "message": "Markierungen im aktuellen Tab aus- oder einblenden"
-  },
   "contextHighlight": {
     "message": "Markieren"
   },

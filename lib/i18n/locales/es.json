@@ -53,6 +53,7 @@
     "hideHighlights": "Ocultar resaltados",
     "showHighlights": "Mostrar resaltados",
     "unavailable": "Overlayer no está disponible en esta página",
+    "guide": "Guía",
     "options": "Ajustes y notas"
   },
   "sticky": {
@@ -140,5 +141,44 @@
     "jumpSearching": "Buscando en la página…",
     "jumpNotFound": "Resaltado no encontrado en la página",
     "jumpContinue": "Seguir buscando"
+  },
+  "guide": {
+    "title": "Cómo funciona Overlayer",
+    "notes": {
+      "title": "Notas rápidas",
+      "p1": "Cada sitio tiene su propia hoja de notas. Ábrela con el botón redondo lateral, desde el popup o con clic derecho → Notas.",
+      "p2": "La barra bajo la hoja añade texto, notas adhesivas, botones de enlace e imágenes.",
+      "p3": "También puedes arrastrar imágenes directamente a la hoja. Funciona desde tu equipo y desde cualquier sitio web.",
+      "p4": "Arrastra los elementos para moverlos. Doble clic abre la edición. El clic derecho cambia color y capa o elimina."
+    },
+    "pages": {
+      "title": "Páginas y títulos",
+      "p1": "Un sitio puede tener varias páginas de notas. Cámbialas con las flechas sobre la hoja.",
+      "p2": "Escribe el título de cada página en el campo junto a las flechas.",
+      "p3": "El botón + crea una página nueva. La papelera elimina la actual."
+    },
+    "highlight": {
+      "title": "Resaltador de texto",
+      "p1": "Selecciona texto en una página y pulsa el botoncito que aparece. También funciona clic derecho → Resaltar.",
+      "p2": "El clic derecho sobre un resaltado abre su editor. Allí puedes cambiar color y estilo, escribir una nota o eliminarlo.",
+      "p3": "Pasa el cursor sobre un resaltado para leer su nota.",
+      "sample": "Así se ve un resaltado"
+    },
+    "list": {
+      "title": "Botones laterales y lista",
+      "p1": "Los botones redondos laterales abren las notas rápidas y la lista de resaltados. Arrástralos arriba o abajo.",
+      "p2": "La lista tiene búsqueda por texto, filtros por color y estilo, y vista de página o de todo el sitio.",
+      "p3": "Haz clic en una entrada para ir a su texto. En feeds largos pulsa Seguir buscando para cargar más historia."
+    },
+    "manager": {
+      "title": "Notas guardadas",
+      "p1": "Los ajustes tienen un gestor de todos tus sitios con tres pestañas: Sitios, Notas y Texto.",
+      "p2": "Haz clic en una entrada para abrir el sitio. Las notas se abren solas y el resaltado se localiza en la página."
+    },
+    "data": {
+      "title": "Tus datos",
+      "p1": "Todo se guarda localmente en tu navegador. Nada sale de tu dispositivo.",
+      "p2": "Usa Exportar para guardar una copia JSON. Impórtala en otro dispositivo para mover tus notas."
+    }
   }
 }

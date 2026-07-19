@@ -5,12 +5,6 @@
   "extDescription": {
     "message": "あらゆるサイトで使えるノートキャンバスとテキストハイライター。完全オフラインで動作します。"
   },
-  "commandToggleCanvas": {
-    "message": "現在のタブでノートキャンバスを開く / 閉じる"
-  },
-  "commandToggleVisibility": {
-    "message": "現在のタブでハイライトを隠す / 表示する"
-  },
   "contextHighlight": {
     "message": "ハイライト"
   },

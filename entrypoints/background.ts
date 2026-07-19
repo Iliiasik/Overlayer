@@ -1,12 +1,10 @@
 import { browser } from 'wxt/browser';
-import { MessageType, onMessage, sendToActiveTab } from '@/lib/messaging';
+import { MessageType, onMessage } from '@/lib/messaging';
 import { annotationRepository } from '@/lib/storage/annotation-repository';
 import { isAnnotatableUrl, isNotesKey, isQuickKey } from '@/lib/storage/page-key';
 import { runMigrations } from '@/lib/storage/schema';
 import { settingsRepository } from '@/lib/storage/settings-repository';
 
-const TOGGLE_CANVAS_COMMAND = 'toggle-canvas';
-const VISIBILITY_COMMAND = 'toggle-visibility';
 const HIGHLIGHT_MENU_ID = 'overlayer-highlight';
 const NOTES_MENU_ID = 'overlayer-notes';
 const MENU_URL_PATTERNS = ['http://*/*', 'https://*/*', 'file:///*'];
@@ -87,15 +85,6 @@ export default defineBackground(() => {
       void browser.tabs
         .sendMessage(tab.id, { type: MessageType.ToggleCanvas })
         .catch(() => undefined);
-    }
-  });
-
-  browser.commands.onCommand.addListener((command) => {
-    if (command === TOGGLE_CANVAS_COMMAND) {
-      void sendToActiveTab({ type: MessageType.ToggleCanvas }).catch(() => undefined);
-    }
-    if (command === VISIBILITY_COMMAND) {
-      void sendToActiveTab({ type: MessageType.ToggleMarks }).catch(() => undefined);
     }
   });
 

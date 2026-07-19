@@ -53,6 +53,7 @@
     "hideHighlights": "Hide highlights",
     "showHighlights": "Show highlights",
     "unavailable": "Overlayer is not available on this page",
+    "guide": "Guide",
     "options": "Settings and Notes"
   },
   "sticky": {
@@ -140,5 +141,44 @@
     "jumpSearching": "Searching the page…",
     "jumpNotFound": "Highlight not found on this page",
     "jumpContinue": "Keep searching"
+  },
+  "guide": {
+    "title": "How Overlayer works",
+    "notes": {
+      "title": "Quick notes",
+      "p1": "Every site has its own notes sheet. Open it with the round side button, from the popup, or with right-click → Notes.",
+      "p2": "Use the toolbar below the sheet to add text, stickers, link buttons and images.",
+      "p3": "You can also drag images straight onto the sheet. This works from your computer and from any website.",
+      "p4": "Drag items to move them. Double-click to edit. Right-click to change color, layer or delete."
+    },
+    "pages": {
+      "title": "Pages and titles",
+      "p1": "A site can have several note pages. Switch between them with the arrows above the sheet.",
+      "p2": "Type a title for each page in the field next to the arrows.",
+      "p3": "The + button adds a new page. The trash button deletes the current one."
+    },
+    "highlight": {
+      "title": "Text highlighter",
+      "p1": "Select text on a page and press the small button that appears. Right-click → Highlight also works.",
+      "p2": "Right-click a highlight to open its editor. There you can change color and style, write a note or delete it.",
+      "p3": "Hover over a highlight to read its note.",
+      "sample": "This is what a highlight looks like"
+    },
+    "list": {
+      "title": "Side buttons and the list",
+      "p1": "The round side buttons open quick notes and the list of highlights. Drag them up or down to reposition.",
+      "p2": "The list has text search, color and style filters, and a page or whole-site view.",
+      "p3": "Click an entry to jump to its text. On long feeds press Keep searching to load older history."
+    },
+    "manager": {
+      "title": "Saved notes",
+      "p1": "Settings contains a manager of all your sites with three tabs: Sites, Notes and Text.",
+      "p2": "Click an entry to open the site. Notes open automatically and highlights are located on the page."
+    },
+    "data": {
+      "title": "Your data",
+      "p1": "Everything is stored locally in your browser. Nothing ever leaves your device.",
+      "p2": "Use Export to save a JSON backup. Import it on another device to move your notes."
+    }
   }
 }

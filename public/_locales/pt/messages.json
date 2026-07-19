@@ -5,12 +5,6 @@
   "extDescription": {
     "message": "Canvas de notas e marcador de texto para qualquer site. Funciona totalmente offline."
   },
-  "commandToggleCanvas": {
-    "message": "Abrir ou fechar o canvas de notas na aba atual"
-  },
-  "commandToggleVisibility": {
-    "message": "Ocultar ou mostrar os destaques na aba atual"
-  },
   "contextHighlight": {
     "message": "Destacar"
   },

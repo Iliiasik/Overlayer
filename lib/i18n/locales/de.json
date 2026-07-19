@@ -53,6 +53,7 @@
     "hideHighlights": "Markierungen ausblenden",
     "showHighlights": "Markierungen anzeigen",
     "unavailable": "Overlayer ist auf dieser Seite nicht verfügbar",
+    "guide": "Anleitung",
     "options": "Einstellungen und Notizen"
   },
   "sticky": {
@@ -140,5 +141,44 @@
     "jumpSearching": "Seite wird durchsucht…",
     "jumpNotFound": "Markierung auf der Seite nicht gefunden",
     "jumpContinue": "Weitersuchen"
+  },
+  "guide": {
+    "title": "So funktioniert Overlayer",
+    "notes": {
+      "title": "Schnellnotizen",
+      "p1": "Jede Website hat ihr eigenes Notizblatt. Öffne es mit der runden Seitentaste, über das Popup oder per Rechtsklick → Notizen.",
+      "p2": "Die Leiste unter dem Blatt fügt Text, Haftnotizen, Link-Buttons und Bilder hinzu.",
+      "p3": "Bilder kannst du auch direkt aufs Blatt ziehen. Das geht vom Computer und von jeder Website.",
+      "p4": "Ziehe Elemente, um sie zu verschieben. Doppelklick öffnet die Bearbeitung. Rechtsklick ändert Farbe und Ebene oder löscht."
+    },
+    "pages": {
+      "title": "Seiten und Titel",
+      "p1": "Eine Website kann mehrere Notizseiten haben. Wechsle sie mit den Pfeilen über dem Blatt.",
+      "p2": "Den Titel jeder Seite gibst du im Feld neben den Pfeilen ein.",
+      "p3": "Die +-Taste erstellt eine neue Seite. Der Papierkorb löscht die aktuelle."
+    },
+    "highlight": {
+      "title": "Textmarker",
+      "p1": "Markiere Text auf einer Seite und drücke die kleine Taste, die erscheint. Rechtsklick → Markieren geht auch.",
+      "p2": "Rechtsklick auf eine Markierung öffnet den Editor. Dort änderst du Farbe und Stil, schreibst eine Notiz oder löschst sie.",
+      "p3": "Fahre über eine Markierung, um ihre Notiz zu lesen.",
+      "sample": "So sieht eine Markierung aus"
+    },
+    "list": {
+      "title": "Seitentasten und Liste",
+      "p1": "Die runden Seitentasten öffnen Schnellnotizen und die Markierungsliste. Ziehe sie nach oben oder unten.",
+      "p2": "Die Liste bietet Textsuche, Filter nach Farbe und Stil sowie Seiten- oder Website-Ansicht.",
+      "p3": "Klicke einen Eintrag, um zum Text zu springen. Bei langen Feeds lädt Weitersuchen ältere Inhalte."
+    },
+    "manager": {
+      "title": "Gespeicherte Notizen",
+      "p1": "Die Einstellungen haben einen Manager aller Websites mit drei Tabs: Websites, Notizen und Text.",
+      "p2": "Klicke einen Eintrag, um die Website zu öffnen. Notizen öffnen sich selbst und Markierungen werden gefunden."
+    },
+    "data": {
+      "title": "Deine Daten",
+      "p1": "Alles wird lokal im Browser gespeichert. Nichts verlässt dein Gerät.",
+      "p2": "Mit Export speicherst du ein JSON-Backup. Importiere es auf einem anderen Gerät."
+    }
   }
 }

@@ -5,12 +5,6 @@
   "extDescription": {
     "message": "适用于任何网站的笔记画布和文本高亮工具。完全离线运行。"
   },
-  "commandToggleCanvas": {
-    "message": "在当前标签页打开或关闭笔记画布"
-  },
-  "commandToggleVisibility": {
-    "message": "在当前标签页隐藏或显示高亮"
-  },
   "contextHighlight": {
     "message": "高亮"
   },

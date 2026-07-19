@@ -1,4 +1,4 @@
-import { Eye, EyeOff, PenTool, Settings } from 'lucide-react';
+import { BookOpen, Eye, EyeOff, PenTool, Settings } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { browser } from 'wxt/browser';
@@ -6,11 +6,13 @@ import { AppIcon } from '@/components/ui/app-icon';
 import { BannerLogo } from '@/components/ui/banner-logo';
 import { Button } from '@/components/ui/button';
 import { MessageType, sendToActiveTab, type ExtensionState } from '@/lib/messaging';
+import { Guide } from './guide';
 
 export function App() {
   const { t } = useTranslation();
   const [state, setState] = useState<ExtensionState | null>(null);
   const [unavailable, setUnavailable] = useState(false);
+  const [guideOpen, setGuideOpen] = useState(false);
 
   useEffect(() => {
     void sendToActiveTab<ExtensionState>({ type: MessageType.GetState })
@@ -41,6 +43,8 @@ export function App() {
       : state.canvasOpen
         ? t('popup.closeCanvas')
         : t('popup.openCanvas');
+
+  if (guideOpen) return <Guide onBack={() => setGuideOpen(false)} />;
 
   return (
     <div className="flex w-72 flex-col bg-background">
@@ -75,7 +79,16 @@ export function App() {
           <p className="text-center text-xs text-destructive">{t('popup.unavailable')}</p>
         )}
       </div>
-      <div className="border-t p-2">
+      <div className="flex flex-col gap-0.5 border-t p-2">
+        <Button
+          variant="ghost"
+          size="sm"
+          className="w-full justify-start text-muted-foreground"
+          onClick={() => setGuideOpen(true)}
+        >
+          <BookOpen className="h-4 w-4" />
+          {t('popup.guide')}
+        </Button>
         <Button
           variant="ghost"
           size="sm"

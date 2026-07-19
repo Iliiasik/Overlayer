@@ -5,12 +5,6 @@
   "extDescription": {
     "message": "Canvas de notes et surligneur de texte pour n'importe quel site. Fonctionne entièrement hors ligne."
   },
-  "commandToggleCanvas": {
-    "message": "Ouvrir ou fermer le canvas de notes dans l'onglet actuel"
-  },
-  "commandToggleVisibility": {
-    "message": "Masquer ou afficher les surlignages dans l'onglet actuel"
-  },
   "contextHighlight": {
     "message": "Surligner"
   },

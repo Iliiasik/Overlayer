@@ -53,6 +53,7 @@
     "hideHighlights": "Masquer les surlignages",
     "showHighlights": "Afficher les surlignages",
     "unavailable": "Overlayer n'est pas disponible sur cette page",
+    "guide": "Guide",
     "options": "Réglages et notes"
   },
   "sticky": {
@@ -140,5 +141,44 @@
     "jumpSearching": "Recherche sur la page…",
     "jumpNotFound": "Surlignage introuvable sur la page",
     "jumpContinue": "Continuer la recherche"
+  },
+  "guide": {
+    "title": "Comment marche Overlayer",
+    "notes": {
+      "title": "Notes rapides",
+      "p1": "Chaque site a sa propre feuille de notes. Ouvrez-la avec le bouton rond latéral, depuis le popup ou par clic droit → Notes.",
+      "p2": "La barre sous la feuille ajoute du texte, des post-it, des boutons-liens et des images.",
+      "p3": "Vous pouvez aussi glisser des images directement sur la feuille. Cela marche depuis votre ordinateur et tout site web.",
+      "p4": "Glissez les éléments pour les déplacer. Le double-clic ouvre l’édition. Le clic droit change couleur et calque ou supprime."
+    },
+    "pages": {
+      "title": "Pages et titres",
+      "p1": "Un site peut avoir plusieurs pages de notes. Changez-les avec les flèches au-dessus de la feuille.",
+      "p2": "Saisissez le titre de chaque page dans le champ près des flèches.",
+      "p3": "Le bouton + crée une nouvelle page. La corbeille supprime la page actuelle."
+    },
+    "highlight": {
+      "title": "Surligneur de texte",
+      "p1": "Sélectionnez du texte et appuyez sur le petit bouton qui apparaît. Le clic droit → Surligner marche aussi.",
+      "p2": "Le clic droit sur un surlignage ouvre son éditeur. Vous pouvez y changer couleur et style, écrire une note ou supprimer.",
+      "p3": "Survolez un surlignage pour lire sa note.",
+      "sample": "Voici à quoi ressemble un surlignage"
+    },
+    "list": {
+      "title": "Boutons latéraux et liste",
+      "p1": "Les boutons ronds latéraux ouvrent les notes rapides et la liste des surlignages. Glissez-les vers le haut ou le bas.",
+      "p2": "La liste offre la recherche par texte, des filtres par couleur et style, et une vue page ou site entier.",
+      "p3": "Cliquez une entrée pour aller à son texte. Sur les longs fils, Continuer la recherche charge l’historique."
+    },
+    "manager": {
+      "title": "Notes enregistrées",
+      "p1": "Les réglages ont un gestionnaire de tous vos sites avec trois onglets : Sites, Notes et Texte.",
+      "p2": "Cliquez une entrée pour ouvrir le site. Les notes s’ouvrent seules et le surlignage est retrouvé sur la page."
+    },
+    "data": {
+      "title": "Vos données",
+      "p1": "Tout est stocké localement dans votre navigateur. Rien ne quitte votre appareil.",
+      "p2": "Exportez une copie JSON. Importez-la sur un autre appareil pour déplacer vos notes."
+    }
   }
 }

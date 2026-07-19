@@ -27,13 +27,15 @@
   --sheet: #ffffff;
   --sheet-ink: #1f2430;
   --sheet-muted: #9ca3af;
-  --sheet-grid: #d9d9d9;
   --sheet-border: #b9c6b4;
 }
 
 .blue {
   --banner-bg: #c9e5f8;
   --banner-line: #a5c9e2;
+  --sheet: #ffffff;
+  --sheet-ink: #1f2430;
+  --sheet-muted: #9ca3af;
   --background: #f6f5f5;
   --foreground: #1f4250;
   --card: #ffffff;
@@ -59,6 +61,9 @@
 .space {
   --banner-bg: var(--card);
   --banner-line: color-mix(in srgb, var(--card), #000 25%);
+  --sheet: #ffffff;
+  --sheet-ink: #1f2430;
+  --sheet-muted: #9ca3af;
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.205 0 0);

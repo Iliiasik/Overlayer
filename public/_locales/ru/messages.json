@@ -5,12 +5,6 @@
   "extDescription": {
     "message": "Канвас заметок и маркер текста для любого сайта. Работает полностью офлайн."
   },
-  "commandToggleCanvas": {
-    "message": "Открыть или закрыть канвас заметок на текущей вкладке"
-  },
-  "commandToggleVisibility": {
-    "message": "Скрыть или показать выделения на текущей вкладке"
-  },
   "contextHighlight": {
     "message": "Выделить"
   },
