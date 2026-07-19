@@ -122,7 +122,10 @@
     "clearAll": "Apagar tudo",
     "clearAllTitle": "Excluir todos os dados?",
     "clearAllText": "Todas as notas e configurações serão excluídas permanentemente.",
-    "offlineNote": "Todos os dados são armazenados localmente no seu dispositivo"
+    "offlineNote": "Todos os dados são armazenados localmente no seu dispositivo",
+    "sourceCode": "Código-fonte",
+    "reportIssue": "Relatar um problema",
+    "createdBy": "Criado por {{author}}"
   },
   "highlighter": {
     "highlight": "Destacar",

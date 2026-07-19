@@ -122,7 +122,10 @@
     "clearAll": "Tout supprimer",
     "clearAllTitle": "Supprimer toutes les données ?",
     "clearAllText": "Toutes les notes et tous les paramètres seront définitivement supprimés.",
-    "offlineNote": "Toutes les données sont stockées localement sur votre appareil"
+    "offlineNote": "Toutes les données sont stockées localement sur votre appareil",
+    "sourceCode": "Code source",
+    "reportIssue": "Signaler un problème",
+    "createdBy": "Créé par {{author}}"
   },
   "highlighter": {
     "highlight": "Surligner",

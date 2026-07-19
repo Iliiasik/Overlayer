@@ -122,7 +122,10 @@
     "clearAll": "Delete all",
     "clearAllTitle": "Delete all data?",
     "clearAllText": "All notes and settings will be permanently deleted. This cannot be undone.",
-    "offlineNote": "All data is stored locally on your device"
+    "offlineNote": "All data is stored locally on your device",
+    "sourceCode": "Source code",
+    "reportIssue": "Report an issue",
+    "createdBy": "Created by {{author}}"
   },
   "highlighter": {
     "highlight": "Highlight",

@@ -122,7 +122,10 @@
     "clearAll": "Alles löschen",
     "clearAllTitle": "Alle Daten löschen?",
     "clearAllText": "Alle Notizen und Einstellungen werden unwiderruflich gelöscht.",
-    "offlineNote": "Alle Daten werden lokal auf deinem Gerät gespeichert"
+    "offlineNote": "Alle Daten werden lokal auf deinem Gerät gespeichert",
+    "sourceCode": "Quellcode",
+    "reportIssue": "Problem melden",
+    "createdBy": "Erstellt von {{author}}"
   },
   "highlighter": {
     "highlight": "Markieren",

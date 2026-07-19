@@ -122,7 +122,10 @@
     "clearAll": "すべて削除",
     "clearAllTitle": "すべてのデータを削除しますか？",
     "clearAllText": "すべてのノートと設定が完全に削除されます。",
-    "offlineNote": "すべてのデータはお使いのデバイスにローカル保存されます"
+    "offlineNote": "すべてのデータはお使いのデバイスにローカル保存されます",
+    "sourceCode": "ソースコード",
+    "reportIssue": "問題を報告",
+    "createdBy": "作成者: {{author}}"
   },
   "highlighter": {
     "highlight": "ハイライト",

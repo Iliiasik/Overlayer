@@ -122,7 +122,10 @@
     "clearAll": "全部删除",
     "clearAllTitle": "删除所有数据？",
     "clearAllText": "所有笔记和设置将被永久删除。",
-    "offlineNote": "所有数据都本地存储在你的设备上"
+    "offlineNote": "所有数据都本地存储在你的设备上",
+    "sourceCode": "源代码",
+    "reportIssue": "报告问题",
+    "createdBy": "创建者：{{author}}"
   },
   "highlighter": {
     "highlight": "高亮",
