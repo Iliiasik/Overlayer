@@ -16,3 +16,6 @@ exclude:
       - .output
       - .wxt
       - coverage
+failureConditions:
+  severityThresholds:
+    critical: 0

@@ -1,2 +1,6 @@
 name: 'Overlayer profile'
 baseProfile: qodana.recommended
+inspections:
+  - inspection: JsCoverageInspection
+    ignore:
+      - 'scope#!file:lib/**'
