@@ -2,9 +2,17 @@
 # WARNING: Do not store sensitive information in this file, as its contents will be included in the Qodana report. #
 ####################################################################################################################
 
-version: "1.0"
-linter: qodana-go
+version: '1.0'
+linter: qodana-js
 profile:
-  name: qodana.recommended
+  path: .qodana/profile.yaml
+bootstrap: npm ci && npx wxt prepare
 include:
   - name: CheckDependencyLicenses
+  - name: JsCoverageInspection
+exclude:
+  - name: All
+    paths:
+      - .output
+      - .wxt
+      - coverage

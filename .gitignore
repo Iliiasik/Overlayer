@@ -1,6 +1,8 @@
 node_modules/
 .wxt/
 .output/
+coverage/
+.qodana/code-coverage/
 stats.html
 stats-*.json
 *.log
