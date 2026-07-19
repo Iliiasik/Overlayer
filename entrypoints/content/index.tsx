@@ -90,5 +90,7 @@ export default defineContentScript({
     if (markCount > 0) await highlighter.ensureMounted();
     await dock.ensureMounted();
     void runPendingJump(markStore, highlighter);
+
+    window.requestIdleCallback(() => void canvas.prewarm(), { timeout: 2000 });
   },
 });

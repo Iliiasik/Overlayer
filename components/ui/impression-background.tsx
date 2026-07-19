@@ -291,6 +291,11 @@ function smoothstep(value: number): number {
   return t * t * (3 - 2 * t);
 }
 
+function hexToRgb(hex: string): [number, number, number] {
+  const value = parseInt(hex.slice(1), 16);
+  return [(value >> 16) & 255, (value >> 8) & 255, value & 255];
+}
+
 function paintBlob(canvas: HTMLCanvasElement, palette: Palette): void {
   const surfaceWidth = canvas.offsetWidth || window.innerWidth;
   const surfaceHeight = canvas.offsetHeight || window.innerHeight;
@@ -301,9 +306,22 @@ function paintBlob(canvas: HTMLCanvasElement, palette: Palette): void {
   const context = canvas.getContext('2d');
   if (!context) return;
 
-  context.clearRect(0, 0, width, height);
-  context.fillStyle = palette.paper;
-  context.fillRect(0, 0, width, height);
+  const image = context.createImageData(width, height);
+  const data = image.data;
+  const paper = hexToRgb(palette.paper);
+  for (let i = 0; i < data.length; i += 4) {
+    data[i] = paper[0];
+    data[i + 1] = paper[1];
+    data[i + 2] = paper[2];
+    data[i + 3] = 255;
+  }
+
+  const blend = (offset: number, rgb: [number, number, number], alpha: number): void => {
+    const inv = 1 - alpha;
+    data[offset] = rgb[0] * alpha + data[offset] * inv;
+    data[offset + 1] = rgb[1] * alpha + data[offset + 1] * inv;
+    data[offset + 2] = rgb[2] * alpha + data[offset + 2] * inv;
+  };
 
   const aspect = width / height;
   const noises = LAYERS.map((layer, index) =>
@@ -312,43 +330,41 @@ function paintBlob(canvas: HTMLCanvasElement, palette: Palette): void {
 
   LAYERS.forEach((layer, index) => {
     const noise = noises[index];
-    context.fillStyle = palette[layer.color];
-    context.globalAlpha = layer.alpha;
+    const rgb = hexToRgb(palette[layer.color]);
     for (let y = 0; y < height; y++) {
       for (let x = 0; x < width; x++) {
-        const px = x / width;
-        const py = y / height;
+        let paint: boolean;
         if (layer.kind === 'mottle') {
           const value = noise(x, y);
           const edge = (layer.threshold - value) / 0.08 + 1;
-          if (shouldPaint(edge, 0.6, x, y)) context.fillRect(x, y, 1, 1);
-          continue;
-        }
-        let edge: number;
-        if (layer.kind === 'blob') {
-          const dx = px - layer.cx;
-          const dy = (py - layer.cy) / aspect;
-          edge = Math.hypot(dx, dy) / layer.r;
+          paint = shouldPaint(edge, 0.6, x, y);
         } else {
-          edge = bandEdge(layer, px, py, aspect);
+          const px = x / width;
+          const py = y / height;
+          let edge: number;
+          if (layer.kind === 'blob') {
+            const dx = px - layer.cx;
+            const dy = (py - layer.cy) / aspect;
+            edge = Math.hypot(dx, dy) / layer.r;
+          } else {
+            edge = bandEdge(layer, px, py, aspect);
+          }
+          edge += (noise(x, y) - 0.5) * layer.edgeNoise;
+          paint = shouldPaint(edge, layer.dither, x, y);
         }
-        edge += (noise(x, y) - 0.5) * layer.edgeNoise;
-        if (shouldPaint(edge, layer.dither, x, y)) context.fillRect(x, y, 1, 1);
+        if (paint) blend((y * width + x) * 4, rgb, layer.alpha);
       }
     }
   });
 
-  context.globalAlpha = 0.07;
+  const grainDark = hexToRgb(palette.grainDark);
+  const grainLight = hexToRgb(palette.grainLight);
   for (let y = 0; y < height; y++) {
     for (let x = 0; x < width; x++) {
       const roll = hashCell(0x5f356495, x, y);
-      if (roll < 0.14) {
-        context.fillStyle = roll < 0.07 ? palette.grainDark : palette.grainLight;
-        context.fillRect(x, y, 1, 1);
-      }
+      if (roll < 0.14) blend((y * width + x) * 4, roll < 0.07 ? grainDark : grainLight, 0.07);
     }
   }
-  context.globalAlpha = 1;
 
   const unit = surfaceWidth / width;
   const depth = Math.min(
@@ -360,8 +376,10 @@ function paintBlob(canvas: HTMLCanvasElement, palette: Palette): void {
     const profile = smoothstep(t / ARCH_SHOULDER) * smoothstep((1 - t) / ARCH_SHOULDER);
     const lift = depth * profile * (1 - ARCH_DOME + ARCH_DOME * Math.sin(Math.PI * t));
     const cut = Math.max(0, Math.round(height - lift));
-    if (cut < height) context.clearRect(x, cut, 1, height - cut);
+    for (let y = cut; y < height; y++) data[(y * width + x) * 4 + 3] = 0;
   }
+
+  context.putImageData(image, 0, 0);
 }
 
 export function impressionPaper(theme: ThemeSetting): string {

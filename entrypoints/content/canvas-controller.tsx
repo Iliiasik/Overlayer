@@ -15,6 +15,7 @@ const CANVAS_Z_INDEX = 2147483647;
 
 export interface CanvasController {
   toggle(): Promise<void>;
+  prewarm(): Promise<void>;
   close(): void;
   isOpen(): boolean;
   handleLocationChange(): void;
@@ -71,6 +72,10 @@ export function createCanvasController(
         return;
       }
       setOpen(!open);
+    },
+
+    async prewarm() {
+      await ensureMounted();
     },
 
     close() {
