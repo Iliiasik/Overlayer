@@ -1,7 +1,7 @@
 # Privacy Policy
 
 **Extension:** Overlayer
-**Last updated:** 19 July 2026
+**Last updated:** 23 July 2026
 
 ## Summary
 
