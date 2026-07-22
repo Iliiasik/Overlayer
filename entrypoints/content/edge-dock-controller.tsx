@@ -42,7 +42,6 @@ export function createEdgeDockController(
       <I18nextProvider i18n={i18nInstance}>
         <ThemeRoot>
           <EdgeDock
-            key={markStore.url}
             markStore={markStore}
             notesStore={getNotesStore()}
             panelOpen={panelOpen}

@@ -23,4 +23,3 @@ jobs:
       - run: npx vitest run
       - run: npm run build
       - run: npm run build:edge
-      - run: npm run build:firefox

@@ -6,7 +6,7 @@ export default defineConfig({
   vite: () => ({
     plugins: [tailwindcss()],
   }),
-  manifest: ({ browser }) => ({
+  manifest: {
     name: '__MSG_extName__',
     description: '__MSG_extDescription__',
     default_locale: 'en',
@@ -19,17 +19,9 @@ export default defineConfig({
       'activeTab',
       'scripting',
       'contextMenus',
-      ...(browser === 'firefox' ? [] : ['favicon']),
+      'favicon',
     ],
     host_permissions: ['<all_urls>'],
     web_accessible_resources: [{ resources: ['fonts/*', 'icon/*'], matches: ['<all_urls>'] }],
-    ...(browser === 'firefox' && {
-      browser_specific_settings: {
-        gecko: { id: 'overlayer@overlayer.app', strict_min_version: '128.0' },
-      },
-      browser_action: {
-        default_icon: { 16: 'icon/16.png', 32: 'icon/32.png', 48: 'icon/48.png' },
-      },
-    }),
-  }),
+  },
 });

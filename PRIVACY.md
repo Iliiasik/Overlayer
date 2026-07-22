@@ -28,7 +28,7 @@ Site icons shown in the saved notes manager are provided by your browser's own l
 - **storage, unlimitedStorage** — to save your notes and highlights on your device. The larger allowance exists because notes can contain images.
 - **activeTab, scripting** — to display the notes sheet and highlights on the page you are currently viewing.
 - **contextMenus** — to add the "Highlight" and "Notes" items to the right-click menu.
-- **favicon** (Chrome and Edge only) — to show site icons in the saved notes manager.
+- **favicon** — to show site icons in the saved notes manager.
 - **Access to all websites** — Overlayer must be able to work on whichever site you choose to take notes on. It reads and modifies page content only to display your own notes and to restore your own highlights. It does not read, collect, or transmit page content for any other purpose.
 
 ## Deleting your data

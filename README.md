@@ -18,17 +18,11 @@ Overlayer gives every site its own sheet of quick notes and lets you highlight t
 
 Overlayer is not published to the extension stores yet. To try it now, build it from source and load the unpacked build:
 
-**Chrome / Edge**
+**Chrome / Edge** (and other Chromium browsers such as Opera, Brave, and Vivaldi)
 
 1. `npm install && npm run build`
 2. Open `chrome://extensions`, enable **Developer mode**
 3. Choose **Load unpacked** and select `.output/chrome-mv3`
-
-**Firefox**
-
-1. `npm install && npm run build:firefox`
-2. Open `about:debugging#/runtime/this-firefox`
-3. Choose **Load Temporary Add-on** and select any file inside `.output/firefox-mv2`
 
 ## Development
 
@@ -37,9 +31,8 @@ Requires Node.js 22 or newer.
 ```bash
 npm install          # install dependencies
 npm run dev          # Chrome with hot reload
-npm run dev:firefox  # Firefox with hot reload
 npm run check        # types, lint, and tests
-npm run build        # production build (also :edge, :firefox)
+npm run build        # production build (also :edge)
 npm run zip          # packaged archive for store submission
 ```
 
@@ -47,7 +40,7 @@ Code quality is enforced by TypeScript in strict mode, ESLint, Prettier, and Vit
 
 ## Tech stack
 
-Built with [WXT](https://wxt.dev) (Chrome and Edge on Manifest V3, Firefox on Manifest V2), React 19, TypeScript, and Tailwind CSS 4. Rich text is powered by TipTap, and the interface uses Radix UI primitives with Lucide icons.
+Built with [WXT](https://wxt.dev) on Manifest V3 for Chromium browsers, React 19, TypeScript, and Tailwind CSS 4. Rich text is powered by TipTap, and the interface uses Radix UI primitives with Lucide icons.
 
 The three surfaces — popup, settings page, and the in-page interface — are documented alongside the storage model and the highlight-anchoring approach in the source. The in-page UI is mounted inside shadow roots so that website styles and extension styles never collide.
 

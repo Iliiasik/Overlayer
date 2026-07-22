@@ -34,23 +34,32 @@ function normalize(stored: Partial<Settings> | undefined): Settings {
   return merged;
 }
 
+let cachedSettings: Settings | null = null;
+
 export const settingsRepository = {
+  cached(): Settings | null {
+    return cachedSettings;
+  },
+
   async get(): Promise<Settings> {
     const stored = await browser.storage.local.get(SETTINGS_KEY);
-    return normalize(stored[SETTINGS_KEY] as Partial<Settings> | undefined);
+    cachedSettings = normalize(stored[SETTINGS_KEY] as Partial<Settings> | undefined);
+    return cachedSettings;
   },
 
   async update(patch: Partial<Settings>): Promise<Settings> {
     const current = await this.get();
     const next = { ...current, ...patch };
     await browser.storage.local.set({ [SETTINGS_KEY]: next });
+    cachedSettings = next;
     return next;
   },
 
   onChanged(callback: (settings: Settings) => void): () => void {
     const listener = (changes: Record<string, { newValue?: unknown }>, area: string): void => {
       if (area !== 'local' || !(SETTINGS_KEY in changes)) return;
-      callback(normalize(changes[SETTINGS_KEY].newValue as Partial<Settings> | undefined));
+      cachedSettings = normalize(changes[SETTINGS_KEY].newValue as Partial<Settings> | undefined);
+      callback(cachedSettings);
     };
     browser.storage.onChanged.addListener(listener);
     return () => browser.storage.onChanged.removeListener(listener);

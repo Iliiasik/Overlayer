@@ -6,8 +6,10 @@ import {
 } from '@/lib/storage/settings-repository';
 
 export function useSettings() {
-  const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
-  const [loaded, setLoaded] = useState(false);
+  const [settings, setSettings] = useState<Settings>(
+    () => settingsRepository.cached() ?? DEFAULT_SETTINGS,
+  );
+  const [loaded, setLoaded] = useState(() => settingsRepository.cached() != null);
 
   useEffect(() => {
     void settingsRepository.get().then((value) => {
