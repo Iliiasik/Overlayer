@@ -17,6 +17,8 @@ const EDGE_MARGIN = 16;
 const DRAG_THRESHOLD = 4;
 const BUTTON_SIZE = 32;
 const BUTTON_GAP = 8;
+const DOCK_TRANSITION =
+  'transform 320ms cubic-bezier(0.32, 0.72, 0, 1), opacity 320ms cubic-bezier(0.32, 0.72, 0, 1)';
 
 interface EdgeDockProps {
   markStore: MarkStore;
@@ -143,24 +145,33 @@ export function EdgeDock({
     </>
   );
 
-  if (panelOpen) {
-    return (
+  return (
+    <>
       <div
-        className="fixed bottom-4 left-1/2 z-30 flex -translate-x-1/2 flex-row items-center gap-2"
-        style={{ pointerEvents: 'auto' }}
+        className="fixed right-3 z-30 flex touch-none flex-col items-center gap-2"
+        style={{
+          top,
+          opacity: panelOpen ? 0 : 1,
+          pointerEvents: panelOpen ? 'none' : 'auto',
+          transition: DOCK_TRANSITION,
+        }}
+        onPointerDown={startDrag}
       >
         {buttons}
       </div>
-    );
-  }
-
-  return (
-    <div
-      className="fixed right-3 z-30 flex touch-none flex-col items-center gap-2"
-      style={{ top, pointerEvents: 'auto' }}
-      onPointerDown={startDrag}
-    >
-      {buttons}
-    </div>
+      <div className="pointer-events-none fixed inset-0 z-30 overflow-hidden">
+        <div
+          className="absolute bottom-4 left-1/2 flex flex-row items-center gap-2"
+          style={{
+            transform: `translateX(-50%) translateY(${panelOpen ? '0px' : 'calc(100% + 24px)'})`,
+            opacity: panelOpen ? 1 : 0,
+            pointerEvents: panelOpen ? 'auto' : 'none',
+            transition: DOCK_TRANSITION,
+          }}
+        >
+          {buttons}
+        </div>
+      </div>
+    </>
   );
 }

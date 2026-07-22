@@ -4,7 +4,3 @@ export function isEditableElement(node: EventTarget | null): boolean {
     (node.isContentEditable || node.tagName === 'INPUT' || node.tagName === 'TEXTAREA')
   );
 }
-
-export function isEditableEventTarget(event: Event): boolean {
-  return isEditableElement(event.composedPath()[0] ?? null);
-}

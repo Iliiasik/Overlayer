@@ -10,7 +10,6 @@ import {
 import { useTranslation } from 'react-i18next';
 import { usePages } from '@/hooks/use-annotations';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
-import { TooltipProvider } from '@/components/ui/tooltip';
 import {
   createButtonAnnotation,
   createImageAnnotation,
@@ -29,13 +28,7 @@ import { ContextMenu, type ContextMenuState } from './context-menu';
 import { DrawerHeader } from './drawer-header';
 import { ImageDialog } from './image-dialog';
 import { PageBar } from './page-bar';
-import {
-  QuickNotes,
-  QUICK_HEIGHT,
-  QUICK_PADDING,
-  QUICK_WIDTH,
-  type QuickTool,
-} from './quick-notes';
+import { QuickNotes, QUICK_PADDING, QUICK_WIDTH, type QuickTool } from './quick-notes';
 
 const EDITABLE_TYPES = new Set<CanvasItem['type']>(['text', 'sticky', 'button']);
 
@@ -180,7 +173,7 @@ export function CanvasApp({ store, open, onClose }: CanvasAppProps) {
         const height = Math.round(image.height * renderScale);
         const position: Point = {
           x: Math.min(QUICK_WIDTH - QUICK_PADDING - width, Math.max(QUICK_PADDING, point.x)),
-          y: Math.min(QUICK_HEIGHT - QUICK_PADDING - height, Math.max(QUICK_PADDING, point.y)),
+          y: Math.max(QUICK_PADDING, point.y),
         };
         store.addItem(
           pageId,
@@ -235,7 +228,7 @@ export function CanvasApp({ store, open, onClose }: CanvasAppProps) {
   };
 
   return (
-    <TooltipProvider delayDuration={350}>
+    <>
       <section
         ref={sectionRef}
         role="dialog"
@@ -378,6 +371,6 @@ export function CanvasApp({ store, open, onClose }: CanvasAppProps) {
           setMenu(null);
         }}
       />
-    </TooltipProvider>
+    </>
   );
 }

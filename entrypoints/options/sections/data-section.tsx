@@ -1,9 +1,9 @@
 import { Download, Trash2, Upload } from 'lucide-react';
 import { useRef, useState } from 'react';
-import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
+import { ThemePortal } from '@/components/ui/theme-portal';
 import { clearAllData, exportData, importData } from '@/lib/storage/backup';
 import { toast } from '@/lib/toast';
 import { Section, SettingRow } from './section';
@@ -95,7 +95,7 @@ export function DataSection() {
           event.target.value = '';
         }}
       />
-      {createPortal(
+      <ThemePortal>
         <ConfirmDialog
           open={confirmOpen}
           title={t('options.clearAllTitle')}
@@ -105,9 +105,8 @@ export function DataSection() {
           destructive
           onCancel={() => setConfirmOpen(false)}
           onConfirm={() => void handleClearAll()}
-        />,
-        document.body,
-      )}
+        />
+      </ThemePortal>
     </Section>
   );
 }

@@ -1,6 +1,6 @@
 import '@/assets/tailwind.css';
 import { MessageType, onMessage, type ExtensionState } from '@/lib/messaging';
-import { isAnnotatableUrl, quickKeyForUrl } from '@/lib/storage/page-key';
+import { isAnnotatableUrl, pageKeyForUrl, quickKeyForUrl } from '@/lib/storage/page-key';
 import { createMarkStore, createNotesStore, type MarkStore } from '@/lib/storage/annotation-store';
 import { takePendingJump } from '@/lib/storage/pending-jump';
 import { removeAllMarks, setMarksVisible } from '@/lib/text-marks/marker';
@@ -65,7 +65,7 @@ export default defineContentScript({
     onMessage(MessageType.CreateHighlight, () => highlighter.createFromSelection());
 
     ctx.addEventListener(window, 'wxt:locationchange', ({ newUrl }) => {
-      if (newUrl.href === markStore.url) return;
+      if (pageKeyForUrl(newUrl.href) === pageKeyForUrl(markStore.url)) return;
       restorer.dispose();
       markStore.dispose();
       removeAllMarks();

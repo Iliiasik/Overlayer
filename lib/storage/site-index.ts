@@ -1,7 +1,12 @@
 import type { TextMarkAnnotation } from '@/lib/annotations/types';
 import { byteSize } from '@/lib/format';
-import { annotationRepository, pageItemCount, type NotePage } from './annotation-repository';
-import { pageKeyForUrl } from './page-key';
+import {
+  annotationRepository,
+  pageItemCount,
+  type NotePage,
+  type PageRecord,
+} from './annotation-repository';
+import { baseUrlForDomain, boardDomainForUrl, pageKeyForUrl } from './page-key';
 
 export interface HighlightPageEntry {
   key: string;
@@ -31,18 +36,8 @@ export interface SiteEntry {
   updatedAt: number;
 }
 
-function domainOfOrigin(origin: string): string {
-  try {
-    const host = new URL(origin).hostname.replace(/^www\./, '');
-    return host || origin;
-  } catch {
-    return origin;
-  }
-}
-
-function urlForQuickDomain(domain: string): string {
-  if (domain.startsWith('file:')) return `file://${domain.slice('file:'.length)}`;
-  return `https://${domain}/`;
+function markDomain(record: PageRecord): string {
+  return boardDomainForUrl(`${record.origin}${record.path}`);
 }
 
 export function quoteOf(mark: TextMarkAnnotation): string {
@@ -69,9 +64,9 @@ export interface DomainMark {
 export async function listDomainMarks(currentUrl: string): Promise<DomainMark[]> {
   const records = await annotationRepository.listMarkRecords();
   const currentKey = pageKeyForUrl(currentUrl);
-  const domain = domainOfOrigin(new URL(currentUrl).origin);
+  const domain = boardDomainForUrl(currentUrl);
   return records
-    .filter(({ record }) => domainOfOrigin(record.origin) === domain)
+    .filter(({ record }) => markDomain(record) === domain)
     .flatMap(({ key, record }) =>
       record.annotations.map((mark) => ({
         mark,
@@ -98,7 +93,7 @@ export async function buildSiteIndex(): Promise<SiteEntry[]> {
   };
 
   for (const { key, record } of quickRecords) {
-    const url = record.origin ? `${record.origin}/` : urlForQuickDomain(record.domain);
+    const url = baseUrlForDomain(record.domain, record.origin);
     const entry = ensure(record.domain, url);
     entry.notes = {
       key,
@@ -113,9 +108,11 @@ export async function buildSiteIndex(): Promise<SiteEntry[]> {
   }
 
   for (const { key, record } of markRecords) {
-    const domain = domainOfOrigin(record.origin);
-    const entry = ensure(domain, `${record.origin}/`);
-    if (entry.url === urlForQuickDomain(entry.domain)) entry.url = `${record.origin}/`;
+    const domain = markDomain(record);
+    const entry = ensure(domain, baseUrlForDomain(domain, record.origin));
+    if (entry.url === baseUrlForDomain(domain)) {
+      entry.url = baseUrlForDomain(domain, record.origin);
+    }
     entry.highlightPages.push({
       key,
       url: `${record.origin}${record.path}`,

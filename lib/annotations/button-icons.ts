@@ -29,7 +29,7 @@ export const BUTTON_ICONS: Record<string, LucideIcon> = {
   zap: Zap,
 };
 
-export const DEFAULT_BUTTON_ICON = 'link';
+const DEFAULT_BUTTON_ICON = 'link';
 
 export function buttonIcon(name: string | undefined): LucideIcon {
   return BUTTON_ICONS[name ?? DEFAULT_BUTTON_ICON] ?? ExternalLink;

@@ -55,6 +55,7 @@ interface Point {
 function selectionInPage(): Selection | null {
   const selection = document.getSelection();
   if (!selection || selection.isCollapsed || selection.rangeCount === 0) return null;
+  if (selection.toString().trim() === '') return null;
   return selection;
 }
 
@@ -448,15 +449,14 @@ export function HighlighterApp({ store, handleRef, onPanelChange }: HighlighterA
           </div>
         </>
       )}
-      {panelOpen && (
-        <HighlightsPanel
-          marks={marks}
-          failedIds={failedIds}
-          onClose={() => setPanelOpen(false)}
-          onDelete={removeMark}
-          onJump={startJumpSearch}
-        />
-      )}
+      <HighlightsPanel
+        open={panelOpen}
+        marks={marks}
+        failedIds={failedIds}
+        onClose={() => setPanelOpen(false)}
+        onDelete={removeMark}
+        onJump={startJumpSearch}
+      />
       {jump?.phase === 'prompt' && (
         <div
           className="fixed bottom-6 left-1/2 z-30 flex w-80 max-w-[calc(100vw-24px)] -translate-x-1/2 flex-col gap-2.5 rounded-xl border bg-popover p-3 text-popover-foreground shadow-xl"

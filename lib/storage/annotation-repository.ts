@@ -6,6 +6,7 @@ import {
   isNotesKey,
   isQuickKey,
   pageKeyForUrl,
+  pagePath,
   quickKeyForUrl,
 } from './page-key';
 
@@ -98,10 +99,10 @@ export const annotationRepository = {
   },
 
   async saveMarks(url: string, marks: TextMarkAnnotation[]): Promise<void> {
-    const { origin, pathname, search } = new URL(url);
+    const { origin } = new URL(url);
     const record: PageRecord = {
       origin,
-      path: pathname + search,
+      path: pagePath(url),
       annotations: marks,
       updatedAt: Date.now(),
     };

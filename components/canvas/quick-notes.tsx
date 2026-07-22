@@ -1,9 +1,8 @@
 import { Image, Link, Loader2, StickyNote, Type, type LucideIcon } from 'lucide-react';
-import { useEffect, useRef, useState, type DragEvent } from 'react';
+import { useCallback, useEffect, useRef, useState, type DragEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { useElementSize } from '@/hooks/use-element-size';
-import { itemBounds } from '@/lib/canvas/bounds';
 import type { Camera } from '@/lib/canvas/camera';
 import type { CanvasItem, Point } from '@/lib/annotations/types';
 import { isEditableElement } from '@/lib/dom';
@@ -20,15 +19,10 @@ import type { SheetBounds } from './items/sheet';
 export type QuickTool = 'text' | 'sticky' | 'button' | 'image';
 
 export const QUICK_WIDTH = 440;
-export const QUICK_HEIGHT = 2400;
 export const QUICK_PADDING = 24;
+const MIN_SHEET_HEIGHT = 1200;
+const BOTTOM_HEADROOM = 600;
 const CONTENT_GAP = 20;
-
-const SHEET_BOUNDS: SheetBounds = {
-  width: QUICK_WIDTH,
-  height: QUICK_HEIGHT,
-  padding: QUICK_PADDING,
-};
 
 interface QuickNotesProps {
   items: CanvasItem[];
@@ -52,16 +46,6 @@ const QUICK_TOOLS: { id: QuickTool; icon: LucideIcon }[] = [
   { id: 'image', icon: Image },
 ];
 
-function nextQuickPoint(items: CanvasItem[]): Point {
-  let bottom = 0;
-  for (const item of items) {
-    const bounds = itemBounds(item);
-    bottom = Math.max(bottom, bounds.y + bounds.height);
-  }
-  const y = bottom === 0 ? QUICK_PADDING : bottom + CONTENT_GAP;
-  return { x: QUICK_PADDING, y: Math.min(y, QUICK_HEIGHT - 120) };
-}
-
 export function QuickNotes({
   items,
   editingId,
@@ -81,10 +65,41 @@ export function QuickNotes({
   const size = useElementSize(containerRef);
   const [scroll, setScroll] = useState(0);
   const [dropActive, setDropActive] = useState(false);
+  const [contentBottom, setContentBottom] = useState(0);
 
   const scale = size.width > 0 ? size.width / QUICK_WIDTH : 1;
-  const maxScroll = Math.max(0, QUICK_HEIGHT - size.height / scale);
+
+  const measureBottom = useCallback(() => {
+    const node = containerRef.current;
+    if (!node || scale <= 0) return 0;
+    let bottom = 0;
+    node.querySelectorAll<HTMLElement>('[data-item]').forEach((el) => {
+      const item = items.find((candidate) => candidate.id === el.getAttribute('data-item'));
+      if (!item) return;
+      bottom = Math.max(bottom, item.position.y + el.getBoundingClientRect().height / scale);
+    });
+    return bottom;
+  }, [items, scale]);
+
+  useEffect(() => {
+    const node = containerRef.current;
+    if (!node) return;
+    const observer = new ResizeObserver(() => setContentBottom(measureBottom()));
+    observer.observe(node);
+    node.querySelectorAll('[data-item]').forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, [measureBottom]);
+
+  const sheetHeight = Math.max(MIN_SHEET_HEIGHT, Math.ceil(contentBottom) + BOTTOM_HEADROOM);
+  const sheetHeightRef = useRef(sheetHeight);
+  useEffect(() => {
+    sheetHeightRef.current = sheetHeight;
+  }, [sheetHeight]);
+
+  const maxScroll = Math.max(0, sheetHeight - size.height / scale);
   const clampedScroll = Math.min(scroll, maxScroll);
+
+  const bounds: SheetBounds = { width: QUICK_WIDTH, height: sheetHeight, padding: QUICK_PADDING };
 
   useEffect(() => {
     const node = containerRef.current;
@@ -94,7 +109,7 @@ export function QuickNotes({
       event.stopPropagation();
       const rect = node.getBoundingClientRect();
       const currentScale = rect.width / QUICK_WIDTH;
-      const limit = Math.max(0, QUICK_HEIGHT - rect.height / currentScale);
+      const limit = Math.max(0, sheetHeightRef.current - rect.height / currentScale);
       setScroll((current) => Math.min(limit, Math.max(0, current + event.deltaY / currentScale)));
     };
     node.addEventListener('wheel', onWheel, { passive: false });
@@ -102,9 +117,10 @@ export function QuickNotes({
   }, []);
 
   const add = (tool: QuickTool) => {
-    const point = nextQuickPoint(items);
-    onAdd(tool, point);
-    setScroll(Math.min(maxScroll, Math.max(0, point.y - (size.height / scale) * 0.6)));
+    const bottom = measureBottom();
+    const y = bottom === 0 ? QUICK_PADDING : Math.ceil(bottom) + CONTENT_GAP;
+    onAdd(tool, { x: QUICK_PADDING, y });
+    setScroll(Math.max(0, y - (size.height / scale) * 0.6));
   };
 
   const camera: Camera = { x: 0, y: -clampedScroll * scale, scale };
@@ -121,10 +137,7 @@ export function QuickNotes({
         QUICK_WIDTH - QUICK_PADDING,
         Math.max(QUICK_PADDING, (event.clientX - rect.left) / scale),
       ),
-      y: Math.min(
-        QUICK_HEIGHT - QUICK_PADDING,
-        Math.max(QUICK_PADDING, (event.clientY - rect.top) / scale + clampedScroll),
-      ),
+      y: Math.max(QUICK_PADDING, (event.clientY - rect.top) / scale + clampedScroll),
     };
     onDropImage(payloadFromDataTransfer(event.dataTransfer), point);
   };
@@ -169,7 +182,7 @@ export function QuickNotes({
           onTranslate={onTranslate}
           onOpenLink={onOpenLink}
           onContextMenu={onContextMenu}
-          bounds={SHEET_BOUNDS}
+          bounds={bounds}
         />
         {dropBusy && (
           <div className="absolute bottom-2 right-2 flex items-center gap-1.5 rounded-md border bg-popover px-2 py-1 text-xs text-popover-foreground shadow-md">

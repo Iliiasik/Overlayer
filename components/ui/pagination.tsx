@@ -2,7 +2,7 @@ import { ChevronLeft, ChevronRight, MoreHorizontal } from 'lucide-react';
 import { useState, type ButtonHTMLAttributes, type HTMLAttributes } from 'react';
 import { cn } from '@/lib/utils';
 
-export function Pagination({ className, ...props }: HTMLAttributes<HTMLElement>) {
+function Pagination({ className, ...props }: HTMLAttributes<HTMLElement>) {
   return (
     <nav
       role="navigation"
@@ -13,11 +13,11 @@ export function Pagination({ className, ...props }: HTMLAttributes<HTMLElement>)
   );
 }
 
-export function PaginationContent({ className, ...props }: HTMLAttributes<HTMLUListElement>) {
+function PaginationContent({ className, ...props }: HTMLAttributes<HTMLUListElement>) {
   return <ul className={cn('flex items-center gap-1', className)} {...props} />;
 }
 
-export function PaginationItem(props: HTMLAttributes<HTMLLIElement>) {
+function PaginationItem(props: HTMLAttributes<HTMLLIElement>) {
   return <li {...props} />;
 }
 
@@ -25,7 +25,7 @@ interface PaginationLinkProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   isActive?: boolean;
 }
 
-export function PaginationLink({ className, isActive, ...props }: PaginationLinkProps) {
+function PaginationLink({ className, isActive, ...props }: PaginationLinkProps) {
   return (
     <button
       type="button"
@@ -43,7 +43,7 @@ export function PaginationLink({ className, isActive, ...props }: PaginationLink
   );
 }
 
-export function PaginationPrevious({ className, ...props }: PaginationLinkProps) {
+function PaginationPrevious({ className, ...props }: PaginationLinkProps) {
   return (
     <PaginationLink aria-label="previous page" className={className} {...props}>
       <ChevronLeft className="h-4 w-4" />
@@ -51,7 +51,7 @@ export function PaginationPrevious({ className, ...props }: PaginationLinkProps)
   );
 }
 
-export function PaginationNext({ className, ...props }: PaginationLinkProps) {
+function PaginationNext({ className, ...props }: PaginationLinkProps) {
   return (
     <PaginationLink aria-label="next page" className={className} {...props}>
       <ChevronRight className="h-4 w-4" />
@@ -59,7 +59,7 @@ export function PaginationNext({ className, ...props }: PaginationLinkProps) {
   );
 }
 
-export function PaginationEllipsis({ className, ...props }: HTMLAttributes<HTMLSpanElement>) {
+function PaginationEllipsis({ className, ...props }: HTMLAttributes<HTMLSpanElement>) {
   return (
     <span
       aria-hidden
@@ -118,7 +118,7 @@ export function Pager({ page, totalPages, onChange }: PagerProps) {
   );
 }
 
-export interface Paged<T> {
+interface Paged<T> {
   page: number;
   totalPages: number;
   slice: T[];

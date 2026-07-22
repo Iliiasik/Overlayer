@@ -59,6 +59,18 @@ describe('buildSiteIndex', () => {
     expect(sites.map((site) => site.domain).sort()).toEqual(['one.com', 'two.com']);
   });
 
+  it('separates projects on a github.io host and rebuilds openable urls', async () => {
+    await annotationRepository.saveQuick('https://iliiasik.github.io/MThoughts-Wiki/', [
+      createNotePage([sticky()]),
+    ]);
+    await annotationRepository.saveMarks('https://iliiasik.github.io/Other/page', [mark('z')]);
+    const sites = await buildSiteIndex();
+    const domains = sites.map((site) => site.domain).sort();
+    expect(domains).toEqual(['iliiasik.github.io/MThoughts-Wiki', 'iliiasik.github.io/Other']);
+    const wiki = sites.find((site) => site.domain === 'iliiasik.github.io/MThoughts-Wiki');
+    expect(wiki?.url).toBe('https://iliiasik.github.io/MThoughts-Wiki/');
+  });
+
   it('sums record sizes', async () => {
     await annotationRepository.saveQuick('https://example.com/', [createNotePage([sticky()])]);
     await annotationRepository.saveMarks('https://example.com/a', [mark('x')]);

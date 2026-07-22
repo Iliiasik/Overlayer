@@ -1,7 +1,7 @@
 import type { TextMarkAnnotation } from '@/lib/annotations/types';
 import { resolveQuote, resolveQuotes } from './anchor';
 
-export const MARK_TAG = 'overlayer-mark';
+const MARK_TAG = 'overlayer-mark';
 const HIGHLIGHT_ALPHA = '59';
 
 function markSelector(id: string): string {
