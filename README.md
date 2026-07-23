@@ -10,6 +10,8 @@
 [![CI](https://github.com/Iliiasik/Overlayer/actions/workflows/ci.yml/badge.svg)](https://github.com/Iliiasik/Overlayer/actions/workflows/ci.yml)
 ![Free and open source](https://img.shields.io/badge/free%20%26%20open%20source-brightgreen)
 
+**English** · [Русский](README.ru.md) · [Español](README.es.md) · [简体中文](README.zh.md)
+
 </div>
 
 Overlayer gives every website its own sheet of quick notes and lets you highlight text directly on the page. Everything you create stays in your browser, on your device — no servers, no accounts, no tracking.
