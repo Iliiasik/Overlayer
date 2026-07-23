@@ -10,7 +10,14 @@
 [![CI](https://github.com/Iliiasik/Overlayer/actions/workflows/ci.yml/badge.svg)](https://github.com/Iliiasik/Overlayer/actions/workflows/ci.yml)
 ![Free and open source](https://img.shields.io/badge/free%20%26%20open%20source-brightgreen)
 
-**English** · [Русский](README.ru.md) · [Español](README.es.md) · [简体中文](README.zh.md)
+<table align="center">
+  <tr>
+    <td><b>🇬🇧&nbsp;English</b></td>
+    <td><a href="README.ru.md">🇷🇺&nbsp;Русский</a></td>
+    <td><a href="README.es.md">🇪🇸&nbsp;Español</a></td>
+    <td><a href="README.zh.md">🇨🇳&nbsp;简体中文</a></td>
+  </tr>
+</table>
 
 </div>
 
