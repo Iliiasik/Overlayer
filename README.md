@@ -1,7 +1,8 @@
-<img width="128" height="128" alt="128" src="https://github.com/user-attachments/assets/ec12223c-faae-4903-b94e-6e27f20d15d8" />
+<div align="center">
 
-
-<img width="624" height="144" alt="Overlayer" src="https://github.com/user-attachments/assets/4bff94d2-ac07-4fe9-93e9-b5ab0237e9eb" /><div align="center">
+<img width="128" height="128" alt="Overlayer icon" src="https://github.com/user-attachments/assets/ec12223c-faae-4903-b94e-6e27f20d15d8" />
+<br />
+<img width="624" height="144" alt="Overlayer" src="https://github.com/user-attachments/assets/4bff94d2-ac07-4fe9-93e9-b5ab0237e9eb" />
 
 **A notes canvas and text highlighter for any website — fully offline.**
 
@@ -14,19 +15,59 @@
 Overlayer gives every website its own sheet of quick notes and lets you highlight text directly on the page. Everything you create stays in your browser, on your device — no servers, no accounts, no tracking.
 
 ## Showcase
-<img width="2512" height="1112" alt="Jump on highlight (from settings)" src="https://github.com/user-attachments/assets/ba943d96-6aac-480b-ad35-610dd9149208" />
-<img width="2526" height="1322" alt="Highlight" src="https://github.com/user-attachments/assets/74ed3d3c-9787-4d40-b06c-24d35938d3fa" />
-<img width="2516" height="1312" alt="Highlight with list" src="https://github.com/user-attachments/assets/2f5bf0f0-7c73-4dde-b1b8-8fe23b9c9508" />
-<img width="2504" height="1308" alt="expanded list in the Saved Notes" src="https://github.com/user-attachments/assets/d03bc856-d309-460c-881d-5831bc736173" />
-<img width="764" height="1324" alt="Textbox Example (Quick notes screenshot without full page)" src="https://github.com/user-attachments/assets/1e191aa3-f07a-4ebf-9268-57a04b89b9bb" />
-<img width="2496" height="1294" alt="Settings" src="https://github.com/user-attachments/assets/5c5311c4-6ca7-4718-bca8-bcf8b4ef3683" />
-<img width="2514" height="1316" alt="Settings (Green)" src="https://github.com/user-attachments/assets/95729259-3f1d-4052-9942-55aa867b1c59" />
-<img width="2520" height="1324" alt="Settings (Blue)" src="https://github.com/user-attachments/assets/ea314d2e-1c84-4a47-ac83-63595c396bde" />
-<img width="2518" height="1312" alt="Search on page" src="https://github.com/user-attachments/assets/2066ce8b-6e27-4b5d-ac1c-0b56e74af170" />
-<img width="2502" height="1254" alt="Saved notes section" src="https://github.com/user-attachments/assets/67518037-1e13-494a-a24c-9f273613cf07" />
-<img width="2524" height="1328" alt="Quick Notes" src="https://github.com/user-attachments/assets/da9cce5c-b9f0-4af2-8cd3-e2824a786c85" />
-<img width="764" height="1324" alt="Link  Quick Notes (Quick notes screenshot without full page)" src="https://github.com/user-attachments/assets/196d2f98-1279-4e3b-b528-5e065494f128" />
 
+<p align="center">
+  <img width="100%" alt="Overlayer — highlighting text on a page" src="https://github.com/user-attachments/assets/74ed3d3c-9787-4d40-b06c-24d35938d3fa" />
+  <br />
+  <sub>Select text, pick a color, and attach a note — right on the page.</sub>
+</p>
+
+<p align="center">
+  <img height="210" alt="Overlayer — highlights list open on a page" src="https://github.com/user-attachments/assets/2f5bf0f0-7c73-4dde-b1b8-8fe23b9c9508" />
+  <img height="210" alt="Overlayer — searching a page for a highlight" src="https://github.com/user-attachments/assets/2066ce8b-6e27-4b5d-ac1c-0b56e74af170" />
+  <br />
+  <sub>Open the list of every highlight, or let Overlayer scroll a long feed until it finds the one you saved.</sub>
+</p>
+
+<p align="center">
+  <img width="100%" alt="Overlayer — jumping to a highlight from Saved notes" src="https://github.com/user-attachments/assets/ba943d96-6aac-480b-ad35-610dd9149208" />
+  <br />
+  <sub>Jump straight to any highlight from the Saved notes manager.</sub>
+</p>
+
+---
+
+<p align="center">
+  <img width="100%" alt="Overlayer — quick notes sheet on a website" src="https://github.com/user-attachments/assets/da9cce5c-b9f0-4af2-8cd3-e2824a786c85" />
+  <br />
+  <sub>Every site gets its own sheet of quick notes — text, stickers, links, and images.</sub>
+</p>
+
+<p align="center">
+  <img height="380" alt="Overlayer — rich text note on the quick notes sheet" src="https://github.com/user-attachments/assets/1e191aa3-f07a-4ebf-9268-57a04b89b9bb" />
+  <img height="380" alt="Overlayer — link button on the quick notes sheet" src="https://github.com/user-attachments/assets/196d2f98-1279-4e3b-b528-5e065494f128" />
+  <br />
+  <sub>Rich text blocks and link buttons, placed anywhere on the sheet.</sub>
+</p>
+
+---
+
+<p align="center">
+  <img height="210" alt="Overlayer — Saved notes manager" src="https://github.com/user-attachments/assets/67518037-1e13-494a-a24c-9f273613cf07" />
+  <img height="210" alt="Overlayer — expanded highlights in Saved notes" src="https://github.com/user-attachments/assets/d03bc856-d309-460c-881d-5831bc736173" />
+  <br />
+  <sub>Manage everything across all your sites — searchable by site or by highlighted text.</sub>
+</p>
+
+---
+
+<p align="center">
+  <img height="150" alt="Overlayer — settings in the Green theme" src="https://github.com/user-attachments/assets/95729259-3f1d-4052-9942-55aa867b1c59" />
+  <img height="150" alt="Overlayer — settings in the Blue theme" src="https://github.com/user-attachments/assets/ea314d2e-1c84-4a47-ac83-63595c396bde" />
+  <img height="150" alt="Overlayer — settings in the Space theme" src="https://github.com/user-attachments/assets/5c5311c4-6ca7-4718-bca8-bcf8b4ef3683" />
+  <br />
+  <sub>Three themes — Green, Blue, and Space.</sub>
+</p>
 
 ## Features
 
@@ -63,7 +104,22 @@ Until then, build from source and load the unpacked build:
 
 ## Supported languages
 
-English, Russian, Spanish, German, French, Portuguese, Japanese, and Simplified Chinese. The interface follows your browser language by default and can be changed in settings.
+<table align="center">
+  <tr>
+    <td>🇬🇧&nbsp;English</td>
+    <td>🇷🇺&nbsp;Русский</td>
+    <td>🇪🇸&nbsp;Español</td>
+    <td>🇩🇪&nbsp;Deutsch</td>
+  </tr>
+  <tr>
+    <td>🇫🇷&nbsp;Français</td>
+    <td>🇵🇹&nbsp;Português</td>
+    <td>🇯🇵&nbsp;日本語</td>
+    <td>🇨🇳&nbsp;简体中文</td>
+  </tr>
+</table>
+
+The interface follows your browser language by default and can be changed in settings.
 
 ## Development
 
