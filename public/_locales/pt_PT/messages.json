@@ -1,0 +1,14 @@
+{
+  "extName": {
+    "message": "Overlayer"
+  },
+  "extDescription": {
+    "message": "Canvas de notas e marcador de texto para qualquer site. Funciona totalmente offline."
+  },
+  "contextHighlight": {
+    "message": "Destacar"
+  },
+  "contextNotes": {
+    "message": "Notas"
+  }
+}
