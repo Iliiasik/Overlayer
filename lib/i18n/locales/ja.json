@@ -125,7 +125,8 @@
     "offlineNote": "すべてのデータはお使いのデバイスにローカル保存されます",
     "sourceCode": "ソースコード",
     "reportIssue": "問題を報告",
-    "createdBy": "作成者: {{author}}"
+    "createdBy": "作成者: {{author}}",
+    "freeOpenSource": "無料・オープンソース"
   },
   "highlighter": {
     "highlight": "ハイライト",

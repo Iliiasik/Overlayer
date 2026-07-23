@@ -125,7 +125,8 @@
     "offlineNote": "Todos os dados são armazenados localmente no seu dispositivo",
     "sourceCode": "Código-fonte",
     "reportIssue": "Relatar um problema",
-    "createdBy": "Criado por {{author}}"
+    "createdBy": "Criado por {{author}}",
+    "freeOpenSource": "Grátis e de código aberto"
   },
   "highlighter": {
     "highlight": "Destacar",

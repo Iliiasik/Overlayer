@@ -125,7 +125,8 @@
     "offlineNote": "All data is stored locally on your device",
     "sourceCode": "Source code",
     "reportIssue": "Report an issue",
-    "createdBy": "Created by {{author}}"
+    "createdBy": "Created by {{author}}",
+    "freeOpenSource": "Free and open source"
   },
   "highlighter": {
     "highlight": "Highlight",

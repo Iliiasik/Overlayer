@@ -37,7 +37,9 @@ export function App() {
           <PagesSection />
         </div>
         <footer className="flex flex-col items-center gap-3 pb-4 pt-2 text-center text-xs text-foreground/70">
-          <span>Overlayer 1.0.0 · {t('options.offlineNote')}</span>
+          <span>
+            Overlayer 1.0.0 · {t('options.freeOpenSource')} · {t('options.offlineNote')}
+          </span>
           <div className="flex flex-wrap items-center justify-center gap-2">
             <a
               href="https://github.com/Iliiasik/Overlayer"

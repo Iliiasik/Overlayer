@@ -125,7 +125,8 @@
     "offlineNote": "所有数据都本地存储在你的设备上",
     "sourceCode": "源代码",
     "reportIssue": "报告问题",
-    "createdBy": "创建者：{{author}}"
+    "createdBy": "创建者：{{author}}",
+    "freeOpenSource": "免费开源"
   },
   "highlighter": {
     "highlight": "高亮",

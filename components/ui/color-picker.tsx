@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react';
 import { hexToHsv, hsvToHex, type Hsv } from '@/lib/color';
-import { DRAWING_COLORS } from '@/lib/annotations/palette';
 import { cn } from '@/lib/utils';
 
 interface ColorPickerProps {
@@ -47,12 +46,6 @@ export function ColorPicker({ color, onChange, onClose, side = 'bottom' }: Color
     setHsv(next);
     emitted.current = hsvToHex(next);
     onChange(emitted.current);
-  };
-
-  const select = (preset: string) => {
-    emitted.current = preset;
-    setHsv(hexToHsv(preset));
-    onChange(preset);
   };
 
   const handleSaturation = (event: ReactPointerEvent) => {
@@ -119,24 +112,6 @@ export function ColorPicker({ color, onChange, onClose, side = 'bottom' }: Color
             className="pointer-events-none absolute top-1/2 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white shadow"
             style={{ left: `${(hsv.h / 360) * 100}%`, backgroundColor: hueColor }}
           />
-        </div>
-        <div className="flex items-center gap-1.5">
-          {DRAWING_COLORS.map((preset) => (
-            <button
-              key={preset}
-              type="button"
-              aria-label={preset}
-              onClick={() => select(preset)}
-              className={cn(
-                'h-5 w-5 rounded-full border-2 transition-transform hover:scale-110',
-                current === preset ? 'border-foreground' : 'border-transparent',
-              )}
-              style={{ backgroundColor: preset }}
-            />
-          ))}
-          <span className="ml-auto font-mono text-xs uppercase text-muted-foreground">
-            {current}
-          </span>
         </div>
       </div>
     </>

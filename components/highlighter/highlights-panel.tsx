@@ -75,7 +75,7 @@ export function HighlightsPanel({
   const [query, setQuery] = useState('');
   const [scope, setScope] = useState<SearchScope>('page');
   const [domainMarks, setDomainMarks] = useState<DomainMark[] | null>(null);
-  const [colorFilter, setColorFilter] = useState<string | null>(null);
+  const [colorFilters, setColorFilters] = useState<Set<string>>(new Set());
   const [styleFilters, setStyleFilters] = useState<Set<StyleFilter>>(new Set());
   const [page, setPage] = useState(1);
 
@@ -107,24 +107,24 @@ export function HighlightsPanel({
     [rows],
   );
 
-  const toggleStyleFilter = (filter: StyleFilter) => {
-    setStyleFilters((previous) => {
+  const toggleInSet =
+    <T,>(value: T) =>
+    (previous: Set<T>) => {
       const next = new Set(previous);
-      if (next.has(filter)) {
-        next.delete(filter);
+      if (next.has(value)) {
+        next.delete(value);
       } else {
-        next.add(filter);
+        next.add(value);
       }
       return next;
-    });
-  };
+    };
 
   const visible = useMemo(() => {
     if (!rows) return [];
     const needle = query.trim().toLowerCase();
     return rows
       .filter(({ mark }) => {
-        if (colorFilter && mark.style.color !== colorFilter) return false;
+        if (colorFilters.size > 0 && !colorFilters.has(mark.style.color)) return false;
         if (styleFilters.has('bold') && !mark.bold) return false;
         if (styleFilters.has('italic') && !mark.italic) return false;
         if (styleFilters.has('note') && !mark.note) return false;
@@ -137,7 +137,7 @@ export function HighlightsPanel({
         if (a.path !== b.path) return a.path.localeCompare(b.path);
         return a.mark.anchor.position.y - b.mark.anchor.position.y;
       });
-  }, [rows, query, colorFilter, styleFilters]);
+  }, [rows, query, colorFilters, styleFilters]);
 
   const totalPages = Math.max(1, Math.ceil(visible.length / PAGE_SIZE));
   const safePage = Math.min(page, totalPages);
@@ -233,13 +233,11 @@ export function HighlightsPanel({
                 key={value}
                 type="button"
                 aria-label={value}
-                aria-pressed={colorFilter === value}
-                onClick={() =>
-                  applyFilter(() => setColorFilter((current) => (current === value ? null : value)))
-                }
+                aria-pressed={colorFilters.has(value)}
+                onClick={() => applyFilter(() => setColorFilters(toggleInSet(value)))}
                 className={cn(
                   'h-5 w-5 rounded-full border-2 transition-transform hover:scale-110',
-                  colorFilter === value ? 'border-foreground' : 'border-transparent',
+                  colorFilters.has(value) ? 'border-foreground' : 'border-transparent',
                 )}
                 style={{ backgroundColor: value }}
               />
@@ -253,7 +251,7 @@ export function HighlightsPanel({
                   className="h-7 w-7"
                   aria-label={label}
                   aria-pressed={styleFilters.has(filter)}
-                  onClick={() => applyFilter(() => toggleStyleFilter(filter))}
+                  onClick={() => applyFilter(() => setStyleFilters(toggleInSet(filter)))}
                 >
                   <Icon className="h-3.5 w-3.5" />
                 </Button>
@@ -295,7 +293,7 @@ export function HighlightsPanel({
                         <ItemContent>
                           <ItemTitle
                             className={cn(
-                              'line-clamp-2 break-words font-normal',
+                              'line-clamp-2 [overflow-wrap:anywhere] font-normal',
                               row.mark.bold && 'font-bold',
                               row.mark.italic && 'italic',
                             )}
@@ -308,7 +306,9 @@ export function HighlightsPanel({
                           {row.mark.note && (
                             <ItemDescription className="flex items-start gap-1">
                               <StickyNote className="mt-0.5 h-3 w-3 shrink-0" />
-                              <span className="line-clamp-2 break-words">{row.mark.note}</span>
+                              <span className="line-clamp-2 [overflow-wrap:anywhere]">
+                                {row.mark.note}
+                              </span>
                             </ItemDescription>
                           )}
                         </ItemContent>

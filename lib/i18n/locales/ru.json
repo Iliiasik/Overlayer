@@ -125,7 +125,8 @@
     "offlineNote": "Все данные хранятся локально на вашем устройстве",
     "sourceCode": "Исходный код",
     "reportIssue": "Сообщить о проблеме",
-    "createdBy": "Автор — {{author}}"
+    "createdBy": "Автор — {{author}}",
+    "freeOpenSource": "Бесплатно, открытый код"
   },
   "highlighter": {
     "highlight": "Выделить",

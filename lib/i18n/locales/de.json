@@ -125,7 +125,8 @@
     "offlineNote": "Alle Daten werden lokal auf deinem Gerät gespeichert",
     "sourceCode": "Quellcode",
     "reportIssue": "Problem melden",
-    "createdBy": "Erstellt von {{author}}"
+    "createdBy": "Erstellt von {{author}}",
+    "freeOpenSource": "Kostenlos und quelloffen"
   },
   "highlighter": {
     "highlight": "Markieren",
