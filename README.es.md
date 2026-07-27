@@ -6,6 +6,7 @@
 
 **Un lienzo de notas y resaltador de texto para cualquier sitio web — totalmente sin conexión.**
 
+[![Chrome Web Store](https://img.shields.io/chrome-web-store/v/afdjfcfcifamjoljflbhgdeoijhimpec?logo=googlechrome&logoColor=white&label=Chrome%20Web%20Store)](https://chromewebstore.google.com/detail/afdjfcfcifamjoljflbhgdeoijhimpec)
 [![License: GPL-3.0-or-later](https://img.shields.io/badge/License-GPL--3.0--or--later-blue.svg)](LICENSE)
 [![CI](https://github.com/Iliiasik/Overlayer/actions/workflows/ci.yml/badge.svg)](https://github.com/Iliiasik/Overlayer/actions/workflows/ci.yml)
 ![Free and open source](https://img.shields.io/badge/free%20%26%20open%20source-brightgreen)
@@ -97,19 +98,18 @@ Overlayer le da a cada sitio web su propia hoja de notas rápidas y te permite r
 
 ## Instalación
 
-<!-- After publishing, replace the note below with store badges:
-[![Chrome Web Store]([IMAGE])](STORE_URL)  [![Edge Add-ons]([IMAGE])](STORE_URL)
--->
+[![Add to Chrome](https://img.shields.io/badge/Add%20to%20Chrome-Chrome%20Web%20Store-4285F4?style=for-the-badge&logo=googlechrome&logoColor=white)](https://chromewebstore.google.com/detail/afdjfcfcifamjoljflbhgdeoijhimpec)
 
-> **Aún no está en las tiendas de extensiones** — los enlaces a las tiendas aparecerán aquí una vez publicada.
+Disponible en Chrome Web Store — también funciona en Edge, Opera, Brave, Vivaldi y otros navegadores Chromium.
 
-Mientras tanto, compílala desde el código fuente y carga la compilación sin empaquetar:
-
-**Chrome / Edge** (y otros navegadores Chromium como Opera, Brave, Vivaldi)
+<details>
+<summary>O compila desde el código fuente</summary>
 
 1. `npm install && npm run build`
 2. Abre `chrome://extensions` y activa el **modo de desarrollador**
 3. Elige **Cargar descomprimida** y selecciona `.output/chrome-mv3`
+
+</details>
 
 ## Idiomas de la interfaz
 

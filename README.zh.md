@@ -6,6 +6,7 @@
 
 **为任何网站提供的笔记画布与文本高亮工具 —— 完全离线。**
 
+[![Chrome Web Store](https://img.shields.io/chrome-web-store/v/afdjfcfcifamjoljflbhgdeoijhimpec?logo=googlechrome&logoColor=white&label=Chrome%20Web%20Store)](https://chromewebstore.google.com/detail/afdjfcfcifamjoljflbhgdeoijhimpec)
 [![License: GPL-3.0-or-later](https://img.shields.io/badge/License-GPL--3.0--or--later-blue.svg)](LICENSE)
 [![CI](https://github.com/Iliiasik/Overlayer/actions/workflows/ci.yml/badge.svg)](https://github.com/Iliiasik/Overlayer/actions/workflows/ci.yml)
 ![Free and open source](https://img.shields.io/badge/free%20%26%20open%20source-brightgreen)
@@ -97,19 +98,18 @@ Overlayer 为每个网站提供专属的快速笔记面板，并让你直接在�
 
 ## 安装
 
-<!-- After publishing, replace the note below with store badges:
-[![Chrome Web Store]([IMAGE])](STORE_URL)  [![Edge Add-ons]([IMAGE])](STORE_URL)
--->
+[![Add to Chrome](https://img.shields.io/badge/Add%20to%20Chrome-Chrome%20Web%20Store-4285F4?style=for-the-badge&logo=googlechrome&logoColor=white)](https://chromewebstore.google.com/detail/afdjfcfcifamjoljflbhgdeoijhimpec)
 
-> **尚未上架扩展商店** —— 发布后商店链接会出现在这里。
+已上架 Chrome 应用商店 —— 也适用于 Edge、Opera、Brave、Vivaldi 等 Chromium 浏览器。
 
-在此之前，请从源码构建并加载未打包的构建：
-
-**Chrome / Edge**（以及 Opera、Brave、Vivaldi 等其他 Chromium 浏览器）
+<details>
+<summary>或从源码构建</summary>
 
 1. `npm install && npm run build`
 2. 打开 `chrome://extensions` 并启用**开发者模式**
 3. 选择**加载已解压的扩展程序**并选中 `.output/chrome-mv3`
+
+</details>
 
 ## 界面语言
 

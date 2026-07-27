@@ -6,6 +6,7 @@
 
 **A notes canvas and text highlighter for any website — fully offline.**
 
+[![Chrome Web Store](https://img.shields.io/chrome-web-store/v/afdjfcfcifamjoljflbhgdeoijhimpec?logo=googlechrome&logoColor=white&label=Chrome%20Web%20Store)](https://chromewebstore.google.com/detail/afdjfcfcifamjoljflbhgdeoijhimpec)
 [![License: GPL-3.0-or-later](https://img.shields.io/badge/License-GPL--3.0--or--later-blue.svg)](LICENSE)
 [![CI](https://github.com/Iliiasik/Overlayer/actions/workflows/ci.yml/badge.svg)](https://github.com/Iliiasik/Overlayer/actions/workflows/ci.yml)
 ![Free and open source](https://img.shields.io/badge/free%20%26%20open%20source-brightgreen)
@@ -97,19 +98,18 @@ Overlayer gives every website its own sheet of quick notes and lets you highligh
 
 ## Installation
 
-<!-- After publishing, replace the note below with store badges:
-[![Chrome Web Store]([IMAGE])](STORE_URL)  [![Edge Add-ons]([IMAGE])](STORE_URL)
--->
+[![Add to Chrome](https://img.shields.io/badge/Add%20to%20Chrome-Chrome%20Web%20Store-4285F4?style=for-the-badge&logo=googlechrome&logoColor=white)](https://chromewebstore.google.com/detail/afdjfcfcifamjoljflbhgdeoijhimpec)
 
-> **Not on the extension stores yet** — store links will appear here once published.
+Available on the Chrome Web Store — also works in Edge, Opera, Brave, Vivaldi, and other Chromium browsers.
 
-Until then, build from source and load the unpacked build:
-
-**Chrome / Edge** (and other Chromium browsers such as Opera, Brave, and Vivaldi)
+<details>
+<summary>Or build from source</summary>
 
 1. `npm install && npm run build`
 2. Open `chrome://extensions` and enable **Developer mode**
 3. Choose **Load unpacked** and select `.output/chrome-mv3`
+
+</details>
 
 ## Supported languages
 

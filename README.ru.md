@@ -6,6 +6,7 @@
 
 **Холст заметок и текстовый хайлайтер для любого сайта — полностью офлайн.**
 
+[![Chrome Web Store](https://img.shields.io/chrome-web-store/v/afdjfcfcifamjoljflbhgdeoijhimpec?logo=googlechrome&logoColor=white&label=Chrome%20Web%20Store)](https://chromewebstore.google.com/detail/afdjfcfcifamjoljflbhgdeoijhimpec)
 [![License: GPL-3.0-or-later](https://img.shields.io/badge/License-GPL--3.0--or--later-blue.svg)](LICENSE)
 [![CI](https://github.com/Iliiasik/Overlayer/actions/workflows/ci.yml/badge.svg)](https://github.com/Iliiasik/Overlayer/actions/workflows/ci.yml)
 ![Free and open source](https://img.shields.io/badge/free%20%26%20open%20source-brightgreen)
@@ -97,19 +98,18 @@ Overlayer даёт каждому сайту собственную шторку
 
 ## Установка
 
-<!-- After publishing, replace the note below with store badges:
-[![Chrome Web Store]([IMAGE])](STORE_URL)  [![Edge Add-ons]([IMAGE])](STORE_URL)
--->
+[![Add to Chrome](https://img.shields.io/badge/Add%20to%20Chrome-Chrome%20Web%20Store-4285F4?style=for-the-badge&logo=googlechrome&logoColor=white)](https://chromewebstore.google.com/detail/afdjfcfcifamjoljflbhgdeoijhimpec)
 
-> **Пока не в магазинах расширений** — ссылки на магазины появятся здесь после публикации.
+Доступно в Chrome Web Store — также работает в Edge, Opera, Brave, Vivaldi и других браузерах на Chromium.
 
-А пока соберите из исходников и загрузите распакованную сборку:
-
-**Chrome / Edge** (и другие браузеры на Chromium: Opera, Brave, Vivaldi)
+<details>
+<summary>Или соберите из исходников</summary>
 
 1. `npm install && npm run build`
 2. Откройте `chrome://extensions` и включите **режим разработчика**
 3. Выберите **Загрузить распакованное расширение** и укажите `.output/chrome-mv3`
+
+</details>
 
 ## Языки интерфейса
 
