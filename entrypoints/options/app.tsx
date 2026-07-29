@@ -1,5 +1,6 @@
 import { MessageSquare } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { browser } from 'wxt/browser';
 import { AppIcon } from '@/components/ui/app-icon';
 import { BannerLogo } from '@/components/ui/banner-logo';
 import { ImpressionBlob, impressionPaper } from '@/components/ui/impression-background';
@@ -38,7 +39,8 @@ export function App() {
         </div>
         <footer className="flex flex-col items-center gap-3 pb-4 pt-2 text-center text-xs text-foreground/70">
           <span>
-            Overlayer 1.0.0 · {t('options.freeOpenSource')} · {t('options.offlineNote')}
+            Overlayer {browser.runtime.getManifest().version} · {t('options.freeOpenSource')} ·{' '}
+            {t('options.offlineNote')}
           </span>
           <div className="flex flex-wrap items-center justify-center gap-2">
             <a
